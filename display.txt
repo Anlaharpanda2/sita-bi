@@ -1,0 +1,12 @@
+web:dev:  GET /favicon.ico?favicon.45db1c09.ico 200 in 288ms
+api:dev: [Nest] 16228  - 11/09/2025, 20.25.16   ERROR [ExceptionsHandler] TypeError: res.setHeader is not a function
+api:dev:     at strategy.redirect (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport@0.7.0\node_modules\passport\lib\middleware\authenticate.js:340:13)
+api:dev:     at stored (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport-oauth2@1.8.0\node_modules\passport-oauth2\lib\strategy.js:285:14)
+api:dev:     at NullStore.store (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport-oauth2@1.8.0\node_modules\passport-oauth2\lib\state\null.js:5:3)
+api:dev:     at OAuth2Strategy.authenticate (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport-oauth2@1.8.0\node_modules\passport-oauth2\lib\strategy.js:297:28)
+api:dev:     at attempt (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport@0.7.0\node_modules\passport\lib\middleware\authenticate.js:378:16)
+api:dev:     at authenticate (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\passport@0.7.0\node_modules\passport\lib\middleware\authenticate.js:379:7)
+api:dev:     at D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\@nestjs+passport@11.0.5_@nestjs+common@11.1.6_passport@0.7.0\node_modules\@nestjs\passport\dist\auth.guard.js:88:3
+api:dev:     at new Promise (<anonymous>)
+api:dev:     at D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\@nestjs+passport@11.0.5_@nestjs+common@11.1.6_passport@0.7.0\node_modules\@nestjs\passport\dist\auth.guard.js:80:83
+api:dev:     at MixinAuthGuard.canActivate (D:\Project\Matkul-Proyek\SITA-BI\node_modules\.pnpm\@nestjs+passport@11.0.5_@nestjs+common@11.1.6_passport@0.7.0\node_modules\@nestjs\passport\dist\auth.guard.js:44:32)
