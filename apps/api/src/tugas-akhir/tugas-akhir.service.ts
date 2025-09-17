@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { CreateTugasAkhirDto } from './dto/create-tugas-akhir.dto';
 import { Prisma, StatusTugasAkhir, TugasAkhir } from '@prisma/client';
 import * as stringSimilarity from 'string-similarity';

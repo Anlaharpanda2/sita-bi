@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { PendaftaranSidang, TipeDokumenSidang } from '@prisma/client';
 import * as fs from 'fs/promises';
 import * as path from 'path';

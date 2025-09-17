@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TugasAkhirService } from './tugas-akhir.service';
 import { TugasAkhirController } from './tugas-akhir.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from '@repo/db';
 
 @Module({
   imports: [PrismaModule],

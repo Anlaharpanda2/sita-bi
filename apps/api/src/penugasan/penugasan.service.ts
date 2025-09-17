@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PeranDosen, StatusTugasAkhir, TugasAkhir } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { AssignPembimbingDto } from './dto/assign-pembimbing.dto';
 
 @Injectable()

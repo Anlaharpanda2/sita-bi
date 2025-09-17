@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { CreateTawaranTopikDto } from './dto/create-tawaran-topik.dto';
 
 @Injectable()

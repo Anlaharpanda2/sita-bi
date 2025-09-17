@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { PeranDosen, PendaftaranSidang, Sidang } from '@prisma/client';
 import { CreateJadwalDto } from './dto/create-jadwal.dto';
 
