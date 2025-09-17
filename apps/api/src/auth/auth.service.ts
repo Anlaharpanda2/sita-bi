@@ -3,7 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@repo/db';
 import { MailerService } from '@nestjs-modules/mailer';
 import { randomInt } from 'crypto';
 

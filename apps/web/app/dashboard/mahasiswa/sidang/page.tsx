@@ -28,7 +28,10 @@ function RegistrationForm({ tugasAkhirId, onRegistrationSuccess }: { tugasAkhirI
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files: inputFiles } = e.target;
     if (inputFiles && inputFiles.length > 0) {
-      setFiles(prev => ({ ...prev, [name]: inputFiles[0] }));
+      const file = inputFiles[0];
+      if (file) {
+        setFiles(prev => ({ ...prev, [name]: file }));
+      }
     }
   };
 
@@ -38,6 +41,7 @@ function RegistrationForm({ tugasAkhirId, onRegistrationSuccess }: { tugasAkhirI
     setIsSubmitting(true);
 
     const formData = new FormData();
+    formData.append('tugas_akhir_id', String(tugasAkhirId));
     let fileCount = 0;
     for (const key in files) {
       if (files[key]) {
@@ -59,8 +63,12 @@ function RegistrationForm({ tugasAkhirId, onRegistrationSuccess }: { tugasAkhirI
       });
       alert('Registration successful! Please wait for supervisor approval.');
       onRegistrationSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit registration');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -94,8 +102,12 @@ export default function PendaftaranSidangPage() {
       // This endpoint should be extended to include pendaftaranSidang relation
       const taData = await request<TugasAkhir>('/bimbingan/sebagai-mahasiswa');
       setTugasAkhir(taData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -112,6 +124,11 @@ export default function PendaftaranSidangPage() {
       return <p>You have not registered for a defense yet.</p>;
     }
     const latestRegistration = tugasAkhir.pendaftaranSidang[tugasAkhir.pendaftaranSidang.length - 1];
+
+    if (!latestRegistration) {
+      return <p>No registration status to display.</p>;
+    }
+
     return (
       <div>
         <h4>Latest Registration Status (ID: {latestRegistration.id})</h4>

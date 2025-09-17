@@ -20,6 +20,8 @@
   "license": "ISC",
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.15.3",
     "bcrypt": "^6.0.0",
@@ -30,6 +32,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.15.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0"
   },
   "exports": {
     ".": {

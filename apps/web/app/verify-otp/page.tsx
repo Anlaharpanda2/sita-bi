@@ -29,8 +29,12 @@ function VerifyOtpForm() {
         Cookies.set('token', response.access_token, { expires: 1 });
         router.push('/dashboard');
       }
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -44,8 +48,12 @@ function VerifyOtpForm() {
             body: JSON.stringify({ email })
         });
         alert('A new OTP has been sent to your email.');
-    } catch(err: any) {
-        setError(err.message || 'Failed to resend OTP.');
+    } catch(err) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Failed to resend OTP.');
+        }
     }
   }
 

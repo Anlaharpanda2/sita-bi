@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PendaftaranSidangController } from './pendaftaran-sidang.controller';
 import { PendaftaranSidangService } from './pendaftaran-sidang.service';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from '@repo/db';
 
 @Module({
   imports: [PrismaModule],

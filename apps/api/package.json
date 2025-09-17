@@ -27,7 +27,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-fastify": "^11.1.6",
     "@nestjs/swagger": "^11.2.0",
-    "@repo/api": "workspace:*",
+    "@repo/api-contract": "workspace:*",
     "@repo/db": "workspace:*",
     "@types/multer": "^2.0.0",
     "bcrypt": "^6.0.0",

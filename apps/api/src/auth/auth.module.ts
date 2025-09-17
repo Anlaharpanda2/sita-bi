@@ -7,10 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaModule, PrismaService } from '@repo/db';
 import { GoogleStrategy } from './strategies/google.strategy';
-import { PrismaModule } from '../prisma/prisma.module';
-
 @Module({
   imports: [
     forwardRef(() => UsersModule),

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PenugasanService } from './penugasan.service';
 import { PenugasanController } from './penugasan.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from '@repo/db';
 
 @Module({
   imports: [PrismaModule],

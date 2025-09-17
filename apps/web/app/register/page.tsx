@@ -42,8 +42,12 @@ export default function RegisterPage() {
       alert(response.message);
       // Redirect to OTP verification page, passing email along
       router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
