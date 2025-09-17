@@ -25,6 +25,7 @@ import { PrismaModule } from '../prisma/prisma.module';
       inject: [ConfigService],
     }),
   ],
+  
   controllers: [AuthController],
   providers: [
     AuthService, 
