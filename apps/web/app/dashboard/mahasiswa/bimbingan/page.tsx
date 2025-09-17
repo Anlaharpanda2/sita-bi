@@ -40,8 +40,12 @@ export default function BimbinganPage() {
       setLoading(true);
       const taData = await request<TugasAkhir>('/bimbingan/sebagai-mahasiswa');
       setTugasAkhir(taData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -68,8 +72,12 @@ export default function BimbinganPage() {
       setNote('');
       setSelectedSessionId(null);
       fetchData(); // Refresh data
-    } catch (err: any) {
-      alert(`Error adding note: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Error adding note: ${err.message}`);
+      } else {
+        alert('An unknown error occurred while adding the note.');
+      }
     }
   };
 

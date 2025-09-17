@@ -44,8 +44,12 @@ function ScheduleForm({ tugasAkhirId, onActionSuccess }: { tugasAkhirId: number,
       });
       alert('Schedule set successfully!');
       onActionSuccess();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      } else {
+        alert('An unknown error occurred');
+      }
     }
   };
 
@@ -70,8 +74,12 @@ function AddNoteForm({ sessionId, onActionSuccess }: { sessionId: number, onActi
             alert('Note added!');
             setCatatan('');
             onActionSuccess();
-        } catch (err: any) {
-            alert(`Error: ${err.message}`);
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(`Error: ${err.message}`);
+            } else {
+                alert('An unknown error occurred');
+            }
         }
     };
     return (
@@ -94,8 +102,12 @@ export default function DosenBimbinganPage() {
       setLoading(true);
       const data = await request<TugasAkhir[]>('/bimbingan/sebagai-dosen');
       setSupervisedStudents(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -113,8 +125,12 @@ export default function DosenBimbinganPage() {
         await request(`/bimbingan/sesi/${sessionId}/${action}`, { method: 'POST' });
         alert(`Session ${action}d successfully!`);
         fetchData();
-    } catch (err: any) {
-        alert(`Error: ${err.message}`);
+    } catch (err) {
+        if (err instanceof Error) {
+            alert(`Error: ${err.message}`);
+        } else {
+            alert('An unknown error occurred');
+        }
     }
   }
 
