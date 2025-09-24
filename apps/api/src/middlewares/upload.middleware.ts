@@ -4,20 +4,12 @@ import path from 'path';
 import fs from 'fs';
 
 // Ensure the storage directory exists
-const storageDir = path.join(process.cwd(), 'storage', 'sidang_files');
-if (!fs.existsSync(storageDir)) {
-  fs.mkdirSync(storageDir, { recursive: true });
-}
+// const storageDir = path.join(process.cwd(), 'storage', 'sidang_files');
+// if (!fs.existsSync(storageDir)) {
+//   fs.mkdirSync(storageDir, { recursive: true });
+// }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, storageDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  },
-});
+const storage = multer.memoryStorage();
 
 // Filter to allow only specific file types if needed
 /*

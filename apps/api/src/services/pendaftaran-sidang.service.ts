@@ -1,5 +1,5 @@
 import { PrismaClient, PendaftaranSidang, TipeDokumenSidang, Prisma } from '@repo/db';
-import path from 'path';
+
 
 // Interface untuk return type getPendingRegistrations
 interface PendingRegistration {
@@ -73,10 +73,15 @@ export class PendaftaranSidangService {
           const fileArray = files[fieldname];
           if (fileArray) {
             for (const file of fileArray) {
+              // TODO: Implement file upload to a cloud storage service (e.g., S3, Cloudinary)
+              // For now, we'll just store the original name and a placeholder path.
+              // In a real scenario, 'uploadedFilePath' would be the URL returned by the cloud service.
+              const uploadedFilePath = `cloud-storage-url/${file.originalname}`; // Placeholder
+
               await tx.pendaftaranSidangFile.create({
                 data: {
                   pendaftaran_sidang_id: pendaftaran.id,
-                  file_path: path.join('sidang_files', file.filename),
+                  file_path: uploadedFilePath, // Use the URL from cloud storage
                   original_name: file.originalname,
                   tipe_dokumen: this.mapFilenameToTipe(file.fieldname),
                 },
