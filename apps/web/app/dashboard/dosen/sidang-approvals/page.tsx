@@ -29,8 +29,8 @@ export default function SidangApprovalsPage() {
       setLoading(true);
       const data = await request<Registration[]>('/pendaftaran-sidang/pending-approvals');
       setRegistrations(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -48,8 +48,8 @@ export default function SidangApprovalsPage() {
       await request(`/pendaftaran-sidang/${id}/approve`, { method: 'POST' });
       alert('Registration approved!');
       fetchData(); // Refresh list
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err) {
+      alert(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
     }
   };
 
@@ -64,8 +64,8 @@ export default function SidangApprovalsPage() {
       });
       alert('Registration rejected!');
       fetchData(); // Refresh list
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err) {
+      alert(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
     }
   };
 

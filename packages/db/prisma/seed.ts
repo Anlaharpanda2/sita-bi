@@ -1,5 +1,6 @@
-import { PrismaClient, AudiensPengumuman } from '@prisma/client';
+import { PrismaClient, AudiensPengumuman, Prisma } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import * as bcrypt from 'bcrypt'; // New import
 
 const prisma = new PrismaClient();
 
@@ -37,10 +38,68 @@ async function main() {
   // Use createMany for efficient bulk insertion
   const result = await prisma.pengumuman.createMany({
     data: announcements,
-    skipDuplicates: true, // Skip if any announcement with the same unique fields already exists
   });
 
   console.log(`Seeding finished. ${result.count} announcements created.`);
+
+  // --- New Dosen Seeding Logic ---
+  console.log('Start seeding 5000 Dosen...');
+
+  const dosenRole = await prisma.role.findUnique({ where: { name: 'dosen' } });
+
+  if (!dosenRole) {
+    console.error('Dosen role not found. Please ensure roles are seeded.');
+    return;
+  }
+
+  const dosenToSeed = [];
+  for (let i = 0; i < 5000; i++) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const name = `${firstName} ${lastName}`;
+    const email = faker.internet.email({ firstName, lastName }).toLowerCase().replace('@', `.${i}@`); // Ensure unique email
+    const password = 'password123'; // Default password for seeded dosen
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const nidn = `${faker.string.numeric(9)}${i}`; // Ensure unique NIDN
+
+    dosenToSeed.push({
+      user: {
+        create: {
+          name: name,
+          email: email,
+          password: hashedPassword,
+          roles: {
+            connect: { id: dosenRole.id },
+          },
+        },
+      },
+      nidn: nidn,
+    });
+
+    if ((i + 1) % 100 === 0) {
+      console.log(`Generated ${i + 1} dosen data...`);
+    }
+  }
+
+  // Using a loop for create as createMany for related records is complex
+  for (const dosenData of dosenToSeed) {
+    try {
+      await prisma.dosen.create({
+        data: dosenData,
+      });
+    } catch (e) {
+      // Handle unique constraint errors if any
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        console.warn(`Skipping duplicate entry for dosen: ${dosenData.user.create.email}`);
+      } else {
+        console.error(`Error seeding dosen: ${(e as Error).message}`);
+        throw e;
+      }
+    }
+  }
+
+  console.log('5000 Dosen seeded successfully.');
+  // --- End New Dosen Seeding Logic ---
 }
 
 main()

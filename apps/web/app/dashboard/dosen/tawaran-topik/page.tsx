@@ -45,8 +45,8 @@ function CreateTopikForm({ onTopicCreated }: { onTopicCreated: () => void }) {
       setDeskripsi('');
       setKuota(1);
       onTopicCreated();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create topic');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create topic');
     }
   };
 
@@ -79,8 +79,8 @@ export default function TawaranTopikPage() {
       ]);
       setTopics(topicsRes);
       setApplications(appsRes);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -97,8 +97,8 @@ export default function TawaranTopikPage() {
       await request(`/tawaran-topik/applications/${appId}/${action}`, { method: 'POST' });
       alert(`Application ${action}d successfully!`);
       fetchData(); // Refresh all data
-    } catch (err: any) {
-      alert(`Failed to ${action} application: ${err.message}`);
+    } catch (err) {
+      alert(`Failed to ${action} application: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
     }
   };
 

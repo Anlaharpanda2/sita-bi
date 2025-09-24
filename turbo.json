@@ -12,6 +12,14 @@
     },
     "lint": {},
     "test": {},
-    "test:e2e": {}
+    "test:e2e": {},
+    "api#dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "api#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    }
   }
 }

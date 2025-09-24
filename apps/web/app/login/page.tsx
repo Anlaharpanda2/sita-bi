@@ -28,8 +28,12 @@ export default function LoginPage() {
       } else {
         setError('Login failed: No access token received.');
       }
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message || 'An unknown error occurred.');
+        } else {
+            setError('An unknown error occurred.');
+        }
     }
   };
 
@@ -64,7 +68,7 @@ export default function LoginPage() {
         Sign in with Google
       </a>
       <div style={{ marginTop: '1rem' }}>
-        <p>Don't have an account? <a href="/register">Register here</a></p>
+        <p>Don&apos;t have an account? <a href="/register">Register here</a></p>
       </div>
     </div>
   );

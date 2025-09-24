@@ -34,18 +34,24 @@ export default function TugasAkhirPage() {
       // Check for active TA first
       const taData = await request<TugasAkhir>('/bimbingan/sebagai-mahasiswa');
       setTugasAkhir(taData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // If no active TA is found (404), fetch available topics
-      if (err.message.includes('not found')) {
+      if (err instanceof Error && err.message.includes('not found')) {
         setTugasAkhir(null);
         try {
           const topicsData = await request<TawaranTopik[]>('/tawaran-topik/available');
           setAvailableTopics(topicsData);
-        } catch (topicsErr: any) {
-          setError(topicsErr.message || 'Failed to fetch available topics');
+        } catch (topicsErr: unknown) {
+          if (topicsErr instanceof Error) {
+            setError(topicsErr.message || 'Failed to fetch available topics');
+          } else {
+            setError('An unknown error occurred while fetching topics.');
+          }
         }
-      } else {
+      } else if (err instanceof Error) {
         setError(err.message || 'Failed to fetch data');
+      } else {
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);
@@ -64,8 +70,12 @@ export default function TugasAkhirPage() {
       await request(`/tawaran-topik/${topicId}/apply`, { method: 'POST' });
       alert('Successfully applied for the topic! Please wait for lecturer approval.');
       fetchData(); // Refresh data
-    } catch (err: any) {
-      alert(`Error applying: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error applying: ${err.message}`);
+      } else {
+        alert('An unknown error occurred while applying.');
+      }
     }
   };
 
@@ -79,8 +89,12 @@ export default function TugasAkhirPage() {
       });
       alert('Successfully submitted title for approval.');
       fetchData(); // Refresh data
-    } catch (err: any) {
-      alert(`Error submitting title: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error submitting title: ${err.message}`);
+      } else {
+        alert('An unknown error occurred while submitting title.');
+      }
     }
   };
 

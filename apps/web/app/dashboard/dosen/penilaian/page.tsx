@@ -41,8 +41,8 @@ function PenilaianForm({ sidangId, onScoringSuccess }: { sidangId: number, onSco
       setSkor(80);
       setKomentar('');
       onScoringSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit score');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit score');
     }
   };
 
@@ -70,8 +70,8 @@ export default function PenilaianPage() {
       setLoading(true);
       const data = await request<Sidang[]>('/jadwal-sidang/for-penguji');
       setAssignedSidang(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export default function PenilaianPage() {
               <p><strong>Schedule:</strong> {new Date(sidang.jadwalSidang[0].tanggal).toLocaleDateString()} at {sidang.jadwalSidang[0].waktu_mulai} in {sidang.jadwalSidang[0].ruangan.nama_ruangan}</p>
             )}
             
-            <h4>Scores You've Given:</h4>
+            <h4>Scores You&apos;ve Given:</h4>
             {sidang.nilaiSidang.length > 0 ? (
               <ul>
                 {sidang.nilaiSidang.map(n => <li key={n.id}>{n.aspek}: {n.skor}</li>)}

@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 //================================================================================
@@ -23,6 +23,7 @@ enum StatusTugasAkhir {
   DRAFT
   DIAJUKAN
   DISETUJUI
+  BIMBINGAN
   REVISI
   MENUNGGU_PEMBATALAN
   DIBATALKAN
@@ -30,6 +31,7 @@ enum StatusTugasAkhir {
   LULUS_DENGAN_REVISI
   SELESAI
   DITOLAK
+  GAGAL
 }
 
 enum PeranDosen {
@@ -59,7 +61,7 @@ enum StatusPersetujuan {
   ditolak
 }
 
-enum StatusHasilSidang {
+enum HasilSidang {
   menunggu_penjadwalan
   dijadwalkan
   lulus
@@ -109,7 +111,7 @@ model User {
   email_verified_at DateTime?
   password          String
   photo             String?
-  remember_token    String?   @db.VarChar(100)
+  remember_token    String?
   created_at        DateTime  @default(now())
   updated_at        DateTime  @updatedAt
 
@@ -203,7 +205,7 @@ model TawaranTopik {
   id          Int       @id @default(autoincrement())
   user_id     Int
   judul_topik String
-  deskripsi   String    @db.Text
+  deskripsi   String
   kuota       Int
   deleted_at  DateTime?
   created_at  DateTime  @default(now())
@@ -239,7 +241,7 @@ model TugasAkhir {
   tanggal_pengajuan DateTime?
   disetujui_oleh    Int?
   ditolak_oleh      Int?
-  alasan_penolakan  String?             @db.Text
+  alasan_penolakan  String?
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
 
@@ -301,7 +303,7 @@ model CatatanBimbingan {
   id              Int       @id @default(autoincrement())
   bimbingan_ta_id Int
   author_id       Int
-  catatan         String    @db.Text
+  catatan         String
   author_type     String // "Mahasiswa" atau "Dosen"
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
@@ -320,7 +322,7 @@ model HistoryPerubahanJadwal {
   jam_lama         String?
   tanggal_baru     DateTime?
   jam_baru         String?
-  alasan_perubahan String?     @db.Text
+  alasan_perubahan String?
   status           String
   created_at       DateTime    @default(now())
   updated_at       DateTime    @updatedAt
@@ -342,9 +344,9 @@ model PendaftaranSidang {
   status_verifikasi     StatusVerifikasi   @default(menunggu_verifikasi)
   status_pembimbing_1   StatusPersetujuan  @default(menunggu)
   status_pembimbing_2   StatusPersetujuan  @default(menunggu)
-  catatan_admin         String?            @db.Text
-  catatan_pembimbing_1  String?            @db.Text
-  catatan_pembimbing_2  String?            @db.Text
+  catatan_admin         String?
+  catatan_pembimbing_1  String?
+  catatan_pembimbing_2  String?
   created_at            DateTime           @default(now())
   updated_at            DateTime           @updatedAt
 
@@ -373,7 +375,7 @@ model Sidang {
   tugas_akhir_id        Int
   pendaftaran_sidang_id Int?             @unique
   jenis_sidang          JenisSidang
-  status_hasil          StatusHasilSidang @default(menunggu_penjadwalan)
+  status_hasil          HasilSidang @default(menunggu_penjadwalan)
   is_active             Boolean          @default(true)
   deleted_at            DateTime?
   created_at            DateTime         @default(now())
@@ -421,7 +423,7 @@ model NilaiSidang {
   sidang_id  Int
   dosen_id   Int
   aspek      String
-  komentar   String?  @db.Text
+  komentar   String?
   skor       Float
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -460,7 +462,7 @@ model DokumenTa {
 model Pengumuman {
   id             Int               @id @default(autoincrement())
   judul          String
-  isi            String            @db.Text
+  isi            String
   dibuat_oleh    Int
   audiens        AudiensPengumuman
   tanggal_dibuat DateTime
@@ -478,8 +480,8 @@ model Log {
   user_id     Int?
   action      String
   ip_address  String?
-  user_agent  String?  @db.Text
-  url         String?  @db.Text
+  user_agent  String?
+  url         String?
   method      String?
   created_at  DateTime @default(now())
 

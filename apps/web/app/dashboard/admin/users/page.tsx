@@ -42,8 +42,8 @@ function CreateDosenForm({ onDosenCreated }: { onDosenCreated: () => void }) {
       setPassword('');
       // Trigger data refresh in parent
       onDosenCreated();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create dosen');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create dosen');
     }
   };
 
@@ -88,8 +88,8 @@ export default function ManageUsersPage() {
       ]);
       setDosen(dosenRes.data);
       setMahasiswa(mahasiswaRes.data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
