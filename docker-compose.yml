@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  api:
+    # Membangun image dari Dockerfile di direktori saat ini
+    build: .
+    # Memberi nama container agar mudah diidentifikasi
+    container_name: sita_bi_api
+    # Mengambil variabel lingkungan dari file .env di direktori backend
+    env_file:
+      - ./packages/db/.env
+      - ./apps/api/.env
+    # Memetakan port
+    ports:
+      - "${PORT:-3000}:3000"
+    # Memastikan container restart secara otomatis jika terjadi kegagalan
+    restart: unless-stopped
