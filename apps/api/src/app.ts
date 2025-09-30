@@ -16,15 +16,19 @@ import tugasAkhirRouter from './api/tugas-akhir.router';
 import usersRouter from './api/users.router';
 import testUploadRouter from './api/test-upload.router'; // Router untuk testing upload S3
 import ruanganRouter from './api/ruangan.router';
+import authRouter from './api/auth.router';
 import { errorHandler } from './middlewares/error.middleware';
 
 const app: express.Express = express();
 
 // Global Middlewares
 app.use(express.json());
+
+// Allow all origins for debugging purposes
 app.use(cors());
 
 // API Routes
+app.use('/api/auth', authRouter);
 app.use('/api/links', linksRouter);
 app.use('/api/contoh-prisma', contohPrismaRouter);
 app.use('/api/bimbingan', bimbinganRouter);

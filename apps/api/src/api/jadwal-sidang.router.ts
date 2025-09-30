@@ -10,11 +10,10 @@ import { createJadwalSchema } from '../dto/jadwal-sidang.dto';
 const router: Router = Router();
 const jadwalSidangService = new JadwalSidangService();
 
-// Apply JWT Auth and Roles Guard globally for this router
-
-
 router.get(
   '/approved-registrations',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
@@ -25,6 +24,7 @@ router.get(
 
 router.post(
   '/',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin]),
   validate(createJadwalSchema),
   asyncHandler(async (req, res) => {
@@ -35,6 +35,7 @@ router.post(
 
 router.get(
   '/for-penguji',
+  jwtAuthMiddleware,
   authorizeRoles([Role.dosen]),
   asyncHandler(async (req, res) => {
     const dosenId = req.user?.dosen?.id;
@@ -45,6 +46,21 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const sidang = await jadwalSidangService.getSidangForPenguji(dosenId, page, limit);
+    res.status(200).json({ status: 'sukses', data: sidang });
+  })
+);
+
+router.get(
+  '/for-mahasiswa',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.mahasiswa]),
+  asyncHandler(async (req, res) => {
+    const mahasiswaId = req.user?.mahasiswa?.id;
+    if (mahasiswaId === undefined) {
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil mahasiswa.' });
+      return;
+    }
+    const sidang = await jadwalSidangService.getSidangForMahasiswa(mahasiswaId);
     res.status(200).json({ status: 'sukses', data: sidang });
   })
 );

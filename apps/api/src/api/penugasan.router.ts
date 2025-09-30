@@ -15,6 +15,7 @@ const penugasanService = new PenugasanService();
 
 router.get(
   '/unassigned',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin, Role.kajur]),
   asyncHandler(async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
@@ -26,6 +27,7 @@ router.get(
 
 router.post(
   '/:tugasAkhirId/assign',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin, Role.kajur]),
   validate(assignPembimbingSchema),
   asyncHandler(async (req, res) => {

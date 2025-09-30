@@ -11,7 +11,7 @@ const router: Router = Router();
 const usersService = new UsersService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-// router.use(jwtAuthMiddleware);
+router.use(jwtAuthMiddleware);
 
 router.post(
   '/dosen',

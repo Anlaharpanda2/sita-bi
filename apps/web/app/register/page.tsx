@@ -10,6 +10,7 @@ export default function RegisterPage() {
     email: '',
     nim: '',
     prodi: 'D3', // Default value
+    angkatan: '', // Tambahkan field angkatan
     kelas: '',
     password: '',
     password_confirmation: '',
@@ -34,20 +35,20 @@ export default function RegisterPage() {
       return;
     }
 
+    // Hapus password_confirmation sebelum mengirim
+    const { password_confirmation, ...payload } = formData;
+
     try {
       const response = await request<{ message: string }>('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(formData),
+        body: payload, // Kirim sebagai objek mentah
       });
       alert(response.message);
       // Redirect to OTP verification page, passing email along
       router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'An unknown error occurred.');
-      } else {
-        setError('An unknown error occurred.');
-      }
+    } catch (err: any) {
+      const errorMessage = err.data?.message || err.message || 'An unknown error occurred.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -60,6 +61,7 @@ export default function RegisterPage() {
         <div><label>Name: <input name="name" type="text" value={formData.name} onChange={handleChange} required /></label></div>
         <div><label>Email: <input name="email" type="email" value={formData.email} onChange={handleChange} required /></label></div>
         <div><label>NIM: <input name="nim" type="text" value={formData.nim} onChange={handleChange} required /></label></div>
+        <div><label>Angkatan: <input name="angkatan" type="text" value={formData.angkatan} onChange={handleChange} required /></label></div>
         <div>
           <label>Prodi: 
             <select name="prodi" value={formData.prodi} onChange={handleChange}>

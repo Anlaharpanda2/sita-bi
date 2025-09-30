@@ -16,24 +16,23 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await request<{ access_token: string }>('/auth/login', {
+      // `request` sekarang menangani stringify secara otomatis
+      const response = await request<{ data: { token: string } }>('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: { email, password }, // Kirim sebagai objek mentah
       });
 
-      if (response.access_token) {
-        Cookies.set('token', response.access_token, { expires: 1 }); // Expires in 1 day
-        // TODO: Redirect based on role
-        router.push('/dashboard'); // Redirect to a generic dashboard for now
+      // Sesuaikan dengan struktur respons baru dari backend
+      if (response.data.token) {
+        Cookies.set('token', response.data.token, { expires: 7 }); // Simpan token selama 7 hari
+        router.push('/dashboard');
       } else {
-        setError('Login failed: No access token received.');
+        setError('Login gagal: Token tidak diterima.');
       }
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            setError(err.message || 'An unknown error occurred.');
-        } else {
-            setError('An unknown error occurred.');
-        }
+    } catch (err: any) {
+      // Tangani error dari FetchError atau error lainnya
+      const errorMessage = err.data?.message || err.message || 'Terjadi kesalahan tidak diketahui.';
+      setError(errorMessage);
     }
   };
 

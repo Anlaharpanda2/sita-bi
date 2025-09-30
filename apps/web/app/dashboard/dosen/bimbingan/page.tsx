@@ -40,7 +40,7 @@ function ScheduleForm({ tugasAkhirId, onActionSuccess }: { tugasAkhirId: number,
     try {
       await request(`/bimbingan/${tugasAkhirId}/jadwal`, {
         method: 'POST',
-        body: JSON.stringify({ tanggal_bimbingan: tanggal, jam_bimbingan: jam }),
+        body: { tanggal_bimbingan: tanggal, jam_bimbingan: jam },
       });
       alert('Schedule set successfully!');
       onActionSuccess();
@@ -65,7 +65,7 @@ function AddNoteForm({ sessionId, onActionSuccess }: { sessionId: number, onActi
         try {
             await request('/bimbingan/catatan', {
                 method: 'POST',
-                body: JSON.stringify({ bimbingan_ta_id: sessionId, catatan }),
+                body: { bimbingan_ta_id: sessionId, catatan },
             });
             alert('Note added!');
             setCatatan('');
@@ -92,8 +92,8 @@ export default function DosenBimbinganPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await request<TugasAkhir[]>('/bimbingan/sebagai-dosen');
-      setSupervisedStudents(data);
+      const data = await request<{ data: { data: TugasAkhir[] } }>('/bimbingan/sebagai-dosen');
+      setSupervisedStudents(data.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

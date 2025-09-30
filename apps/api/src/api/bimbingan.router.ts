@@ -12,7 +12,7 @@ const router: Router = Router();
 const bimbinganService = new BimbinganService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-
+router.use(jwtAuthMiddleware);
 
 router.get(
   '/sebagai-dosen',

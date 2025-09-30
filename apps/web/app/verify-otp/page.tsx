@@ -1,83 +1,69 @@
 'use client';
 
-import { useState, FormEvent, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import request from '../../lib/api';
 
-function VerifyOtpForm() {
-  const router = useRouter();
+function VerifyComponent() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || '';
-  
-  const [otp, setOtp] = useState('');
+  const router = useRouter();
+  const token = searchParams.get('token');
+
+  const [status, setStatus] = useState('Verifying...');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleVerifySubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      const response = await request<{ access_token: string }>('/auth/verify-otp', {
-        method: 'POST',
-        body: JSON.stringify({ email, otp }),
-      });
-
-      if (response.access_token) {
-        Cookies.set('token', response.access_token, { expires: 1 });
-        router.push('/dashboard');
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'An unknown error occurred.');
-      } else {
-        setError('An unknown error occurred.');
-      }
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (!token) {
+      setStatus('Error');
+      setError('No verification token found in URL.');
+      return;
     }
-  };
 
-  const handleResendOtp = async () => {
-    setError('');
-    try {
-        await request('/auth/resend-otp', {
-            method: 'POST',
-            body: JSON.stringify({ email })
+    const verifyToken = async () => {
+      try {
+        const response = await request<{ message: string }>('/auth/verify-email', {
+          method: 'POST',
+          body: { token },
         });
-        alert('A new OTP has been sent to your email.');
-    } catch(err: unknown) {
-        if (err instanceof Error) {
-            setError(err.message || 'Failed to resend OTP.');
-        } else {
-            setError('An unknown error occurred while resending OTP.');
-        }
-    }
-  }
+        setStatus('Success!');
+        setError(''); // Clear any previous errors
+      } catch (err: any) {
+        setStatus('Failed');
+        const errorMessage = err.data?.message || err.message || 'An unknown error occurred.';
+        setError(errorMessage);
+      }
+    };
+
+    verifyToken();
+  }, [token]);
 
   return (
-    <div>
-      <h1>Verify Your Account</h1>
-      <p>An OTP has been sent to <strong>{email}</strong>. Please enter it below.</p>
-      <form onSubmit={handleVerifySubmit}>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Email Verification</h1>
+      {status === 'Verifying...' && <p>Please wait while we verify your email address.</p>}
+      {status === 'Success!' && (
         <div>
-          <label>OTP Code: </label>
-          <input type="text" value={otp} onChange={e => setOtp(e.target.value)} required maxLength={6} />
+          <p style={{ color: 'green' }}>Your email has been successfully verified!</p>
+          <button onClick={() => router.push('/login')} style={{ marginTop: '20px' }}>
+            Proceed to Login
+          </button>
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={isLoading}>{isLoading ? 'Verifying...' : 'Verify'}</button>
-      </form>
-      <button onClick={handleResendOtp} style={{marginTop: '1rem'}}>Resend OTP</button>
+      )}
+      {status === 'Failed' && (
+        <div>
+          <p style={{ color: 'red' }}>Verification failed: {error}</p>
+          <p>Please try registering again or contact support.</p>
+        </div>
+      )}
     </div>
   );
 }
 
+// Wrap the component in Suspense because useSearchParams requires it.
 export default function VerifyOtpPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <VerifyOtpForm />
-        </Suspense>
-    )
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyComponent />
+    </Suspense>
+  );
 }

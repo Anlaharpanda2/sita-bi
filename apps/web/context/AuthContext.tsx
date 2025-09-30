@@ -29,8 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = Cookies.get('token');
       if (token) {
         try {
-          const userData = await request<User>('/profile');
-          setUser(userData);
+          const response = await request<{ data: User }>('/profile');
+          setUser(response.data); // Ekstrak dan set hanya data pengguna
         } catch (error) {
           console.error('Failed to fetch user', error);
           Cookies.remove('token'); // Invalid token

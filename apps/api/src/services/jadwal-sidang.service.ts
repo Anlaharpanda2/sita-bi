@@ -149,4 +149,39 @@ export class JadwalSidangService {
       totalPages: Math.ceil(total / limit),
     };
   }
+
+  async getSidangForMahasiswa(mahasiswaId: number): Promise<unknown> {
+    const data = await this.prisma.sidang.findMany({
+      where: {
+        tugasAkhir: {
+          mahasiswa_id: mahasiswaId,
+        },
+      },
+      include: {
+        tugasAkhir: {
+          include: {
+            peranDosenTa: {
+              where: {
+                peran: { in: [PeranDosen.pembimbing1, PeranDosen.pembimbing2, PeranDosen.penguji1, PeranDosen.penguji2, PeranDosen.penguji3, PeranDosen.penguji4] }
+              },
+              include: {
+                dosen: { include: { user: true } }
+              }
+            }
+          }
+        },
+        jadwalSidang: { include: { ruangan: true } },
+        nilaiSidang: true,
+      },
+      orderBy: { created_at: 'desc' },
+    });
+
+    return {
+        data: data,
+        total: data.length,
+        page: 1,
+        limit: data.length,
+        totalPages: 1,
+    };
+  }
 }

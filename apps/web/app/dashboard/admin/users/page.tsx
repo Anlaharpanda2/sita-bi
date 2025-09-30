@@ -32,7 +32,7 @@ function CreateDosenForm({ onDosenCreated }: { onDosenCreated: () => void }) {
     try {
       await request('/users/dosen', {
         method: 'POST',
-        body: JSON.stringify({ name, email, nidn, password }),
+        body: { name, email, nidn, password }, // Kirim sebagai objek mentah
       });
       alert('Dosen created successfully!');
       // Reset form
@@ -83,11 +83,11 @@ export default function ManageUsersPage() {
     try {
       setLoading(true);
       const [dosenRes, mahasiswaRes] = await Promise.all([
-        request<{ data: Dosen[] }>('/users/dosen?limit=500'),
-        request<{ data: Mahasiswa[] }>('/users/mahasiswa?limit=500')
+        request<{ data: { data: Dosen[] } }>('/users/dosen?limit=500'),
+        request<{ data: { data: Mahasiswa[] } }>('/users/mahasiswa?limit=500')
       ]);
-      setDosen(dosenRes.data);
-      setMahasiswa(mahasiswaRes.data);
+      setDosen(dosenRes.data.data);
+      setMahasiswa(mahasiswaRes.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

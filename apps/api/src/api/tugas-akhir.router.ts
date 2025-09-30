@@ -16,6 +16,7 @@ const tugasAkhirService = new TugasAkhirService();
 
 router.post(
   '/',
+  jwtAuthMiddleware,
   authorizeRoles([Role.mahasiswa]),
   validate(createTugasAkhirSchema),
   asyncHandler(async (req, res) => {
@@ -31,6 +32,7 @@ router.post(
 
 router.get(
   '/validasi',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
@@ -42,6 +44,7 @@ router.get(
 
 router.patch(
   '/:id/approve',
+  jwtAuthMiddleware,
   tugasAkhirGuard, // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req, res) => {
@@ -62,6 +65,7 @@ router.patch(
 
 router.patch(
   '/:id/reject',
+  jwtAuthMiddleware,
   tugasAkhirGuard, // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   validate(rejectTugasAkhirSchema),
@@ -84,6 +88,7 @@ router.patch(
 
 router.post(
   '/:id/cek-kemiripan',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req, res) => {
     const { id } = req.params;

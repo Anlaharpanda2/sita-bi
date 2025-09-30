@@ -13,6 +13,7 @@ const logService = new LogService();
 
 router.get(
   '/',
+  jwtAuthMiddleware,
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page as string) || undefined;

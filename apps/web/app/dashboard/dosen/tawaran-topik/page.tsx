@@ -38,7 +38,7 @@ function CreateTopikForm({ onTopicCreated }: { onTopicCreated: () => void }) {
     try {
       await request('/tawaran-topik', {
         method: 'POST',
-        body: JSON.stringify({ judul_topik: judul, deskripsi, kuota: Number(kuota) }),
+        body: { judul_topik: judul, deskripsi, kuota: Number(kuota) },
       });
       alert('Topic created successfully!');
       setJudul('');
@@ -74,11 +74,11 @@ export default function TawaranTopikPage() {
     try {
       setLoading(true);
       const [topicsRes, appsRes] = await Promise.all([
-        request<TawaranTopik[]>('/tawaran-topik'),
-        request<Application[]>('/tawaran-topik/applications'),
+        request<{ data: { data: TawaranTopik[] } }>('/tawaran-topik'),
+        request<{ data: { data: Application[] } }>('/tawaran-topik/applications'),
       ]);
-      setTopics(topicsRes);
-      setApplications(appsRes);
+      setTopics(topicsRes.data.data);
+      setApplications(appsRes.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

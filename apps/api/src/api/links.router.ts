@@ -3,12 +3,17 @@ import { LinksService } from '../services/links.service';
 import { validate } from '../middlewares/validation.middleware';
 import { createLinkSchema, updateLinkSchema } from '../dto/links.dto';
 import asyncHandler from 'express-async-handler';
+import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authorizeRoles } from '../middlewares/roles.middleware';
+import { Role } from '../types/roles';
 
 const router: Router = Router();
 const linksService = new LinksService();
 
 router.post(
   '/',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.admin]),
   validate(createLinkSchema),
   asyncHandler(async (req, res) => {
     const newLink = await linksService.create(req.body);
@@ -45,6 +50,8 @@ router.get(
 
 router.patch(
   '/:id',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.admin]),
   validate(updateLinkSchema),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -66,6 +73,8 @@ router.patch(
 
 router.delete(
   '/:id',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {

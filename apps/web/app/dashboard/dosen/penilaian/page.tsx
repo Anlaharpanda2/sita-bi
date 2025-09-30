@@ -34,7 +34,7 @@ function PenilaianForm({ sidangId, onScoringSuccess }: { sidangId: number, onSco
     try {
       await request('/penilaian', {
         method: 'POST',
-        body: JSON.stringify({ sidang_id: sidangId, aspek, skor: Number(skor), komentar }),
+        body: { sidang_id: sidangId, aspek, skor: Number(skor), komentar },
       });
       alert('Score submitted successfully!');
       setAspek('');
@@ -68,8 +68,8 @@ export default function PenilaianPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await request<Sidang[]>('/jadwal-sidang/for-penguji');
-      setAssignedSidang(data);
+      const data = await request<{ data: { data: Sidang[] } }>('/jadwal-sidang/for-penguji');
+      setAssignedSidang(data.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

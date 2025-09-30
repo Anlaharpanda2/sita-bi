@@ -2,35 +2,62 @@ import Cookies from 'js-cookie';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+// Definisikan tipe kustom untuk error agar bisa menyertakan detail
+export class FetchError extends Error {
+  response: Response;
+  data: any;
+
+  constructor(response: Response, data: any) {
+    super(data.message || `Request failed with status ${response.status}`);
+    this.response = response;
+    this.data = data;
+  }
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
   const token = Cookies.get('token');
-  const headers = new Headers(options.headers);
 
+  // Bangun konfigurasi secara manual untuk menghindari masalah dengan spread operator
+  const config: RequestInit = {
+    method: options.method || 'GET',
+    headers: new Headers(options.headers),
+    cache: options.cache,
+    credentials: options.credentials,
+    mode: options.mode,
+    redirect: options.redirect,
+    referrer: options.referrer,
+    referrerPolicy: options.referrerPolicy,
+    integrity: options.integrity,
+  };
+
+  // Tambahkan token otorisasi jika ada
   if (token) {
-    headers.append('Authorization', `Bearer ${token}`);
+    (config.headers as Headers).append('Authorization', `Bearer ${token}`);
   }
 
-  // Do not set Content-Type for FormData, browser will do it with boundary
-  if (options.body && !(options.body instanceof FormData)) {
-    headers.append('Content-Type', 'application/json');
-  }
-
-  const response = await fetch(`${API_URL}${endpoint}`,
-    {
-      ...options,
-      headers,
+  // Logika cerdas untuk body
+  if (options.body) {
+    if (options.body instanceof FormData) {
+      config.body = options.body;
+    } else if (typeof options.body === 'object') {
+      config.body = JSON.stringify(options.body);
+      (config.headers as Headers).set('Content-Type', 'application/json');
+    } else {
+      config.body = options.body;
     }
-  );
+  }
+
+  const response = await fetch(`${API_URL}/api${endpoint}`, config);
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'An error occurred');
+    const errorData = await response.json().catch(() => ({ message: 'An unexpected error occurred' }));
+    throw new FetchError(response, errorData);
   }
 
-  // Handle cases with no content
+  // Handle kasus 204 No Content
   if (response.status === 204) {
     return null as T;
   }

@@ -9,16 +9,27 @@ export default function DashboardRedirector() {
   const router = useRouter();
 
   useEffect(() => {
+    // DEBUG: Log the user object to see its actual structure in the browser console
+    console.log('User object from AuthContext:', user);
+
     if (!loading && user) {
-      const roles = user.roles.map(r => r.name);
-      if (roles.includes('admin')) {
-        router.replace('/dashboard/admin');
-      } else if (roles.includes('dosen')) {
-        router.replace('/dashboard/dosen');
-      } else if (roles.includes('mahasiswa')) {
-        router.replace('/dashboard/mahasiswa');
+      // Defensive check to prevent crash if roles array is missing
+      if (user.roles && user.roles.length > 0) {
+        const roles = user.roles.map(r => r.name);
+        if (roles.includes('admin')) {
+          router.replace('/dashboard/admin');
+        } else if (roles.includes('dosen')) {
+          router.replace('/dashboard/dosen');
+        } else if (roles.includes('mahasiswa')) {
+          router.replace('/dashboard/mahasiswa');
+        } else {
+          // Fallback for users with no recognized role
+          console.error('User has no recognized role, logging out.');
+          router.replace('/login');
+        }
       } else {
-        // Fallback or error for users with no recognized role
+        // Handle case where user object exists but has no roles
+        console.error('User object is missing roles array, logging out.', user);
         router.replace('/login');
       }
     }

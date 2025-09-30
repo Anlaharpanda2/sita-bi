@@ -46,10 +46,18 @@ export class UsersService {
 
   async createDosen(dto: CreateDosenDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const rolesToConnect = dto.roles?.map(roleName => ({ name: roleName })) ?? [];
 
-    if (dto.roles?.includes(Role.dosen) === false) {
-      rolesToConnect.push({ name: Role.dosen });
+    // Selalu tambahkan peran 'dosen' secara default
+    const rolesToConnect = [{ name: Role.dosen }];
+
+    // Tambahkan peran lain dari DTO jika ada dan valid
+    if (dto.roles) {
+      const validRoles = [Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4];
+      dto.roles.forEach(roleName => {
+        if (roleName !== Role.dosen && validRoles.includes(roleName)) {
+          rolesToConnect.push({ name: roleName });
+        }
+      });
     }
 
     return this.prisma.user.create({
