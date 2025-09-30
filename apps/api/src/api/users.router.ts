@@ -19,7 +19,7 @@ router.post(
   validate(createDosenSchema),
   asyncHandler(async (req, res) => {
     const newDosen = await usersService.createDosen(req.body);
-    res.status(201).json(newDosen);
+    res.status(201).json({ status: 'sukses', data: newDosen });
   })
 );
 
@@ -30,7 +30,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const dosenList = await usersService.findAllDosen(page, limit);
-    res.status(200).json(dosenList);
+    res.status(200).json({ status: 'sukses', data: dosenList });
   })
 );
 
@@ -41,7 +41,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const mahasiswaList = await usersService.findAllMahasiswa(page, limit);
-    res.status(200).json(mahasiswaList);
+    res.status(200).json({ status: 'sukses', data: mahasiswaList });
   })
 );
 
@@ -52,11 +52,11 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Dosen ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Dosen diperlukan' });
       return;
     }
     const updatedDosen = await usersService.updateDosen(parseInt(id, 10), req.body);
-    res.status(200).json(updatedDosen);
+    res.status(200).json({ status: 'sukses', data: updatedDosen });
   })
 );
 
@@ -67,11 +67,11 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Mahasiswa ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Mahasiswa diperlukan' });
       return;
     }
     const updatedMahasiswa = await usersService.updateMahasiswa(parseInt(id, 10), req.body);
-    res.status(200).json(updatedMahasiswa);
+    res.status(200).json({ status: 'sukses', data: updatedMahasiswa });
   })
 );
 
@@ -81,11 +81,11 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'User ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Pengguna diperlukan' });
       return;
     }
     await usersService.deleteUser(parseInt(id, 10));
-    res.status(204).send();
+    res.status(200).json({ status: 'sukses', message: 'Pengguna berhasil dihapus.' });
   })
 );
 

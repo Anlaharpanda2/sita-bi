@@ -19,7 +19,7 @@ router.post(
   validate(createTawaranTopikSchema),
   asyncHandler(async (req, res) => {
     const newTawaranTopik = await tawaranTopikService.create(req.body, req.user!.id);
-    res.status(201).json(newTawaranTopik);
+    res.status(201).json({ status: 'sukses', data: newTawaranTopik });
   })
 );
 
@@ -30,7 +30,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const tawaranTopik = await tawaranTopikService.findByDosen(req.user!.id, page, limit);
-    res.status(200).json(tawaranTopik);
+    res.status(200).json({ status: 'sukses', data: tawaranTopik });
   })
 );
 
@@ -41,7 +41,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const availableTopics = await tawaranTopikService.findAvailable(page, limit);
-    res.status(200).json(availableTopics);
+    res.status(200).json({ status: 'sukses', data: availableTopics });
   })
 );
 
@@ -52,7 +52,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const applications = await tawaranTopikService.getApplicationsForDosen(req.user!.id, page, limit);
-    res.status(200).json(applications);
+    res.status(200).json({ status: 'sukses', data: applications });
   })
 );
 
@@ -62,11 +62,11 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Application ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Aplikasi diperlukan' });
       return;
     }
     const approvedApplication = await tawaranTopikService.approveApplication(parseInt(id, 10), req.user!.id);
-    res.status(200).json(approvedApplication);
+    res.status(200).json({ status: 'sukses', data: approvedApplication });
   })
 );
 
@@ -76,11 +76,11 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Application ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Aplikasi diperlukan' });
       return;
     }
     const rejectedApplication = await tawaranTopikService.rejectApplication(parseInt(id, 10), req.user!.id);
-    res.status(200).json(rejectedApplication);
+    res.status(200).json({ status: 'sukses', data: rejectedApplication });
   })
 );
 
@@ -90,7 +90,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Topic ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Topik diperlukan' });
       return;
     }
     const mahasiswaId = req.user?.mahasiswa?.id;
@@ -98,7 +98,7 @@ router.post(
       throw new Error('User is not a mahasiswa or profile is not loaded.');
     }
     const application = await tawaranTopikService.applyForTopic(parseInt(id, 10), mahasiswaId);
-    res.status(201).json(application);
+    res.status(201).json({ status: 'sukses', data: application });
   })
 );
 

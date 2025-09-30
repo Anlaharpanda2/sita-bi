@@ -12,7 +12,7 @@ router.post(
   validate(createLinkSchema),
   asyncHandler(async (req, res) => {
     const newLink = await linksService.create(req.body);
-    res.status(201).json(newLink);
+    res.status(201).json({ status: 'sukses', data: newLink });
   })
 );
 
@@ -22,7 +22,7 @@ router.get(
     const page = parseInt(req.query.page as string) || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const links = await linksService.findAll(page, limit);
-    res.status(200).json(links);
+    res.status(200).json({ status: 'sukses', data: links });
   })
 );
 
@@ -31,15 +31,15 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Link ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }
     const link = await linksService.findOne(parseInt(id, 10));
     if (link == null) {
-      res.status(404).json({ message: 'Link not found' });
+      res.status(404).json({ status: 'gagal', message: 'Link tidak ditemukan' });
       return;
     }
-    res.status(200).json(link);
+    res.status(200).json({ status: 'sukses', data: link });
   })
 );
 
@@ -49,7 +49,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Link ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }
     const updatedLink = await linksService.update(
@@ -57,10 +57,10 @@ router.patch(
       req.body
     );
     if (updatedLink == null) {
-      res.status(404).json({ message: 'Link not found' });
+      res.status(404).json({ status: 'gagal', message: 'Link tidak ditemukan' });
       return;
     }
-    res.status(200).json(updatedLink);
+    res.status(200).json({ status: 'sukses', data: updatedLink });
   })
 );
 
@@ -69,15 +69,15 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Link ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }
     const removedLink = await linksService.remove(parseInt(id, 10));
     if (removedLink == null) {
-      res.status(404).json({ message: 'Link not found' });
+      res.status(404).json({ status: 'gagal', message: 'Link tidak ditemukan' });
       return;
     }
-    res.status(204).send(); // No content for successful deletion
+    res.status(200).json({ status: 'sukses', message: 'Link berhasil dihapus.' });
   })
 );
 

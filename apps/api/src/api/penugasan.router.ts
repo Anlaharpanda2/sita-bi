@@ -20,7 +20,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const unassignedTugasAkhir = await penugasanService.findUnassignedTugasAkhir(page, limit);
-    res.status(200).json(unassignedTugasAkhir);
+    res.status(200).json({ status: 'sukses', data: unassignedTugasAkhir });
   })
 );
 
@@ -31,11 +31,11 @@ router.post(
   asyncHandler(async (req, res) => {
     const { tugasAkhirId } = req.params;
     if (!tugasAkhirId) {
-      res.status(400).json({ message: 'Tugas Akhir ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }
     const assignedPembimbing = await penugasanService.assignPembimbing(parseInt(tugasAkhirId, 10), req.body);
-    res.status(200).json(assignedPembimbing);
+    res.status(200).json({ status: 'sukses', data: assignedPembimbing });
   })
 );
 

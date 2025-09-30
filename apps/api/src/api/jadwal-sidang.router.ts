@@ -19,7 +19,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const registrations = await jadwalSidangService.getApprovedRegistrations(page, limit);
-    res.status(200).json(registrations);
+    res.status(200).json({ status: 'sukses', data: registrations });
   })
 );
 
@@ -29,7 +29,7 @@ router.post(
   validate(createJadwalSchema),
   asyncHandler(async (req, res) => {
     const newJadwal = await jadwalSidangService.createJadwal(req.body);
-    res.status(201).json(newJadwal);
+    res.status(201).json({ status: 'sukses', data: newJadwal });
   })
 );
 
@@ -39,13 +39,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const sidang = await jadwalSidangService.getSidangForPenguji(dosenId, page, limit);
-    res.status(200).json(sidang);
+    res.status(200).json({ status: 'sukses', data: sidang });
   })
 );
 

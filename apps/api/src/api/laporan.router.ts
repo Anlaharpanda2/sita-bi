@@ -16,7 +16,7 @@ router.get(
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const statistik = await laporanService.getStatistik();
-    res.status(200).json(statistik);
+    res.status(200).json({ status: 'sukses', data: statistik });
   })
 );
 

@@ -43,7 +43,7 @@ async function main() {
   console.log(`Seeding finished. ${result.count} announcements created.`);
 
   // --- New Dosen Seeding Logic ---
-  console.log('Start seeding 5000 Dosen...');
+  console.log('Start seeding 50 Dosen...');
 
   const dosenRole = await prisma.role.findUnique({ where: { name: 'dosen' } });
 
@@ -53,7 +53,7 @@ async function main() {
   }
 
   const dosenToSeed = [];
-  for (let i = 0; i < 5000; i++) {
+  for (let i = 0; i < 50; i++) {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const name = `${firstName} ${lastName}`;
@@ -98,7 +98,7 @@ async function main() {
     }
   }
 
-  console.log('5000 Dosen seeded successfully.');
+  console.log('50 Dosen seeded successfully.');
   // --- End New Dosen Seeding Logic ---
 }
 

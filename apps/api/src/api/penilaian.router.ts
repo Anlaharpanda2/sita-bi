@@ -20,11 +20,11 @@ router.post(
   asyncHandler(async (req, res) => {
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const newNilai = await penilaianService.createNilai(req.body, dosenId);
-    res.status(201).json(newNilai);
+    res.status(201).json({ status: 'sukses', data: newNilai });
   })
 );
 
@@ -35,11 +35,11 @@ router.get(
   asyncHandler(async (req, res) => {
     const { sidangId } = req.params;
     if (!sidangId) {
-      res.status(400).json({ message: 'Sidang ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Sidang diperlukan' });
       return;
     }
     const nilai = await penilaianService.getNilaiForSidang(parseInt(sidangId, 10));
-    res.status(200).json(nilai);
+    res.status(200).json({ status: 'sukses', data: nilai });
   })
 );
 

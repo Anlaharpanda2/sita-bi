@@ -73,15 +73,17 @@ export class PendaftaranSidangService {
           const fileArray = files[fieldname];
           if (fileArray) {
             for (const file of fileArray) {
-              // TODO: Implement file upload to a cloud storage service (e.g., S3, Cloudinary)
-              // For now, we'll just store the original name and a placeholder path.
-              // In a real scenario, 'uploadedFilePath' would be the URL returned by the cloud service.
-              const uploadedFilePath = `cloud-storage-url/${file.originalname}`; // Placeholder
+              // The file object from multer-s3 has a 'location' property which is the public URL.
+              const uploadedFilePath = (file as any).location;
+
+              if (!uploadedFilePath) {
+                throw new Error(`Failed to upload ${file.originalname} to S3.`);
+              }
 
               await tx.pendaftaranSidangFile.create({
                 data: {
                   pendaftaran_sidang_id: pendaftaran.id,
-                  file_path: uploadedFilePath, // Use the URL from cloud storage
+                  file_path: uploadedFilePath, // Save the S3 URL
                   original_name: file.originalname,
                   tipe_dokumen: this.mapFilenameToTipe(file.fieldname),
                 },
@@ -215,7 +217,7 @@ export class PendaftaranSidangService {
 
   private mapFilenameToTipe(fieldname: string): TipeDokumenSidang {
     switch (fieldname) {
-      case 'file_naskah_ta': return TipeDokumenSidang.NASKAH_TA;
+      case 'file_ta': return TipeDokumenSidang.NASKAH_TA;
       case 'file_toeic': return TipeDokumenSidang.TOEIC;
       case 'file_rapor': return TipeDokumenSidang.RAPOR;
       case 'file_ijazah': return TipeDokumenSidang.IJAZAH_SLTA;

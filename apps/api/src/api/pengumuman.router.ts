@@ -18,7 +18,7 @@ router.post(
   validate(createPengumumanSchema),
   asyncHandler(async (req, res) => {
     const newPengumuman = await pengumumanService.create(req.body, req.user!.id);
-    res.status(201).json(newPengumuman);
+    res.status(201).json({ status: 'sukses', data: newPengumuman });
   })
 );
 
@@ -30,7 +30,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const pengumumans = await pengumumanService.findAll(page, limit);
-    res.status(200).json(pengumumans);
+    res.status(200).json({ status: 'sukses', data: pengumumans });
   })
 );
 
@@ -42,11 +42,11 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Pengumuman ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }
     const updatedPengumuman = await pengumumanService.update(parseInt(id, 10), req.body);
-    res.status(200).json(updatedPengumuman);
+    res.status(200).json({ status: 'sukses', data: updatedPengumuman });
   })
 );
 
@@ -57,11 +57,11 @@ router.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Pengumuman ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }
     await pengumumanService.remove(parseInt(id, 10));
-    res.status(204).send();
+    res.status(200).json({ status: 'sukses', message: 'Pengumuman berhasil dihapus.' });
   })
 );
 
@@ -72,7 +72,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const publicPengumumans = await pengumumanService.findPublic(page, limit);
-    res.status(200).json(publicPengumumans);
+    res.status(200).json({ status: 'sukses', data: publicPengumumans });
   })
 );
 
@@ -84,7 +84,7 @@ router.get(
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const mahasiswaPengumumans = await pengumumanService.findForMahasiswa(page, limit);
-    res.status(200).json(mahasiswaPengumumans);
+    res.status(200).json({ status: 'sukses', data: mahasiswaPengumumans });
   })
 );
 
@@ -93,15 +93,15 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Pengumuman ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }
     const pengumuman = await pengumumanService.findOne(parseInt(id, 10));
     if (pengumuman === null) {
-      res.status(404).json({ message: 'Pengumuman not found' });
+      res.status(404).json({ status: 'gagal', message: 'Pengumuman tidak ditemukan' });
       return;
     }
-    res.status(200).json(pengumuman);
+    res.status(200).json({ status: 'sukses', data: pengumuman });
   })
 );
 

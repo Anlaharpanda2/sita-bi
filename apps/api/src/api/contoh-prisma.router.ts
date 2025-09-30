@@ -11,7 +11,7 @@ router.get(
     const page = parseInt(req.query.page as string) || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const users = await contohPrismaService.findAll(page, limit);
-    res.status(200).json(users);
+    res.status(200).json({ status: 'sukses', data: users });
   })
 );
 

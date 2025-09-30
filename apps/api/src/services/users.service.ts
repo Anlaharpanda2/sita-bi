@@ -206,7 +206,7 @@ export class UsersService {
     }));
     
     return {
-      data: users,
+      data: data,
       total,
       page,
       limit,

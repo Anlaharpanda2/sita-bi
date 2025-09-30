@@ -19,13 +19,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const page = req.query.page ? parseInt(req.query.page as string) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
     const bimbingan = await bimbinganService.getBimbinganForDosen(dosenId, page, limit);
-    res.status(200).json(bimbingan);
+    res.status(200).json({ status: 'sukses', data: bimbingan });
   })
 );
 
@@ -34,11 +34,11 @@ router.get(
   asyncHandler(async (req, res) => {
     const mahasiswaId = req.user?.mahasiswa?.id;
     if (mahasiswaId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a student profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil mahasiswa.' });
       return;
     }
     const bimbingan = await bimbinganService.getBimbinganForMahasiswa(mahasiswaId);
-    res.status(200).json(bimbingan);
+    res.status(200).json({ status: 'sukses', data: bimbingan });
   })
 );
 
@@ -49,12 +49,12 @@ router.post(
   asyncHandler(async (req, res) => {
     const userId = req.user?.id;
     if (userId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User ID not found.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: ID pengguna tidak ditemukan.' });
       return;
     }
     const { bimbingan_ta_id, catatan } = req.body;
     const newCatatan = await bimbinganService.createCatatan(bimbingan_ta_id, userId, catatan);
-    res.status(201).json(newCatatan);
+    res.status(201).json({ status: 'sukses', data: newCatatan });
   })
 );
 
@@ -65,17 +65,17 @@ router.post(
   asyncHandler(async (req, res) => {
     const { tugasAkhirId } = req.params;
     if (!tugasAkhirId) {
-      res.status(400).json({ message: 'Tugas Akhir ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const { tanggal_bimbingan, jam_bimbingan } = req.body;
     const jadwal = await bimbinganService.setJadwal(parseInt(tugasAkhirId, 10), dosenId, tanggal_bimbingan, jam_bimbingan);
-    res.status(201).json(jadwal);
+    res.status(201).json({ status: 'sukses', data: jadwal });
   })
 );
 
@@ -85,20 +85,20 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Session ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Sesi diperlukan' });
       return;
     }
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const result = await bimbinganService.cancelBimbingan(parseInt(id, 10), dosenId);
     if (result === null) {
-      res.status(404).json({ message: 'Supervision session not found or not authorized.' });
+      res.status(404).json({ status: 'gagal', message: 'Sesi bimbingan tidak ditemukan atau tidak diizinkan.' });
       return;
     }
-    res.status(200).json({ message: 'Supervision session cancelled.', result });
+    res.status(200).json({ status: 'sukses', message: 'Sesi bimbingan dibatalkan.', data: result });
   })
 );
 
@@ -108,20 +108,20 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(400).json({ message: 'Session ID is required' });
+      res.status(400).json({ status: 'gagal', message: 'ID Sesi diperlukan' });
       return;
     }
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
-      res.status(401).json({ message: 'Unauthorized: User does not have a lecturer profile.' });
+      res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
     const result = await bimbinganService.selesaikanSesi(parseInt(id, 10), dosenId);
     if (result === null) {
-      res.status(404).json({ message: 'Supervision session not found or not authorized.' });
+      res.status(404).json({ status: 'gagal', message: 'Sesi bimbingan tidak ditemukan atau tidak diizinkan.' });
       return;
     }
-    res.status(200).json({ message: 'Supervision session completed.', result });
+    res.status(200).json({ status: 'sukses', message: 'Sesi bimbingan telah diselesaikan.', data: result });
   })
 );
 
