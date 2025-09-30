@@ -89,6 +89,18 @@ router.get(
 );
 
 router.get(
+  '/dosen',
+  jwtAuthMiddleware,
+  authorizeRoles([Role.dosen]),
+  asyncHandler(async (req, res) => {
+    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const dosenPengumumans = await pengumumanService.findForDosen(page, limit);
+    res.status(200).json({ status: 'sukses', data: dosenPengumumans });
+  })
+);
+
+router.get(
   '/:id',
   asyncHandler(async (req, res) => {
     const { id } = req.params;

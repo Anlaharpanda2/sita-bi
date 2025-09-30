@@ -15,6 +15,7 @@ import tawaranTopikRouter from './api/tawaran-topik.router';
 import tugasAkhirRouter from './api/tugas-akhir.router';
 import usersRouter from './api/users.router';
 import testUploadRouter from './api/test-upload.router'; // Router untuk testing upload S3
+import ruanganRouter from './api/ruangan.router';
 import { errorHandler } from './middlewares/error.middleware';
 
 const app: express.Express = express();
@@ -39,6 +40,7 @@ app.use('/api/tawaran-topik', tawaranTopikRouter);
 app.use('/api/tugas-akhir', tugasAkhirRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/test-upload', testUploadRouter); // Rute untuk testing upload S3
+app.use('/api/ruangan', ruanganRouter);
 
 // Error Handling Middleware
 app.use(errorHandler);
