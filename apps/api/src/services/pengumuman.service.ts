@@ -93,6 +93,32 @@ export class PengumumanService {
     };
   }
 
+  async findForDosen(page = 1, limit = 50): Promise<{
+    data: Pengumuman[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const whereClause = {
+      audiens: { in: [AudiensPengumuman.all_users, AudiensPengumuman.registered_users, AudiensPengumuman.dosen] },
+    };
+    const total = await this.prisma.pengumuman.count({ where: whereClause });
+    const data = await this.prisma.pengumuman.findMany({
+      where: whereClause,
+      orderBy: { tanggal_dibuat: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return {
+      data: data,
+      total: total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async findOne(id: number): Promise<Pengumuman | null> {
     return this.prisma.pengumuman.findUnique({ where: { id } });
   }
