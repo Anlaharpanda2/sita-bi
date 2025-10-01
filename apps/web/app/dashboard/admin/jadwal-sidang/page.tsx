@@ -77,13 +77,16 @@ const JadwalSidangModal = ({
     setError(null);
 
     try {
-      await api.post("/jadwal-sidang", {
-        pendaftaranSidangId: registration.id,
-        tanggal,
-        waktu_mulai: waktuMulai,
-        waktu_selesai: waktuSelesai,
-        ruangan_id: Number(ruanganId),
-        pengujiIds,
+      await api("/jadwal-sidang", {
+        method: 'POST',
+        body: {
+          pendaftaranSidangId: registration.id,
+          tanggal,
+          waktu_mulai: waktuMulai,
+          waktu_selesai: waktuSelesai,
+          ruangan_id: Number(ruanganId),
+          pengujiIds,
+        }
       });
       onJadwalCreated(); // Callback to refresh the list
       onClose(); // Close modal on success
@@ -164,9 +167,9 @@ export default function JadwalSidangPage() {
     setLoading(true);
     try {
       const [regResponse, ruanganResponse, dosenResponse] = await Promise.all([
-        api.get("/jadwal-sidang/approved-registrations"),
-        api.get("/ruangan"),
-        api.get("/users/dosen"),
+        api("/jadwal-sidang/approved-registrations"),
+        api("/ruangan"),
+        api("/users/dosen"),
       ]);
       setRegistrations(regResponse.data.data.data || []);
       setRuanganList(ruanganResponse.data.data || []);

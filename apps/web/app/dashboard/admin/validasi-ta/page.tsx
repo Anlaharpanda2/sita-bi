@@ -76,7 +76,7 @@ export default function ValidasiTaPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/tugas-akhir/validasi");
+      const response = await api("/tugas-akhir/validasi");
       setTas(response.data.data.data || []);
     } catch (err) { setError("Gagal memuat data."); } 
     finally { setLoading(false); }
@@ -103,7 +103,7 @@ export default function ValidasiTaPage() {
 
   const handleCekKemiripan = async (id: number) => {
     try {
-      const response = await api.post(`/tugas-akhir/${id}/cek-kemiripan`);
+      const response = await api(`/tugas-akhir/${id}/cek-kemiripan`, { method: 'POST' });
       setKemiripanResult(response.data.data);
       setKemiripanModalOpen(true);
     } catch (err) { alert("Gagal mengecek kemiripan."); }

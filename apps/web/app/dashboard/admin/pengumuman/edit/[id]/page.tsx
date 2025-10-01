@@ -29,7 +29,7 @@ export default function EditPengumumanPage() {
 
     const fetchPengumuman = async () => {
       try {
-        const response = await api.get(`/pengumuman/${id}`);
+        const response = await api(`/pengumuman/${id}`);
         const data = response.data.data;
         setJudul(data.judul);
         setIsi(data.isi);

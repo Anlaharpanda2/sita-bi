@@ -21,7 +21,7 @@ export default function PengumumanPage() {
     const fetchPengumuman = async () => {
       try {
         // Asumsi endpoint '/pengumuman/all' mengembalikan struktur { data: { data: [...] } }
-        const response = await api.get("/pengumuman/all");
+        const response = await api("/pengumuman/all");
         setPengumuman(response.data.data.data);
       } catch (err) {
         setError("Gagal memuat pengumuman");

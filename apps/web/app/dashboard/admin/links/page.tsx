@@ -55,7 +55,7 @@ const LinkModal = ({
       if (link) {
         await api.patch(`/links/${link.id}`, linkData);
       } else {
-        await api.post("/links", linkData);
+        await api("/links", { method: 'POST', body: linkData });
       }
       onSave();
       onClose();
@@ -107,7 +107,7 @@ export default function LinksPage() {
   const fetchLinks = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/links");
+      const response = await api("/links");
       setLinks(response.data.data.data || []);
     } catch (err) {
       setError("Gagal memuat data links.");

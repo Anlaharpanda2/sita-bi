@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 
@@ -70,7 +70,7 @@ export default function ViewJadwalSidangPage() {
 
     const fetchJadwal = async () => {
       try {
-        const response = await api.get(endpoint);
+        const response = await api(endpoint);
         setJadwalList(response.data.data.data || []);
       } catch (err) {
         setError("Gagal memuat jadwal sidang.");

@@ -63,7 +63,7 @@ const AssignPembimbingModal = ({
     }
 
     try {
-      await api.post(`/penugasan/${tugasAkhir.id}/assign`, assignmentData);
+      await api(`/penugasan/${tugasAkhir.id}/assign`, { method: 'POST', body: assignmentData });
       onSave();
       onClose();
     } catch (err: any) {
@@ -119,8 +119,8 @@ export default function PenugasanPage() {
     setLoading(true);
     try {
       const [taResponse, dosenResponse] = await Promise.all([
-        api.get("/penugasan/unassigned"),
-        api.get("/users/dosen"),
+        api("/penugasan/unassigned"),
+        api("/users/dosen"),
       ]);
       setUnassignedTAs(taResponse.data.data.data || []);
       setDosenList(dosenResponse.data.data.data || []);
