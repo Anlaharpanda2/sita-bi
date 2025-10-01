@@ -18,9 +18,13 @@ export class FetchError extends Error {
   }
 }
 
+interface CustomRequestInit extends Omit<RequestInit, 'body'> {
+  body?: any;
+}
+
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: CustomRequestInit = {}
 ): Promise<T> {
   const token = Cookies.get('token');
 
