@@ -31,16 +31,26 @@ export default function TugasAkhirPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError('');
       // Check for active TA first
-      const taData = await request<TugasAkhir>('/bimbingan/sebagai-mahasiswa');
-      setTugasAkhir(taData);
-    } catch (err: unknown) {
-      // If no active TA is found (404), fetch available topics
-      if (err instanceof Error && err.message.includes('not found')) {
+      const taResponse = await request<{ status: string, data: TugasAkhir | null }>('/bimbingan/sebagai-mahasiswa');
+      
+      if (taResponse.data) {
+        setTugasAkhir(taResponse.data);
+      } else {
+        // If no active TA, fetch available topics
         setTugasAkhir(null);
         try {
-          const topicsData = await request<TawaranTopik[]>('/tawaran-topik/available');
-          setAvailableTopics(topicsData);
+          const topicsResponse = await request<{ 
+            status: string, 
+            data: { data: TawaranTopik[] } 
+          }>('/tawaran-topik/available');
+          
+          if (topicsResponse.data && Array.isArray(topicsResponse.data.data)) {
+            setAvailableTopics(topicsResponse.data.data);
+          } else {
+            setAvailableTopics([]); // Fallback to empty array
+          }
         } catch (topicsErr: unknown) {
           if (topicsErr instanceof Error) {
             setError(topicsErr.message || 'Failed to fetch available topics');
@@ -48,7 +58,9 @@ export default function TugasAkhirPage() {
             setError('An unknown error occurred while fetching topics.');
           }
         }
-      } else if (err instanceof Error) {
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
         setError(err.message || 'Failed to fetch data');
       } else {
         setError('An unknown error occurred.');
@@ -111,9 +123,13 @@ export default function TugasAkhirPage() {
         <p><strong>Status:</strong> {tugasAkhir.status}</p>
         <h4>Supervisors:</h4>
         <ul>
-          {tugasAkhir.peranDosenTa.map(p => (
-            <li key={p.peran}>{p.peran}: {p.dosen.user.name}</li>
-          ))}
+          {tugasAkhir.peranDosenTa && tugasAkhir.peranDosenTa.length > 0 ? (
+            tugasAkhir.peranDosenTa.map(p => (
+              <li key={p.peran}>{p.peran}: {p.dosen.user.name}</li>
+            ))
+          ) : (
+            <li>Belum ada dosen pembimbing yang ditugaskan.</li>
+          )}
         </ul>
       </div>
     );

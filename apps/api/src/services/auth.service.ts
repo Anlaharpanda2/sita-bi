@@ -23,14 +23,21 @@ export class AuthService {
       include: { roles: true },
     });
 
-    if (!user || !user.email_verified_at) { // Tambahan: Cek apakah email sudah diverifikasi
-      throw new HttpError(401, 'Email atau password salah, atau email belum diverifikasi.');
+    const isDosen = user?.roles.some(role => role.name === 'dosen');
+
+    if (!user) {
+      throw new HttpError(401, 'Email atau password salah.');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new HttpError(401, 'Email atau password salah');
+      throw new HttpError(401, 'Email atau password salah.');
+    }
+
+    // Bypass verifikasi email untuk dosen
+    if (!isDosen && !user.email_verified_at) {
+      throw new HttpError(401, 'Email belum diverifikasi.');
     }
 
     const jwtSecret = process.env.JWT_SECRET;

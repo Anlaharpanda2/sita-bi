@@ -38,8 +38,9 @@ export default function BimbinganPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const taData = await request<TugasAkhir>('/bimbingan/sebagai-mahasiswa');
-      setTugasAkhir(taData);
+      setError('');
+      const response = await request<{ status: string, data: TugasAkhir | null }>('/bimbingan/sebagai-mahasiswa');
+      setTugasAkhir(response.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

@@ -60,7 +60,7 @@ export class BimbinganService {
     };
   }
 
-  async getBimbinganForMahasiswa(mahasiswaId: number): Promise<TugasAkhirWithBimbingan> {
+  async getBimbinganForMahasiswa(mahasiswaId: number): Promise<TugasAkhirWithBimbingan | null> {
     const tugasAkhir = await this.prisma.tugasAkhir.findFirst({
       where: {
         mahasiswa_id: mahasiswaId,
@@ -79,7 +79,7 @@ export class BimbinganService {
     });
 
     if (tugasAkhir === null) {
-      throw new Error('Active final project not found.'); // Replaced NotFoundException
+      return null;
     }
 
     return tugasAkhir as TugasAkhirWithBimbingan;
