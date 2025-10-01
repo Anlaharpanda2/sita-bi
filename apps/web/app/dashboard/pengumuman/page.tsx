@@ -39,9 +39,8 @@ export default function ViewPengumumanPage() {
 
     const fetchPengumuman = async () => {
       try {
-        const response = await api(endpoint);
-        // Data structure from backend is { status: 'sukses', data: { data: [...] } }
-        setPengumuman(response.data.data.data);
+        const response = await api<{ data: { data: Pengumuman[] } }>(endpoint);
+        setPengumuman(response.data.data || []);
       } catch (err) {
         setError("Gagal memuat pengumuman.");
       } finally {

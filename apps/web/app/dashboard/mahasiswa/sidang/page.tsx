@@ -20,7 +20,7 @@ interface TugasAkhir {
   pendaftaranSidang: PendaftaranSidang[];
 }
 
-function RegistrationForm({ onRegistrationSuccess }: { onRegistrationSuccess: () => void }) {
+function RegistrationForm({ onRegistrationSuccess, tugasAkhirId }: { onRegistrationSuccess: () => void; tugasAkhirId: number; }) {
   const [files, setFiles] = useState<{[key: string]: File | null}>({});
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +38,8 @@ function RegistrationForm({ onRegistrationSuccess }: { onRegistrationSuccess: ()
     setIsSubmitting(true);
 
     const formData = new FormData();
+    formData.append('tugasAkhirId', String(tugasAkhirId)); // Include the ID
+
     let fileCount = 0;
     for (const key in files) {
       if (files[key]) {

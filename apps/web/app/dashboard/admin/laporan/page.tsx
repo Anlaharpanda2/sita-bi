@@ -35,7 +35,7 @@ export default function LaporanPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api("/laporan/statistik");
+        const response = await api<{ data: { data: StatistikData } }>("/laporan/statistik");
         setStats(response.data.data);
       } catch (err) {
         setError("Gagal memuat data laporan statistik.");

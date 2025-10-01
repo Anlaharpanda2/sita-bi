@@ -20,9 +20,8 @@ export default function PengumumanPage() {
   useEffect(() => {
     const fetchPengumuman = async () => {
       try {
-        // Asumsi endpoint '/pengumuman/all' mengembalikan struktur { data: { data: [...] } }
-        const response = await api("/pengumuman/all");
-        setPengumuman(response.data.data.data);
+        const response = await api<{ data: { data: Pengumuman[] } }>("/pengumuman/all");
+        setPengumuman(response.data.data || []);
       } catch (err) {
         setError("Gagal memuat pengumuman");
       } finally {
@@ -36,7 +35,7 @@ export default function PengumumanPage() {
   const handleDelete = async (id: number) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus pengumuman ini?")) {
       try {
-        await api.delete(`/pengumuman/${id}`);
+        await api(`/pengumuman/${id}`, { method: 'DELETE' });
         setPengumuman(pengumuman.filter((p) => p.id !== id));
       } catch (err) {
         setError("Gagal menghapus pengumuman");

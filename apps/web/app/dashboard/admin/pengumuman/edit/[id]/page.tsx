@@ -29,7 +29,7 @@ export default function EditPengumumanPage() {
 
     const fetchPengumuman = async () => {
       try {
-        const response = await api(`/pengumuman/${id}`);
+        const response = await api<{ data: { data: { judul: string, isi: string, audiens: string } } }>(`/pengumuman/${id}`);
         const data = response.data.data;
         setJudul(data.judul);
         setIsi(data.isi);
@@ -50,7 +50,7 @@ export default function EditPengumumanPage() {
     setError(null);
 
     try {
-      await api.patch(`/pengumuman/${id}`, { judul, isi, audiens });
+      await api(`/pengumuman/${id}`, { method: 'PATCH', body: { judul, isi, audiens } });
       router.push("/dashboard/admin/pengumuman");
     } catch (err) {
       setError("Gagal memperbarui pengumuman. Pastikan semua field terisi.");

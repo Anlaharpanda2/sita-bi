@@ -9,7 +9,13 @@ interface User {
   name: string;
   email: string;
   roles: { name: string }[];
-  // Add other user properties as needed
+  mahasiswa?: {
+    nim: string;
+    angkatan: string;
+  } | null;
+  dosen?: {
+    nidn: string;
+  } | null;
 }
 
 interface AuthContextType {

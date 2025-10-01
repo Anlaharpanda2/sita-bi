@@ -119,11 +119,11 @@ export default function PenugasanPage() {
     setLoading(true);
     try {
       const [taResponse, dosenResponse] = await Promise.all([
-        api("/penugasan/unassigned"),
-        api("/users/dosen"),
+        api<{ data: { data: UnassignedTA[] } }>("/penugasan/unassigned"),
+        api<{ data: { data: Dosen[] } }>("/users/dosen"),
       ]);
-      setUnassignedTAs(taResponse.data.data.data || []);
-      setDosenList(dosenResponse.data.data.data || []);
+      setUnassignedTAs(taResponse.data.data || []);
+      setDosenList(dosenResponse.data.data || []);
     } catch (err) {
       setError("Gagal memuat data.");
     } finally {

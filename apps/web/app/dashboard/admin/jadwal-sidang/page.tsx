@@ -167,9 +167,9 @@ export default function JadwalSidangPage() {
     setLoading(true);
     try {
       const [regResponse, ruanganResponse, dosenResponse] = await Promise.all([
-        api("/jadwal-sidang/approved-registrations"),
-        api("/ruangan"),
-        api("/users/dosen"),
+        api<{ data: { data: { data: ApprovedRegistration[] } } }>("/jadwal-sidang/approved-registrations"),
+        api<{ data: { data: Ruangan[] } }>("/ruangan"),
+        api<{ data: { data: { data: Dosen[] } } }>("/users/dosen"),
       ]);
       setRegistrations(regResponse.data.data.data || []);
       setRuanganList(ruanganResponse.data.data || []);

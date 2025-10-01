@@ -46,7 +46,7 @@ export default function ProfilePage() {
     }
 
     try {
-      await api.patch("/profile", profileData);
+      await api("/profile", { method: 'PATCH', body: profileData });
       setSuccess("Profil berhasil diperbarui. Data akan ter-refresh pada login berikutnya.");
       setIsEditing(false);
     } catch (err: any) {

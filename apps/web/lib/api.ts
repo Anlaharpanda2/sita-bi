@@ -9,17 +9,18 @@ if (!API_URL) {
 // Definisikan tipe kustom untuk error agar bisa menyertakan detail
 export class FetchError extends Error {
   response: Response;
-  data: any;
+  data: unknown;
 
-  constructor(response: Response, data: any) {
-    super(data.message || `Request failed with status ${response.status}`);
+  constructor(response: Response, data: unknown) {
+    const message = (data as any)?.message || `Request failed with status ${response.status}`;
+    super(message);
     this.response = response;
     this.data = data;
   }
 }
 
 interface CustomRequestInit extends Omit<RequestInit, 'body'> {
-  body?: any;
+  body?: BodyInit | Record<string, unknown> | null;
 }
 
 async function request<T>(

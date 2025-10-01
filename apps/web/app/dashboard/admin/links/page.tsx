@@ -53,7 +53,7 @@ const LinkModal = ({
 
     try {
       if (link) {
-        await api.patch(`/links/${link.id}`, linkData);
+        await api(`/links/${link.id}`, { method: 'PATCH', body: linkData });
       } else {
         await api("/links", { method: 'POST', body: linkData });
       }
@@ -107,8 +107,8 @@ export default function LinksPage() {
   const fetchLinks = async () => {
     try {
       setLoading(true);
-      const response = await api("/links");
-      setLinks(response.data.data.data || []);
+      const response = await api<{ data: { data: Link[] } }>("/links");
+      setLinks(response.data.data || []);
     } catch (err) {
       setError("Gagal memuat data links.");
     } finally {
@@ -137,7 +137,7 @@ export default function LinksPage() {
   const handleDelete = async (id: number) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus link ini?")) {
       try {
-        await api.delete(`/links/${id}`);
+        await api(`/links/${id}`, { method: 'DELETE' });
         fetchLinks();
       } catch (err) {
         alert("Gagal menghapus link.");
