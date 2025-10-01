@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
-import request from '../lib/api';
+import request from '@/lib/api';
 
 interface User {
   id: number;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import request from '../../lib/api';
+import request from '@/lib/api';
 
 function VerifyComponent() {
   const searchParams = useSearchParams();

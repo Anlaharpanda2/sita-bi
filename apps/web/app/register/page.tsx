@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import request from '../../lib/api';
+import request from '@/lib/api';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({

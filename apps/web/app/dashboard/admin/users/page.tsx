@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, FormEvent } from 'react';
-import request from '../../../../lib/api';
+import request from '@/lib/api';
 
 // Define interfaces for the data shapes
 interface Dosen {

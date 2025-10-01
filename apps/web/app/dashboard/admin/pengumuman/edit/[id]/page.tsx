@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { api } from "../../../../../../../lib/api";
+import api from "@/lib/api";
 
 const AudiensOptions = [
   { value: "all_users", label: "Semua Pengguna" },

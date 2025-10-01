@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import request from '../../lib/api';
+import request from '@/lib/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
