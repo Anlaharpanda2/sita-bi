@@ -23,7 +23,7 @@ export class EmailService {
   }
 
   async sendVerificationEmail(to: string, token: string): Promise<void> {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const frontendUrl = process.env.FRONTEND_URL;
     const verificationLink = `${frontendUrl}/verify-otp?token=${token}`;
 
     const appName = process.env.APP_NAME || 'SITA-BI Politekni Negeri Padang';

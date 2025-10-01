@@ -722,7 +722,7 @@ export default function SitaBIHomepage() {
               <a href="#jadwal" onClick={(e) => { e.preventDefault(); scrollToSection('jadwal'); }} className="nav-link">Jadwal</a>
               <a href="#pengumuman" onClick={(e) => { e.preventDefault(); scrollToSection('pengumuman'); }} className="nav-link">Pengumuman</a>
               <a href="#team" onClick={(e) => { e.preventDefault(); scrollToSection('team'); }} className="nav-link">Team</a>
-              <a href="#" className="btn-login">Login</a>
+              <a href="/login" className="btn-login">Login</a>
             </nav>
           </div>
         </header>
