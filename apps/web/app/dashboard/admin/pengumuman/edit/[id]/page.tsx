@@ -1,147 +1,72 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import api from '@/lib/api';
+import React from 'react';
+import Link from 'next/link';
+import { Save, ArrowLeft, Trash2 } from 'lucide-react';
 
-const AudiensOptions = [
-  { value: 'all_users', label: 'Semua Pengguna' },
-  { value: 'registered_users', label: 'Pengguna Terdaftar' },
-  { value: 'dosen', label: 'Dosen' },
-  { value: 'mahasiswa', label: 'Mahasiswa' },
-  { value: 'guest', label: 'Tamu' },
-];
+// Dummy data for a specific announcement, fetched based on the [id] param
+const announcement = {
+  id: 1,
+  title: 'Jadwal Sidang Tugas Akhir Semester Ganjil 2024/2025',
+  content: 'Diberitahukan kepada seluruh mahasiswa tingkat akhir bahwa jadwal sidang tugas akhir untuk semester ganjil akan dilaksanakan mulai tanggal 1 Desember 2024. Pastikan semua persyaratan telah terpenuhi.',
+};
 
-export default function EditPengumumanPage() {
-  const router = useRouter();
-  const params = useParams();
-  const id = params.id;
-
-  const [judul, setJudul] = useState('');
-  const [isi, setIsi] = useState('');
-  const [audiens, setAudiens] = useState('all_users');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchPengumuman = async () => {
-      try {
-        const response = await api<{
-          data: { data: { judul: string; isi: string; audiens: string } };
-        }>(`/pengumuman/${id}`);
-        const data = response.data.data;
-        setJudul(data.judul);
-        setIsi(data.isi);
-        setAudiens(data.audiens);
-      } catch {
-        setError('Gagal memuat data pengumuman.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPengumuman();
-  }, [id]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      await api(`/pengumuman/${id}`, {
-        method: 'PATCH',
-        body: { judul, isi, audiens },
-      });
-      router.push('/dashboard/admin/pengumuman');
-    } catch {
-      setError('Gagal memperbarui pengumuman. Pastikan semua field terisi.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error && !judul)
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
-
+export default function EditPengumumanPage({ params }: { params: { id: string } }) {
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Edit Pengumuman</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
-      >
-        {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-        <div className="mb-4">
-          <label htmlFor="judul" className="block text-gray-700 font-bold mb-2">
-            Judul
+    <div className="container mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-maroon-800">Edit Pengumuman</h1>
+          <p className="text-gray-500 mt-1">Mengubah pengumuman dengan ID: {params.id}</p>
+        </div>
+        <Link
+          href="/dashboard/admin/pengumuman"
+          className="flex items-center text-gray-600 hover:text-gray-800"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Kembali ke Daftar Pengumuman
+        </Link>
+      </div>
+
+      <form className="bg-white shadow-md rounded-lg p-8">
+        <div className="mb-6">
+          <label htmlFor="title" className="block text-lg font-medium text-gray-700 mb-2">
+            Judul Pengumuman
           </label>
           <input
             type="text"
-            id="judul"
-            value={judul}
-            onChange={(e) => setJudul(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            id="title"
+            defaultValue={announcement.title}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-maroon-500"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="isi" className="block text-gray-700 font-bold mb-2">
+
+        <div className="mb-8">
+          <label htmlFor="content" className="block text-lg font-medium text-gray-700 mb-2">
             Isi Pengumuman
           </label>
           <textarea
-            id="isi"
-            value={isi}
-            onChange={(e) => setIsi(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
-            required
+            id="content"
+            rows={10}
+            defaultValue={announcement.content}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-maroon-500"
           ></textarea>
         </div>
-        <div className="mb-6">
-          <label
-            htmlFor="audiens"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            Audiens
-          </label>
-          <select
-            id="audiens"
-            value={audiens}
-            onChange={(e) => setAudiens(e.target.value)}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            {AudiensOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300"
-          >
-            {submitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-          </button>
+
+        <div className="flex justify-between items-center">
           <button
             type="button"
-            onClick={() => router.back()}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="flex items-center bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200"
           >
-            Batal
+            <Trash2 className="w-5 h-5 mr-2" />
+            Hapus Pengumuman
+          </button>
+          <button
+            type="submit"
+            className="flex items-center bg-maroon-600 text-white px-6 py-3 rounded-lg hover:bg-maroon-700 transition-colors duration-200"
+          >
+            <Save className="w-5 h-5 mr-2" />
+            Simpan Perubahan
           </button>
         </div>
       </form>
