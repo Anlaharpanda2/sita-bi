@@ -7,7 +7,10 @@ export const createTugasAkhirSchema = z.object({
 export type CreateTugasAkhirDto = z.infer<typeof createTugasAkhirSchema>;
 
 export const rejectTugasAkhirSchema = z.object({
-  alasan_penolakan: z.string().min(1, 'Alasan penolakan cannot be empty').max(500, 'Alasan penolakan cannot exceed 500 characters'),
+  alasan_penolakan: z
+    .string()
+    .min(1, 'Alasan penolakan cannot be empty')
+    .max(500, 'Alasan penolakan cannot exceed 500 characters'),
 });
 
 export type RejectTugasAkhirDto = z.infer<typeof rejectTugasAkhirSchema>;

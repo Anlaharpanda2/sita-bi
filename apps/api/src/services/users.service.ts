@@ -1,6 +1,10 @@
 import { PrismaClient, Prisma, User, Prodi } from '@repo/db';
 import * as bcrypt from 'bcrypt';
-import { CreateDosenDto, UpdateDosenDto, UpdateMahasiswaDto } from '../dto/users.dto';
+import {
+  CreateDosenDto,
+  UpdateDosenDto,
+  UpdateMahasiswaDto,
+} from '../dto/users.dto';
 import { Role } from '@repo/types';
 
 export class UsersService {
@@ -10,15 +14,28 @@ export class UsersService {
     this.prisma = new PrismaClient();
   }
 
-  async findOneByEmail(email: string): Promise<Prisma.UserGetPayload<{ include: { roles: true } }> | null> {
-    return this.prisma.user.findUnique({ where: { email }, include: { roles: true } });
+  async findOneByEmail(
+    email: string,
+  ): Promise<Prisma.UserGetPayload<{ include: { roles: true } }> | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+      include: { roles: true },
+    });
   }
 
-  async findUserById(id: number): Promise<Prisma.UserGetPayload<{ include: { roles: true, mahasiswa: true, dosen: true } }> | null> {
-    return this.prisma.user.findUnique({ where: { id }, include: { roles: true, mahasiswa: true, dosen: true } });
+  async findUserById(id: number): Promise<Prisma.UserGetPayload<{
+    include: { roles: true; mahasiswa: true; dosen: true };
+  }> | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: { roles: true, mahasiswa: true, dosen: true },
+    });
   }
 
-  async createMahasiswa(data: Prisma.UserCreateInput, profileData: { nim: string, prodi: Prodi, kelas: string, angkatan: string }): Promise<User> {
+  async createMahasiswa(
+    data: Prisma.UserCreateInput,
+    profileData: { nim: string; prodi: Prodi; kelas: string; angkatan: string },
+  ): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     return this.prisma.user.create({
@@ -50,9 +67,9 @@ export class UsersService {
     const rolesToConnect = [{ name: Role.dosen }];
 
     // Tambahkan peran lain dari DTO jika ada dan valid
-    if (dto.roles) {
+    if (dto.roles != null) {
       const validRoles = [Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4];
-      dto.roles.forEach(roleName => {
+      dto.roles.forEach((roleName) => {
         if (roleName !== Role.dosen && validRoles.includes(roleName)) {
           rolesToConnect.push({ name: roleName });
         }
@@ -85,10 +102,11 @@ export class UsersService {
 
     if (dto.name != null) userData.name = dto.name;
     if (dto.email != null) userData.email = dto.email;
-    if (dto.password != null) userData.password = await bcrypt.hash(dto.password, 10);
+    if (dto.password != null)
+      userData.password = await bcrypt.hash(dto.password, 10);
     if (dto.roles != null) {
       userData.roles = {
-        set: dto.roles.map(roleName => ({ name: roleName }))
+        set: dto.roles.map((roleName) => ({ name: roleName })),
       };
     }
     if (dto.nidn != null) {
@@ -110,8 +128,9 @@ export class UsersService {
 
     if (dto.name != null) userData.name = dto.name;
     if (dto.email != null) userData.email = dto.email;
-    if (dto.password != null) userData.password = await bcrypt.hash(dto.password, 10);
-    
+    if (dto.password != null)
+      userData.password = await bcrypt.hash(dto.password, 10);
+
     if (dto.nim != null) mahasiswaData.nim = dto.nim;
     if (dto.prodi != null) mahasiswaData.prodi = dto.prodi;
     if (dto.angkatan != null) mahasiswaData.angkatan = dto.angkatan;
@@ -158,8 +177,8 @@ export class UsersService {
           },
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: 'asc',
+        },
       }),
       this.prisma.user.count({ where: { mahasiswa: { isNot: null } } }),
     ]);
@@ -198,20 +217,20 @@ export class UsersService {
           },
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: 'asc',
+        },
       }),
       this.prisma.user.count({ where: { dosen: { isNot: null } } }),
     ]);
 
-    const data = users.map(user => ({
+    const data = users.map((user) => ({
       id: user.id,
       name: user.name,
       email: user.email,
       nidn: user.dosen?.nidn,
-      roles: user.roles.map(r => r.name)
+      roles: user.roles.map((r) => r.name),
     }));
-    
+
     return {
       data: data,
       total,

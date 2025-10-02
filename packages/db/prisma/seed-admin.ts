@@ -8,7 +8,14 @@ async function main() {
 
   // 1. Seed all essential roles
   console.log('Seeding roles...');
-  const rolesToSeed: string[] = ['admin', 'dosen', 'mahasiswa', 'kajur', 'kaprodi_d3', 'kaprodi_d4'];
+  const rolesToSeed: string[] = [
+    'admin',
+    'dosen',
+    'mahasiswa',
+    'kajur',
+    'kaprodi_d3',
+    'kaprodi_d4',
+  ];
   for (const roleName of rolesToSeed) {
     await prisma.role.upsert({
       where: { name: roleName },
@@ -17,7 +24,6 @@ async function main() {
     });
   }
   console.log('Roles seeded.');
-
 
   // 2. Seed the admin user
   console.log('Seeding admin user...');

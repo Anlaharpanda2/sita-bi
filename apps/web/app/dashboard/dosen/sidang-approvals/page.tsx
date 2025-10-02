@@ -12,7 +12,7 @@ interface Registration {
   tugasAkhir: {
     judul: string;
     mahasiswa: {
-      user: { name: string; };
+      user: { name: string };
     };
   };
 }
@@ -27,7 +27,9 @@ export default function SidangApprovalsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await request<{ data: Registration[] }>('/pendaftaran-sidang/pending-approvals');
+      const data = await request<{ data: Registration[] }>(
+        '/pendaftaran-sidang/pending-approvals',
+      );
       setRegistrations(data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
@@ -49,7 +51,9 @@ export default function SidangApprovalsPage() {
       alert('Registration approved!');
       fetchData(); // Refresh list
     } catch (err) {
-      alert(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
+      alert(
+        `Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`,
+      );
     }
   };
 
@@ -65,7 +69,9 @@ export default function SidangApprovalsPage() {
       alert('Registration rejected!');
       fetchData(); // Refresh list
     } catch (err) {
-      alert(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
+      alert(
+        `Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`,
+      );
     }
   };
 

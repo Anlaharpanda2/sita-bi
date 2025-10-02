@@ -29,7 +29,10 @@ export default function DashboardRedirector() {
         }
       } else {
         // Handle case where user object exists but has no role
-        console.error('User object is missing role property, logging out.', user);
+        console.error(
+          'User object is missing role property, logging out.',
+          user,
+        );
         router.replace('/login');
       }
     }

@@ -19,9 +19,11 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -48,8 +50,9 @@ export default function RegisterPage() {
       // Redirect to OTP verification page, passing email along
       router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
     } catch (err) {
-      const error = err as { data?: { message?: string }, message?: string };
-      const errorMessage = error.data?.message || error.message || 'An unknown error occurred.';
+      const error = err as { data?: { message?: string }; message?: string };
+      const errorMessage =
+        error.data?.message || error.message || 'An unknown error occurred.';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -60,24 +63,104 @@ export default function RegisterPage() {
     <div>
       <h1>Register for a Student Account</h1>
       <form onSubmit={handleSubmit}>
-        <div><label>Name: <input name="name" type="text" value={formData.name} onChange={handleChange} required /></label></div>
-        <div><label>Email: <input name="email" type="email" value={formData.email} onChange={handleChange} required /></label></div>
-        <div><label>NIM: <input name="nim" type="text" value={formData.nim} onChange={handleChange} required /></label></div>
-        <div><label>Angkatan: <input name="angkatan" type="text" value={formData.angkatan} onChange={handleChange} required /></label></div>
         <div>
-          <label>Prodi: 
+          <label>
+            Name:{' '}
+            <input
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Email:{' '}
+            <input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            NIM:{' '}
+            <input
+              name="nim"
+              type="text"
+              value={formData.nim}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Angkatan:{' '}
+            <input
+              name="angkatan"
+              type="text"
+              value={formData.angkatan}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Prodi:
             <select name="prodi" value={formData.prodi} onChange={handleChange}>
               <option value="D3">D3</option>
               <option value="D4">D4</option>
             </select>
           </label>
         </div>
-        <div><label>Kelas: <input name="kelas" type="text" value={formData.kelas} onChange={handleChange} required /></label></div>
-        <div><label>Password: <input name="password" type="password" value={formData.password} onChange={handleChange} required /></label></div>
-        <div><label>Confirm Password: <input name="password_confirmation" type="password" value={formData.password_confirmation} onChange={handleChange} required /></label></div>
-        
+        <div>
+          <label>
+            Kelas:{' '}
+            <input
+              name="kelas"
+              type="text"
+              value={formData.kelas}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Password:{' '}
+            <input
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Confirm Password:{' '}
+            <input
+              name="password_confirmation"
+              type="password"
+              value={formData.password_confirmation}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={isLoading}>{isLoading ? 'Registering...' : 'Register'}</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Registering...' : 'Register'}
+        </button>
       </form>
     </div>
   );

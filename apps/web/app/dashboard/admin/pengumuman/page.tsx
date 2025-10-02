@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import api from "@/lib/api";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import api from '@/lib/api';
+import Link from 'next/link';
 
 type Pengumuman = {
   id: number;
@@ -20,10 +20,12 @@ export default function PengumumanPage() {
   useEffect(() => {
     const fetchPengumuman = async () => {
       try {
-        const response = await api<{ data: { data: Pengumuman[] } }>("/pengumuman/all");
+        const response = await api<{ data: { data: Pengumuman[] } }>(
+          '/pengumuman/all',
+        );
         setPengumuman(response.data.data || []);
       } catch {
-        setError("Gagal memuat pengumuman");
+        setError('Gagal memuat pengumuman');
       } finally {
         setLoading(false);
       }
@@ -33,12 +35,12 @@ export default function PengumumanPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus pengumuman ini?")) {
+    if (window.confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) {
       try {
         await api(`/pengumuman/${id}`, { method: 'DELETE' });
         setPengumuman(pengumuman.filter((p) => p.id !== id));
       } catch {
-        setError("Gagal menghapus pengumuman");
+        setError('Gagal menghapus pengumuman');
       }
     }
   };
@@ -58,23 +60,39 @@ export default function PengumumanPage() {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="py-3 px-6">Judul</th>
-              <th scope="col" className="py-3 px-6">Audiens</th>
-              <th scope="col" className="py-3 px-6">Tanggal Dibuat</th>
-              <th scope="col" className="py-3 px-6">Aksi</th>
+              <th scope="col" className="py-3 px-6">
+                Judul
+              </th>
+              <th scope="col" className="py-3 px-6">
+                Audiens
+              </th>
+              <th scope="col" className="py-3 px-6">
+                Tanggal Dibuat
+              </th>
+              <th scope="col" className="py-3 px-6">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
             {pengumuman.map((p) => (
               <tr key={p.id} className="bg-white border-b">
-                <td className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">{p.judul}</td>
+                <td className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                  {p.judul}
+                </td>
                 <td className="py-4 px-6">{p.audiens}</td>
                 <td className="py-4 px-6">
-                  {new Date(p.tanggal_dibuat).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  {new Date(p.tanggal_dibuat).toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
                 </td>
                 <td className="py-4 px-6">
                   <Link href={`/dashboard/admin/pengumuman/edit/${p.id}`}>
-                    <button className="font-medium text-blue-600 hover:underline mr-4">Edit</button>
+                    <button className="font-medium text-blue-600 hover:underline mr-4">
+                      Edit
+                    </button>
                   </Link>
                   <button
                     onClick={() => handleDelete(p.id)}

@@ -48,24 +48,47 @@ function CreateDosenForm({ onDosenCreated }: { onDosenCreated: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: '1px solid #ccc', padding: '1rem', marginTop: '1rem' }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ border: '1px solid #ccc', padding: '1rem', marginTop: '1rem' }}
+    >
       <h4>Create New Dosen</h4>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
         <label>Name: </label>
-        <input type="text" value={name} onChange={e => setName(e.target.value)} required />
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
       </div>
       <div>
         <label>Email: </label>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </div>
       <div>
         <label>NIDN: </label>
-        <input type="text" value={nidn} onChange={e => setNidn(e.target.value)} required />
+        <input
+          type="text"
+          value={nidn}
+          onChange={(e) => setNidn(e.target.value)}
+          required
+        />
       </div>
       <div>
         <label>Password: </label>
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
       </div>
       <button type="submit">Create Dosen</button>
     </form>
@@ -84,7 +107,7 @@ export default function ManageUsersPage() {
       setLoading(true);
       const [dosenRes, mahasiswaRes] = await Promise.all([
         request<{ data: { data: Dosen[] } }>('/users/dosen?limit=500'),
-        request<{ data: { data: Mahasiswa[] } }>('/users/mahasiswa?limit=500')
+        request<{ data: { data: Mahasiswa[] } }>('/users/mahasiswa?limit=500'),
       ]);
       setDosen(dosenRes.data.data);
       setMahasiswa(mahasiswaRes.data.data);
@@ -105,13 +128,23 @@ export default function ManageUsersPage() {
   return (
     <div>
       <h2>Manage Users</h2>
-      
+
       <h3>Dosen</h3>
       <button onClick={() => setShowCreateForm(!showCreateForm)}>
         {showCreateForm ? 'Cancel' : 'Create New Dosen'}
       </button>
-      {showCreateForm && <CreateDosenForm onDosenCreated={() => { fetchData(); setShowCreateForm(false); }} />}
-      <table border={1} style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+      {showCreateForm && (
+        <CreateDosenForm
+          onDosenCreated={() => {
+            fetchData();
+            setShowCreateForm(false);
+          }}
+        />
+      )}
+      <table
+        border={1}
+        style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}
+      >
         <thead>
           <tr>
             <th>ID</th>

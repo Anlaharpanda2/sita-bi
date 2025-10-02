@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
@@ -15,31 +15,59 @@ export default function Footer({ scrollToSection }: FooterProps) {
           <div>
             <h3 className="text-3xl font-bold text-white mb-6">SITA-BI</h3>
             <p className="flex items-center gap-2 mb-2">
-              <MapPin size={18} />Jalan Limau Manis
+              <MapPin size={18} />
+              Jalan Limau Manis
             </p>
-            <p className="mb-4">Limau Manis, Kecamatan Pauh, Kota Padang, 25164</p>
+            <p className="mb-4">
+              Limau Manis, Kecamatan Pauh, Kota Padang, 25164
+            </p>
             <p className="flex items-center gap-2 mb-2">
-              <Phone size={18} /><strong>Phone:</strong> 0751-72590
+              <Phone size={18} />
+              <strong>Phone:</strong> 0751-72590
             </p>
             <p className="flex items-center gap-2">
-              <Mail size={18} /><strong>Email:</strong> info@pnp.ac.id
+              <Mail size={18} />
+              <strong>Email:</strong> info@pnp.ac.id
             </p>
           </div>
           <div>
-            <h4 className="text-xl font-semibold text-white mb-6">Useful Links</h4>
+            <h4 className="text-xl font-semibold text-white mb-6">
+              Useful Links
+            </h4>
             <ul className="space-y-3">
               <li>
-                <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="hover:text-yellow-600 transition-colors">
+                <a
+                  href="#hero"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('hero');
+                  }}
+                  className="hover:text-yellow-600 transition-colors"
+                >
                   Home
                 </a>
               </li>
               <li>
-                <a href="#pengumuman" onClick={(e) => { e.preventDefault(); scrollToSection('pengumuman'); }} className="hover:text-yellow-600 transition-colors">
+                <a
+                  href="#pengumuman"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('pengumuman');
+                  }}
+                  className="hover:text-yellow-600 transition-colors"
+                >
                   Pengumuman
                 </a>
               </li>
               <li>
-                <a href="#jadwal" onClick={(e) => { e.preventDefault(); scrollToSection('jadwal'); }} className="hover:text-yellow-600 transition-colors">
+                <a
+                  href="#jadwal"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('jadwal');
+                  }}
+                  className="hover:text-yellow-600 transition-colors"
+                >
                   Jadwal
                 </a>
               </li>

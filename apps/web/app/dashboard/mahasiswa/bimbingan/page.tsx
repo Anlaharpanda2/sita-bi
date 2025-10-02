@@ -33,13 +33,18 @@ export default function BimbinganPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [note, setNote] = useState('');
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
+    null,
+  );
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError('');
-      const response = await request<{ status: string, data: TugasAkhir | null }>('/bimbingan/sebagai-mahasiswa');
+      const response = await request<{
+        status: string;
+        data: TugasAkhir | null;
+      }>('/bimbingan/sebagai-mahasiswa');
       setTugasAkhir(response.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
@@ -63,14 +68,19 @@ export default function BimbinganPage() {
     try {
       await request('/bimbingan/catatan', {
         method: 'POST',
-        body: JSON.stringify({ bimbingan_ta_id: selectedSessionId, catatan: note }),
+        body: JSON.stringify({
+          bimbingan_ta_id: selectedSessionId,
+          catatan: note,
+        }),
       });
       alert('Note added successfully!');
       setNote('');
       setSelectedSessionId(null);
       fetchData(); // Refresh data
     } catch (err) {
-      alert(`Error adding note: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
+      alert(
+        `Error adding note: ${err instanceof Error ? err.message : 'An unknown error occurred'}`,
+      );
     }
   };
 
@@ -87,25 +97,28 @@ export default function BimbinganPage() {
         <form onSubmit={handleNoteSubmit}>
           <div>
             <label>Select Session: </label>
-            <select 
-              value={selectedSessionId || ''} 
-              onChange={e => setSelectedSessionId(Number(e.target.value))}
+            <select
+              value={selectedSessionId || ''}
+              onChange={(e) => setSelectedSessionId(Number(e.target.value))}
               required
             >
-              <option value="" disabled>-- Select a session --</option>
-              {tugasAkhir.bimbinganTa.map(session => (
+              <option value="" disabled>
+                -- Select a session --
+              </option>
+              {tugasAkhir.bimbinganTa.map((session) => (
                 <option key={session.id} value={session.id}>
-                  Session ID: {session.id} ({new Date(session.tanggal_bimbingan).toLocaleDateString()})
+                  Session ID: {session.id} (
+                  {new Date(session.tanggal_bimbingan).toLocaleDateString()})
                 </option>
               ))}
             </select>
           </div>
           <div>
             <label>Note: </label>
-            <textarea 
-              value={note} 
-              onChange={e => setNote(e.target.value)} 
-              required 
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              required
               style={{ width: '100%', minHeight: '80px' }}
             />
           </div>
@@ -116,17 +129,35 @@ export default function BimbinganPage() {
       <hr style={{ margin: '2rem 0' }} />
 
       <h3>Supervision History</h3>
-      {tugasAkhir.bimbinganTa.map(session => (
-        <div key={session.id} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
+      {tugasAkhir.bimbinganTa.map((session) => (
+        <div
+          key={session.id}
+          style={{
+            border: '1px solid #ccc',
+            padding: '1rem',
+            marginBottom: '1rem',
+          }}
+        >
           <h4>Session ID: {session.id}</h4>
-          <p><strong>Date:</strong> {new Date(session.tanggal_bimbingan).toLocaleString()}</p>
-          <p><strong>Status:</strong> {session.status_bimbingan}</p>
+          <p>
+            <strong>Date:</strong>{' '}
+            {new Date(session.tanggal_bimbingan).toLocaleString()}
+          </p>
+          <p>
+            <strong>Status:</strong> {session.status_bimbingan}
+          </p>
           <h5>Notes:</h5>
           <ul style={{ listStyle: 'none', paddingLeft: '1rem' }}>
-            {session.catatan.map(c => (
-              <li key={c.id} style={{ borderBottom: '1px solid #eee', padding: '0.5rem 0'}}>
-                <strong>{c.author.name}:</strong> {c.catatan} 
-                <em style={{ fontSize: '0.8em', color: '#555' }}> ({new Date(c.created_at).toLocaleString()})</em>
+            {session.catatan.map((c) => (
+              <li
+                key={c.id}
+                style={{ borderBottom: '1px solid #eee', padding: '0.5rem 0' }}
+              >
+                <strong>{c.author.name}:</strong> {c.catatan}
+                <em style={{ fontSize: '0.8em', color: '#555' }}>
+                  {' '}
+                  ({new Date(c.created_at).toLocaleString()})
+                </em>
               </li>
             ))}
           </ul>

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import api from "@/lib/api";
+import { useEffect, useState } from 'react';
+import api from '@/lib/api';
 
 // --- Type Definitions ---
 interface TaByStatus {
@@ -19,7 +19,13 @@ interface StatistikData {
 }
 
 // --- Stat Card Component ---
-const StatCard = ({ title, value }: { title: string; value: string | number }) => (
+const StatCard = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | number;
+}) => (
   <div className="bg-white p-6 rounded-lg shadow-md">
     <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
     <p className="text-3xl font-bold mt-2">{value}</p>
@@ -35,10 +41,12 @@ export default function LaporanPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api<{ data: { data: StatistikData } }>("/laporan/statistik");
+        const response = await api<{ data: { data: StatistikData } }>(
+          '/laporan/statistik',
+        );
         setStats(response.data.data);
       } catch {
-        setError("Gagal memuat data laporan statistik.");
+        setError('Gagal memuat data laporan statistik.');
       } finally {
         setLoading(false);
       }
@@ -71,8 +79,12 @@ export default function LaporanPage() {
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
-                <th scope="col" className="py-3 px-6">Status</th>
-                <th scope="col" className="py-3 px-6">Jumlah</th>
+                <th scope="col" className="py-3 px-6">
+                  Status
+                </th>
+                <th scope="col" className="py-3 px-6">
+                  Jumlah
+                </th>
               </tr>
             </thead>
             <tbody>

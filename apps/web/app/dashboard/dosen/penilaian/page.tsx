@@ -17,12 +17,22 @@ interface Sidang {
     judul: string;
     mahasiswa: { user: { name: string } };
   };
-  jadwalSidang: { tanggal: string; waktu_mulai: string; ruangan: { nama_ruangan: string } }[];
+  jadwalSidang: {
+    tanggal: string;
+    waktu_mulai: string;
+    ruangan: { nama_ruangan: string };
+  }[];
   nilaiSidang: Nilai[];
 }
 
 // --- Child Components ---
-function PenilaianForm({ sidangId, onScoringSuccess }: { sidangId: number, onScoringSuccess: () => void }) {
+function PenilaianForm({
+  sidangId,
+  onScoringSuccess,
+}: {
+  sidangId: number;
+  onScoringSuccess: () => void;
+}) {
   const [aspek, setAspek] = useState('');
   const [skor, setSkor] = useState(80);
   const [komentar, setKomentar] = useState('');
@@ -47,12 +57,38 @@ function PenilaianForm({ sidangId, onScoringSuccess }: { sidangId: number, onSco
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ border: '1px solid #ddd', padding: '1rem', marginTop: '1rem' }}
+    >
       <h4>Submit New Score</h4>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div><label>Aspek Penilaian: </label><input type="text" value={aspek} onChange={e => setAspek(e.target.value)} required /></div>
-      <div><label>Skor (0-100): </label><input type="number" value={skor} onChange={e => setSkor(Number(e.target.value))} required /></div>
-      <div><label>Komentar: </label><textarea value={komentar} onChange={e => setKomentar(e.target.value)} required /></div>
+      <div>
+        <label>Aspek Penilaian: </label>
+        <input
+          type="text"
+          value={aspek}
+          onChange={(e) => setAspek(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label>Skor (0-100): </label>
+        <input
+          type="number"
+          value={skor}
+          onChange={(e) => setSkor(Number(e.target.value))}
+          required
+        />
+      </div>
+      <div>
+        <label>Komentar: </label>
+        <textarea
+          value={komentar}
+          onChange={(e) => setKomentar(e.target.value)}
+          required
+        />
+      </div>
       <button type="submit">Submit Score</button>
     </form>
   );
@@ -68,7 +104,9 @@ export default function PenilaianPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await request<{ data: { data: Sidang[] } }>('/jadwal-sidang/for-penguji');
+      const data = await request<{ data: { data: Sidang[] } }>(
+        '/jadwal-sidang/for-penguji',
+      );
       setAssignedSidang(data.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
@@ -92,19 +130,40 @@ export default function PenilaianPage() {
       {assignedSidang.length === 0 ? (
         <p>You have no defenses to score at the moment.</p>
       ) : (
-        assignedSidang.map(sidang => (
-          <div key={sidang.id} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
-            <h3>{sidang.tugasAkhir.mahasiswa.user.name} - {sidang.tugasAkhir.judul}</h3>
+        assignedSidang.map((sidang) => (
+          <div
+            key={sidang.id}
+            style={{
+              border: '1px solid #ccc',
+              padding: '1rem',
+              marginBottom: '1rem',
+            }}
+          >
+            <h3>
+              {sidang.tugasAkhir.mahasiswa.user.name} -{' '}
+              {sidang.tugasAkhir.judul}
+            </h3>
             {sidang.jadwalSidang[0] && (
-              <p><strong>Schedule:</strong> {new Date(sidang.jadwalSidang[0].tanggal).toLocaleDateString()} at {sidang.jadwalSidang[0].waktu_mulai} in {sidang.jadwalSidang[0].ruangan.nama_ruangan}</p>
+              <p>
+                <strong>Schedule:</strong>{' '}
+                {new Date(sidang.jadwalSidang[0].tanggal).toLocaleDateString()}{' '}
+                at {sidang.jadwalSidang[0].waktu_mulai} in{' '}
+                {sidang.jadwalSidang[0].ruangan.nama_ruangan}
+              </p>
             )}
-            
+
             <h4>Scores You&apos;ve Given:</h4>
             {sidang.nilaiSidang.length > 0 ? (
               <ul>
-                {sidang.nilaiSidang.map(n => <li key={n.id}>{n.aspek}: {n.skor}</li>)}
+                {sidang.nilaiSidang.map((n) => (
+                  <li key={n.id}>
+                    {n.aspek}: {n.skor}
+                  </li>
+                ))}
               </ul>
-            ) : <p>No scores submitted yet.</p>}
+            ) : (
+              <p>No scores submitted yet.</p>
+            )}
 
             <PenilaianForm sidangId={sidang.id} onScoringSuccess={fetchData} />
           </div>

@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register src/server.ts",
     "build": "pnpm --filter @repo/db build && tsc",
     "start": "node dist/server.js",
-    "lint": "eslint \"src/**/*.ts\""
+    "lint": "pnpm exec eslint \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "echo \"No tests configured\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.899.0",

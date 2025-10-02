@@ -8,7 +8,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
 
   // Optional: Add a check to ensure only admins can see this layout
-  const isAdmin = user?.roles?.some(role => role.name === 'admin');
+  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
   if (!isAdmin) {
     return <div>Unauthorized</div>; // Or redirect
   }
@@ -18,8 +18,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <header>
         <h1>Admin Dashboard</h1>
         <nav>
-          <Link href="/dashboard/admin">Home</Link> | 
-          <Link href="/dashboard/admin/users">Manage Users</Link> | 
+          <Link href="/dashboard/admin">Home</Link> |
+          <Link href="/dashboard/admin/users">Manage Users</Link> |
           {/* Add other admin links here */}
         </nav>
         <span>Welcome, {user?.name}</span>

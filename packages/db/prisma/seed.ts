@@ -13,7 +13,9 @@ async function main() {
   });
 
   if (!adminUser) {
-    console.error('Admin user not found. Please seed the admin user first by running `pnpm db:seed:admin`');
+    console.error(
+      'Admin user not found. Please seed the admin user first by running `pnpm db:seed:admin`',
+    );
     return;
   }
 
@@ -57,7 +59,10 @@ async function main() {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const name = `${firstName} ${lastName}`;
-    const email = faker.internet.email({ firstName, lastName }).toLowerCase().replace('@', `.${i}@`); // Ensure unique email
+    const email = faker.internet
+      .email({ firstName, lastName })
+      .toLowerCase()
+      .replace('@', `.${i}@`); // Ensure unique email
     const password = 'password123'; // Default password for seeded dosen
     const hashedPassword = await bcrypt.hash(password, 10);
     const nidn = `${faker.string.numeric(9)}${i}`; // Ensure unique NIDN
@@ -89,8 +94,13 @@ async function main() {
       });
     } catch (e) {
       // Handle unique constraint errors if any
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-        console.warn(`Skipping duplicate entry for dosen: ${dosenData.user.create.email}`);
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        console.warn(
+          `Skipping duplicate entry for dosen: ${dosenData.user.create.email}`,
+        );
       } else {
         console.error(`Error seeding dosen: ${(e as Error).message}`);
         throw e;

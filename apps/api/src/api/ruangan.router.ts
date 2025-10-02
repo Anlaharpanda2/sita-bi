@@ -15,7 +15,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const ruangan = await ruanganService.findAll();
     res.status(200).json({ status: 'sukses', data: ruangan });
-  })
+  }),
 );
 
 export default router;

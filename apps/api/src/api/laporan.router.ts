@@ -16,7 +16,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const statistik = await laporanService.getStatistik();
     res.status(200).json({ status: 'sukses', data: statistik });
-  })
+  }),
 );
 
 export default router;

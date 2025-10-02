@@ -28,10 +28,16 @@ export class TugasAkhirService {
         mahasiswa_id: mahasiswa.id,
         NOT: {
           status: {
-            in: [StatusTugasAkhir.DIBATALKAN, StatusTugasAkhir.LULUS_DENGAN_REVISI, StatusTugasAkhir.LULUS_TANPA_REVISI, StatusTugasAkhir.SELESAI, StatusTugasAkhir.DITOLAK]
-          }
-        }
-      }
+            in: [
+              StatusTugasAkhir.DIBATALKAN,
+              StatusTugasAkhir.LULUS_DENGAN_REVISI,
+              StatusTugasAkhir.LULUS_TANPA_REVISI,
+              StatusTugasAkhir.SELESAI,
+              StatusTugasAkhir.DITOLAK,
+            ],
+          },
+        },
+      },
     });
 
     if (activeTugasAkhir !== null) {
@@ -39,11 +45,11 @@ export class TugasAkhirService {
     }
 
     const existingTitle = await this.prisma.tugasAkhir.findFirst({
-        where: { judul: { equals: dto.judul } }
+      where: { judul: { equals: dto.judul } },
     });
 
     if (existingTitle !== null) {
-        throw new Error(`Judul "${dto.judul}" sudah pernah diajukan.`);
+      throw new Error(`Judul "${dto.judul}" sudah pernah diajukan.`);
     }
 
     return this.prisma.tugasAkhir.create({
@@ -56,7 +62,11 @@ export class TugasAkhirService {
     });
   }
 
-  async findAllForValidation(user: Express.User, page = 1, limit = 50): Promise<unknown> {
+  async findAllForValidation(
+    user: Express.User,
+    page = 1,
+    limit = 50,
+  ): Promise<unknown> {
     const whereClause: Prisma.TugasAkhirWhereInput = {
       status: StatusTugasAkhir.DIAJUKAN,
     };
@@ -67,7 +77,10 @@ export class TugasAkhirService {
       whereClause.mahasiswa = { prodi: 'D3' };
     } else if (userRoles.includes(Role.kaprodi_d4) === true) {
       whereClause.mahasiswa = { prodi: 'D4' };
-    } else if (userRoles.includes(Role.admin) === false && userRoles.includes(Role.kajur) === false) {
+    } else if (
+      userRoles.includes(Role.admin) === false &&
+      userRoles.includes(Role.kajur) === false
+    ) {
       // If not a general viewer and not a specific kaprodi, they can see nothing.
       return {
         data: [],
@@ -110,7 +123,11 @@ export class TugasAkhirService {
     });
   }
 
-  async reject(id: number, rejecterId: number, alasan: string): Promise<TugasAkhir> {
+  async reject(
+    id: number,
+    rejecterId: number,
+    alasan: string,
+  ): Promise<TugasAkhir> {
     await this.findTugasAkhirById(id); // Ensure it exists
     return this.prisma.tugasAkhir.update({
       where: { id },
@@ -130,13 +147,13 @@ export class TugasAkhirService {
       select: { id: true, judul: true, mahasiswa: { include: { user: true } } },
     });
 
-    const allTitles = allOtherTa.map(ta => ta.judul);
+    const allTitles = allOtherTa.map((ta) => ta.judul);
     const ratings = stringSimilarity.findBestMatch(targetTa.judul, allTitles);
 
     const results = ratings.ratings
       .filter((rating: SimilarityRating) => rating.rating > 0.3) // Threshold 30%
       .map((rating: SimilarityRating) => {
-        const match = allOtherTa.find(ta => ta.judul === rating.target);
+        const match = allOtherTa.find((ta) => ta.judul === rating.target);
         return {
           similarity: rating.rating,
           judul: rating.target,
@@ -144,7 +161,10 @@ export class TugasAkhirService {
           nim: match?.mahasiswa?.nim,
         };
       })
-      .sort((a: { similarity: number }, b: { similarity: number }) => b.similarity - a.similarity);
+      .sort(
+        (a: { similarity: number }, b: { similarity: number }) =>
+          b.similarity - a.similarity,
+      );
 
     return {
       target: targetTa.judul,
@@ -152,7 +172,9 @@ export class TugasAkhirService {
     };
   }
 
-  async findTugasAkhirById(id: number): Promise<Prisma.TugasAkhirGetPayload<{ include: { mahasiswa: true } }>> {
+  async findTugasAkhirById(
+    id: number,
+  ): Promise<Prisma.TugasAkhirGetPayload<{ include: { mahasiswa: true } }>> {
     const tugasAkhir = await this.prisma.tugasAkhir.findUnique({
       where: { id },
       include: { mahasiswa: true },
