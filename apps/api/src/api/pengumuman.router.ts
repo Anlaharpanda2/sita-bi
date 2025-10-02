@@ -4,7 +4,7 @@ import { PengumumanService } from '../services/pengumuman.service';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 import { createPengumumanSchema, updatePengumumanSchema } from '../dto/pengumuman.dto';
 
 const router: Router = Router();
@@ -13,10 +13,10 @@ const pengumumanService = new PengumumanService();
 // --- Admin Routes (Protected) ---
 router.post(
   '/',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(createPengumumanSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const newPengumuman = await pengumumanService.create(req.body, req.user!.id);
     res.status(201).json({ status: 'sukses', data: newPengumuman });
   })
@@ -24,11 +24,11 @@ router.post(
 
 router.get(
   '/all',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const pengumumans = await pengumumanService.findAll(page, limit);
     res.status(200).json({ status: 'sukses', data: pengumumans });
   })
@@ -36,12 +36,12 @@ router.get(
 
 router.patch(
   '/:id',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(updatePengumumanSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }
@@ -52,11 +52,11 @@ router.patch(
 
 router.delete(
   '/:id',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }
@@ -68,9 +68,9 @@ router.delete(
 // --- Public/User Routes ---
 router.get(
   '/public',
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const publicPengumumans = await pengumumanService.findPublic(page, limit);
     res.status(200).json({ status: 'sukses', data: publicPengumumans });
   })
@@ -78,11 +78,11 @@ router.get(
 
 router.get(
   '/mahasiswa',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.mahasiswa]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const mahasiswaPengumumans = await pengumumanService.findForMahasiswa(page, limit);
     res.status(200).json({ status: 'sukses', data: mahasiswaPengumumans });
   })
@@ -90,11 +90,11 @@ router.get(
 
 router.get(
   '/dosen',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.dosen]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const dosenPengumumans = await pengumumanService.findForDosen(page, limit);
     res.status(200).json({ status: 'sukses', data: dosenPengumumans });
   })
@@ -102,9 +102,9 @@ router.get(
 
 router.get(
   '/:id',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Pengumuman diperlukan' });
       return;
     }

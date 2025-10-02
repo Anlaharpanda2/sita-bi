@@ -16,7 +16,7 @@ interface TawaranTopik {
   id: number;
   judul_topik: string;
   deskripsi: string;
-  dosenPencetus: { user: { name: string } };
+  dosenPencetus: { name: string };
 }
 
 // --- Main Page Component ---
@@ -97,7 +97,7 @@ export default function TugasAkhirPage() {
     try {
       await request('/tugas-akhir', { 
         method: 'POST',
-        body: JSON.stringify({ judul: judulMandiri })
+        body: { judul: judulMandiri }
       });
       alert('Successfully submitted title for approval.');
       fetchData(); // Refresh data
@@ -164,7 +164,7 @@ export default function TugasAkhirPage() {
                 <td>{topic.id}</td>
                 <td>{topic.judul_topik}</td>
                 <td>{topic.deskripsi}</td>
-                <td>{topic.dosenPencetus.user.name}</td>
+                <td>{topic.dosenPencetus.name}</td>
                 <td><button onClick={() => handleApply(topic.id)}>Apply</button></td>
               </tr>
             ))}

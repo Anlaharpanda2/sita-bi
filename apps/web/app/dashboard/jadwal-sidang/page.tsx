@@ -51,13 +51,13 @@ export default function ViewJadwalSidangPage() {
 
     let endpoint = "";
     if (user) {
-      const roles = user.roles.map(role => role.name);
-      if (roles.includes("admin")) {
+      const role = user.roles[0]?.name;
+      if (role === "admin") {
         router.replace("/dashboard/admin/jadwal-sidang");
         return;
-      } else if (roles.includes("dosen")) {
+      } else if (role === "dosen") {
         endpoint = "/jadwal-sidang/for-penguji";
-      } else if (roles.includes("mahasiswa")) {
+      } else if (role === "mahasiswa") {
         endpoint = "/jadwal-sidang/for-mahasiswa";
       }
     }
@@ -72,7 +72,7 @@ export default function ViewJadwalSidangPage() {
       try {
         const response = await api<{ data: { data: Sidang[] } }>(endpoint);
         setJadwalList(response.data.data || []);
-      } catch (err) {
+      } catch {
         setError("Gagal memuat jadwal sidang.");
       } finally {
         setLoading(false);
@@ -137,7 +137,7 @@ export default function ViewJadwalSidangPage() {
   if (loading || authLoading) return <div>Loading...</div>;
   if (error) return <div className="container mx-auto p-4 text-red-500">{error}</div>;
 
-  const isDosen = user?.roles.some(r => r.name === 'dosen');
+  const isDosen = user?.roles?.some(r => r.name === 'dosen');
 
   return (
     <div className="container mx-auto p-4">

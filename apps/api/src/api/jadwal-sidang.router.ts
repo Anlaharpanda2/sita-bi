@@ -4,7 +4,7 @@ import { JadwalSidangService } from '../services/jadwal-sidang.service';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 import { createJadwalSchema } from '../dto/jadwal-sidang.dto';
 
 const router: Router = Router();
@@ -12,11 +12,11 @@ const jadwalSidangService = new JadwalSidangService();
 
 router.get(
   '/approved-registrations',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const registrations = await jadwalSidangService.getApprovedRegistrations(page, limit);
     res.status(200).json({ status: 'sukses', data: registrations });
   })
@@ -24,10 +24,10 @@ router.get(
 
 router.post(
   '/',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(createJadwalSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const newJadwal = await jadwalSidangService.createJadwal(req.body);
     res.status(201).json({ status: 'sukses', data: newJadwal });
   })
@@ -35,16 +35,16 @@ router.post(
 
 router.get(
   '/for-penguji',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.dosen]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const dosenId = req.user?.dosen?.id;
     if (dosenId === undefined) {
       res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil dosen.' });
       return;
     }
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const sidang = await jadwalSidangService.getSidangForPenguji(dosenId, page, limit);
     res.status(200).json({ status: 'sukses', data: sidang });
   })
@@ -52,9 +52,9 @@ router.get(
 
 router.get(
   '/for-mahasiswa',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.mahasiswa]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const mahasiswaId = req.user?.mahasiswa?.id;
     if (mahasiswaId === undefined) {
       res.status(401).json({ status: 'gagal', message: 'Akses ditolak: Pengguna tidak memiliki profil mahasiswa.' });

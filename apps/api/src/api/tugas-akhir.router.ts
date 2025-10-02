@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { TugasAkhirService } from '../services/tugas-akhir.service';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 import { createTugasAkhirSchema, rejectTugasAkhirSchema } from '../dto/tugas-akhir.dto';
 import { tugasAkhirGuard } from '../middlewares/tugas-akhir.middleware';
 
@@ -16,10 +16,10 @@ const tugasAkhirService = new TugasAkhirService();
 
 router.post(
   '/',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.mahasiswa]),
   validate(createTugasAkhirSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const userId = req.user?.id;
     if (userId === undefined) {
       res.status(401).json({ status: 'gagal', message: 'Akses ditolak: ID pengguna tidak ditemukan.' });
@@ -32,11 +32,11 @@ router.post(
 
 router.get(
   '/validasi',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const tugasAkhirList = await tugasAkhirService.findAllForValidation(req.user!, page, limit);
     res.status(200).json({ status: 'sukses', data: tugasAkhirList });
   })
@@ -44,12 +44,12 @@ router.get(
 
 router.patch(
   '/:id/approve',
-  jwtAuthMiddleware,
-  tugasAkhirGuard, // Custom guard for Tugas Akhir
+  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(tugasAkhirGuard), // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }
@@ -65,13 +65,13 @@ router.patch(
 
 router.patch(
   '/:id/reject',
-  jwtAuthMiddleware,
-  tugasAkhirGuard, // Custom guard for Tugas Akhir
+  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(tugasAkhirGuard), // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   validate(rejectTugasAkhirSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }
@@ -88,11 +88,11 @@ router.patch(
 
 router.post(
   '/:id/cek-kemiripan',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }

@@ -8,7 +8,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
 
   // Optional: Add a check to ensure only admins can see this layout
-  const isAdmin = user?.roles.some(role => role.name === 'admin');
+  const isAdmin = user?.roles?.some(role => role.name === 'admin');
   if (!isAdmin) {
     return <div>Unauthorized</div>; // Or redirect
   }

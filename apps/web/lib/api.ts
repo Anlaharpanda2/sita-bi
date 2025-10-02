@@ -12,7 +12,7 @@ export class FetchError extends Error {
   data: unknown;
 
   constructor(response: Response, data: unknown) {
-    const message = (data as any)?.message || `Request failed with status ${response.status}`;
+    const message = (data as { message: string })?.message || `Request failed with status ${response.status}`;
     super(message);
     this.response = response;
     this.data = data;
@@ -27,7 +27,7 @@ async function request<T>(
   endpoint: string,
   options: CustomRequestInit = {}
 ): Promise<T> {
-  const token = Cookies.get('token');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   // Bangun konfigurasi secara manual untuk menghindari masalah dengan spread operator
   const config: RequestInit = {

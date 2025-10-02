@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Prodi } from '@prisma/client';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 
 const validRoles = [Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4, Role.dosen];
 

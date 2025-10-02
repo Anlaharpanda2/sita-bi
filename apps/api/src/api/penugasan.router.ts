@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PenugasanService } from '../services/penugasan.service';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 import { assignPembimbingSchema } from '../dto/penugasan.dto';
 
 const router: Router = Router();
@@ -15,11 +15,11 @@ const penugasanService = new PenugasanService();
 
 router.get(
   '/unassigned',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin, Role.kajur]),
-  asyncHandler(async (req, res) => {
-    const page = req.query.page ? parseInt(req.query.page as string) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const unassignedTugasAkhir = await penugasanService.findUnassignedTugasAkhir(page, limit);
     res.status(200).json({ status: 'sukses', data: unassignedTugasAkhir });
   })
@@ -27,12 +27,12 @@ router.get(
 
 router.post(
   '/:tugasAkhirId/assign',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin, Role.kajur]),
   validate(assignPembimbingSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { tugasAkhirId } = req.params;
-    if (!tugasAkhirId) {
+    if (tugasAkhirId == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
       return;
     }

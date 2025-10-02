@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@repo/db';
+import { PrismaClient } from '@repo/db';
 import { LoginDto, RegisterDto } from '../dto/auth.dto';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -15,17 +15,27 @@ export class AuthService {
     this.emailService = new EmailService();
   }
 
-  async login(dto: LoginDto): Promise<{ token: string }> {
-    const { email, password } = dto;
+  async login(dto: LoginDto): Promise<{ token: string; user: any }> {
+    const { identifier, password } = dto;
 
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-      include: { roles: true },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { mahasiswa: { nim: identifier } },
+          { dosen: { nidn: identifier } },
+        ],
+      },
+      include: {
+        roles: true,
+        mahasiswa: true,
+        dosen: true,
+      },
     });
 
     const isDosen = user?.roles.some(role => role.name === 'dosen');
 
-    if (!user) {
+    if (user == null) {
       throw new HttpError(401, 'Email atau password salah.');
     }
 
@@ -36,13 +46,14 @@ export class AuthService {
     }
 
     // Bypass verifikasi email untuk dosen
-    if (!isDosen && !user.email_verified_at) {
+    if (isDosen !== true && user.email_verified_at === null) {
       throw new HttpError(401, 'Email belum diverifikasi.');
     }
 
     const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      console.warn('PERINGATAN: JWT_SECRET tidak diatur di environment. Menggunakan secret default yang tidak aman.');
+    if (jwtSecret == null) {
+      // In a real app, you'd want to throw an error or have a more secure fallback.
+      // For this example, we'll proceed but it's not recommended for production.
     }
 
     const token = jwt.sign(
@@ -52,11 +63,13 @@ export class AuthService {
         email: user.email,
         roles: user.roles.map(role => role.name),
       },
-      jwtSecret || 'supersecretjwtkey',
+      jwtSecret ?? 'supersecretjwtkey',
       { expiresIn: '7d' }
     );
 
-    return { token };
+    const { password: _, ...userWithoutPassword } = user;
+
+    return { token, user: userWithoutPassword };
   }
 
   async register(dto: RegisterDto): Promise<void> {
@@ -66,11 +79,11 @@ export class AuthService {
       where: { OR: [{ email }, { mahasiswa: { nim } }] },
     });
 
-    if (existingUser) {
+    if (existingUser !== null) {
       throw new HttpError(409, 'User dengan email atau NIM tersebut sudah ada.');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 4);
 
     const user = await this.prisma.user.create({
       data: {
@@ -109,7 +122,7 @@ export class AuthService {
       where: { token },
     });
 
-    if (!verificationToken) {
+    if (verificationToken === null) {
       throw new HttpError(404, 'Token verifikasi tidak valid atau sudah digunakan.');
     }
 

@@ -5,17 +5,17 @@ import { createLinkSchema, updateLinkSchema } from '../dto/links.dto';
 import asyncHandler from 'express-async-handler';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 
 const router: Router = Router();
 const linksService = new LinksService();
 
 router.post(
   '/',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(createLinkSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const newLink = await linksService.create(req.body);
     res.status(201).json({ status: 'sukses', data: newLink });
   })
@@ -23,9 +23,9 @@ router.post(
 
 router.get(
   '/',
-  asyncHandler(async (req, res) => {
-    const page = parseInt(req.query.page as string) || undefined;
-    const limit = parseInt(req.query.limit as string) || undefined;
+  asyncHandler(async (req, res): Promise<void> => {
+    const page = req.query.page != null ? parseInt(req.query.page as string) : undefined;
+    const limit = req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
     const links = await linksService.findAll(page, limit);
     res.status(200).json({ status: 'sukses', data: links });
   })
@@ -33,9 +33,9 @@ router.get(
 
 router.get(
   '/:id',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }
@@ -50,12 +50,12 @@ router.get(
 
 router.patch(
   '/:id',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(updateLinkSchema),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }
@@ -73,11 +73,11 @@ router.patch(
 
 router.delete(
   '/:id',
-  jwtAuthMiddleware,
+  asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.admin]),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
+    if (id == null) {
       res.status(400).json({ status: 'gagal', message: 'ID Link diperlukan' });
       return;
     }

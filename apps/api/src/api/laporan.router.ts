@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { LaporanService } from '../services/laporan.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
-import { Role } from '../types/roles';
+import { Role } from '@repo/types';
 
 const router: Router = Router();
 const laporanService = new LaporanService();
