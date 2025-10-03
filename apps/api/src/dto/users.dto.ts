@@ -49,6 +49,18 @@ export const updateDosenSchema = z.object({
 
 export type UpdateDosenDto = z.infer<typeof updateDosenSchema>;
 
+export const createMahasiswaSchema = z.object({
+  name: z.string().min(1, 'Name cannot be empty'),
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+  nim: z.string().min(1, 'NIM cannot be empty'),
+  prodi: z.nativeEnum(Prodi),
+  angkatan: z.string().min(4, 'Angkatan must be a 4-digit year'),
+  kelas: z.string().min(1, 'Kelas cannot be empty'),
+});
+
+export type CreateMahasiswaDto = z.infer<typeof createMahasiswaSchema>;
+
 export const updateMahasiswaSchema = z.object({
   name: z.string().optional(),
   email: z.string().email('Invalid email format').optional(),

@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { TugasAkhirService } from '../services/tugas-akhir.service';
+import { TugasAkhirService, SimilarityError } from '../services/tugas-akhir.service';
 import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
@@ -18,6 +18,28 @@ const tugasAkhirService = new TugasAkhirService();
 // router.use(jwtAuthMiddleware);
 
 router.post(
+  '/check-similarity',
+  asyncHandler(jwtAuthMiddleware),
+  authorizeRoles([Role.mahasiswa]),
+  validate(createTugasAkhirSchema),
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const SIMILARITY_BLOCK_THRESHOLD = 80;
+    const { judul } = req.body;
+    const results = await tugasAkhirService.checkSimilarity(judul);
+
+    const isBlocked = results.some(res => res.similarity >= SIMILARITY_BLOCK_THRESHOLD);
+
+    res.status(200).json({ 
+      status: 'sukses', 
+      data: { 
+        results,
+        isBlocked 
+      }
+    });
+  }),
+);
+
+router.post(
   '/',
   asyncHandler(jwtAuthMiddleware),
   authorizeRoles([Role.mahasiswa]),
@@ -31,7 +53,7 @@ router.post(
       });
       return;
     }
-    const newTugasAkhir = await tugasAkhirService.create(req.body, userId);
+    const newTugasAkhir = await tugasAkhirService.createFinal(req.body, userId);
     res.status(201).json({ status: 'sukses', data: newTugasAkhir });
   }),
 );
@@ -131,6 +153,51 @@ router.post(
       parseInt(id, 10),
     );
     res.status(200).json({ status: 'sukses', data: kemiripanResult });
+  }),
+);
+
+router.get(
+  '/my-ta',
+  asyncHandler(jwtAuthMiddleware),
+  authorizeRoles([Role.mahasiswa]),
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user?.id;
+    if (userId === undefined) {
+      res.status(401).json({
+        status: 'gagal',
+        message: 'Akses ditolak: ID pengguna tidak ditemukan.',
+      });
+      return;
+    }
+    const tugasAkhir = await tugasAkhirService.findMyTugasAkhir(userId);
+    res.status(200).json({ status: 'sukses', data: tugasAkhir });
+  }),
+);
+
+router.delete(
+  '/my-ta',
+  asyncHandler(jwtAuthMiddleware),
+  authorizeRoles([Role.mahasiswa]),
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user?.id;
+    if (userId === undefined) {
+      res.status(401).json({
+        status: 'gagal',
+        message: 'Akses ditolak: ID pengguna tidak ditemukan.',
+      });
+      return;
+    }
+    await tugasAkhirService.deleteMyTa(userId);
+    res.status(200).json({ status: 'sukses', message: 'Tugas Akhir berhasil dihapus.' });
+  }),
+);
+
+router.get(
+  '/all-titles',
+  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const titles = await tugasAkhirService.findAllTitles();
+    res.status(200).json({ status: 'sukses', data: titles });
   }),
 );
 

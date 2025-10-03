@@ -122,7 +122,7 @@ export class BimbinganService {
       },
     });
 
-    if (bimbingan === null || bimbingan.tugasAkhir === null) {
+    if (bimbingan?.tugasAkhir == null) {
       throw new Error(
         'Bimbingan session or associated final project not found.',
       );
@@ -132,7 +132,7 @@ export class BimbinganService {
     const peranDosenList = bimbingan.tugasAkhir.peranDosenTa as Array<{
       dosen_id: number | null;
     }>;
-     
+
     const isPembimbing =
       bimbingan.dosen_id !== null &&
       (peranDosenList?.some((p) => p.dosen_id === bimbingan.dosen_id) ?? false);

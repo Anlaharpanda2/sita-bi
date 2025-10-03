@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const createTugasAkhirSchema = z.object({
   judul: z.string().min(1, 'Judul cannot be empty'),
+  force: z.boolean().optional(),
 });
 
 export type CreateTugasAkhirDto = z.infer<typeof createTugasAkhirSchema>;

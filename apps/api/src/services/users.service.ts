@@ -4,6 +4,7 @@ import {
   CreateDosenDto,
   UpdateDosenDto,
   UpdateMahasiswaDto,
+  CreateMahasiswaDto,
 } from '../dto/users.dto';
 import { Role } from '@repo/types';
 
@@ -32,25 +33,23 @@ export class UsersService {
     });
   }
 
-  async createMahasiswa(
-    data: Prisma.UserCreateInput,
-    profileData: { nim: string; prodi: Prodi; kelas: string; angkatan: string },
-  ): Promise<User> {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+  async createMahasiswa(dto: CreateMahasiswaDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     return this.prisma.user.create({
       data: {
-        ...data,
+        name: dto.name,
+        email: dto.email,
         password: hashedPassword,
         roles: {
           connect: { name: Role.mahasiswa },
         },
         mahasiswa: {
           create: {
-            nim: profileData.nim,
-            prodi: profileData.prodi,
-            angkatan: profileData.angkatan,
-            kelas: profileData.kelas,
+            nim: dto.nim,
+            prodi: dto.prodi,
+            angkatan: dto.angkatan,
+            kelas: dto.kelas,
           },
         },
       },
@@ -223,13 +222,7 @@ export class UsersService {
       this.prisma.user.count({ where: { dosen: { isNot: null } } }),
     ]);
 
-    const data = users.map((user) => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      nidn: user.dosen?.nidn,
-      roles: user.roles.map((r) => r.name),
-    }));
+    const data = users; // Return the nested structure directly
 
     return {
       data: data,
@@ -245,7 +238,20 @@ export class UsersService {
     if (user === null) {
       throw new Error(`User with ID ${id} not found`);
     }
-    return this.prisma.user.delete({ where: { id } });
+    try {
+      return await this.prisma.user.delete({ where: { id } });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Foreign key constraint violation
+        if (e.code === 'P2003') {
+          throw new Error(
+            'Cannot delete this user. They are linked to other records (e.g., announcements, thesis topics). Please reassign or delete those records first.',
+          );
+        }
+      }
+      // Re-throw other errors
+      throw e;
+    }
   }
 
   async updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User> {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, ComponentType } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -14,7 +14,64 @@ import {
   Book,
   Users,
   Hash,
+  Calendar,
 } from 'lucide-react';
+
+// --- InputField Component (Refactored) ---
+interface InputFieldProps {
+  id: string;
+  name: string;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  icon: ComponentType<{ className?: string }>;
+  isPassword?: boolean;
+  showPasswordState?: boolean;
+  toggleShowPassword?: () => void;
+}
+
+const InputField = ({
+  id,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  icon: Icon,
+  isPassword = false,
+  showPasswordState,
+  toggleShowPassword,
+}: InputFieldProps) => (
+  <div className="relative group">
+    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <Icon className="h-5 w-5 text-gray-400 group-focus-within:text-rose-600 transition-colors" />
+    </div>
+    <input
+      id={id}
+      name={name}
+      type={type}
+      value={value}
+      onChange={onChange}
+      className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-600 focus:ring-4 focus:ring-rose-100 outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+      placeholder={placeholder}
+      required
+    />
+    {isPassword && (
+      <button
+        type="button"
+        onClick={toggleShowPassword}
+        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        {showPasswordState ? (
+          <EyeOff className="h-5 w-5" />
+        ) : (
+          <Eye className="h-5 w-5" />
+        )}
+      </button>
+    )}
+  </div>
+);
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -79,47 +136,6 @@ export default function RegisterPage() {
     }
   };
 
-  const InputField = ({
-    id,
-    name,
-    type,
-    placeholder,
-    value,
-    icon: Icon,
-    isPassword = false,
-    showPasswordState,
-    toggleShowPassword,
-  }: any) => (
-    <div className="relative group">
-      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-        <Icon className="h-5 w-5 text-gray-400 group-focus-within:text-rose-600 transition-colors" />
-      </div>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        value={value}
-        onChange={handleChange}
-        className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-600 focus:ring-4 focus:ring-rose-100 outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
-        placeholder={placeholder}
-        required
-      />
-      {isPassword && (
-        <button
-          type="button"
-          onClick={toggleShowPassword}
-          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          {showPasswordState ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
-            <Eye className="h-5 w-5" />
-          )}
-        </button>
-      )}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-96 h-96 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
@@ -140,11 +156,11 @@ export default function RegisterPage() {
 
           <div className="p-8">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <InputField id="name" name="name" type="text" placeholder="Full Name" value={formData.name} icon={User} />
-              <InputField id="email" name="email" type="email" placeholder="Email Address" value={formData.email} icon={Mail} />
+              <InputField id="name" name="name" type="text" placeholder="Full Name" value={formData.name} icon={User} onChange={handleChange} />
+              <InputField id="email" name="email" type="email" placeholder="Email Address" value={formData.email} icon={Mail} onChange={handleChange} />
               <div className="grid grid-cols-2 gap-4">
-                <InputField id="nim" name="nim" type="text" placeholder="NIM" value={formData.nim} icon={Hash} />
-                <InputField id="angkatan" name="angkatan" type="text" placeholder="Angkatan" value={formData.angkatan} icon={Calendar} />
+                <InputField id="nim" name="nim" type="text" placeholder="NIM" value={formData.nim} icon={Hash} onChange={handleChange} />
+                <InputField id="angkatan" name="angkatan" type="text" placeholder="Angkatan" value={formData.angkatan} icon={Calendar} onChange={handleChange} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                  <div>
@@ -158,10 +174,10 @@ export default function RegisterPage() {
                         </select>
                     </div>
                 </div>
-                <InputField id="kelas" name="kelas" type="text" placeholder="Kelas" value={formData.kelas} icon={Users} />
+                <InputField id="kelas" name="kelas" type="text" placeholder="Kelas" value={formData.kelas} icon={Users} onChange={handleChange} />
               </div>
-              <InputField id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Password" value={formData.password} icon={Lock} isPassword={true} showPasswordState={showPassword} toggleShowPassword={() => setShowPassword(!showPassword)} />
-              <InputField id="password_confirmation" name="password_confirmation" type={showConfirmPassword ? 'text' : 'password'} placeholder="Confirm Password" value={formData.password_confirmation} icon={Lock} isPassword={true} showPasswordState={showConfirmPassword} toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)} />
+              <InputField id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Password" value={formData.password} icon={Lock} isPassword={true} showPasswordState={showPassword} toggleShowPassword={() => setShowPassword(!showPassword)} onChange={handleChange} />
+              <InputField id="password_confirmation" name="password_confirmation" type={showConfirmPassword ? 'text' : 'password'} placeholder="Confirm Password" value={formData.password_confirmation} icon={Lock} isPassword={true} showPasswordState={showConfirmPassword} toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)} onChange={handleChange} />
 
               {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">

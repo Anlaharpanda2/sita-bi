@@ -145,13 +145,13 @@ export default function TawaranTopikPage() {
     try {
       setLoading(true);
       const [topicsRes, appsRes] = await Promise.all([
-        request<{ data: { data: TawaranTopik[] } }>('/tawaran-topik'),
-        request<{ data: { data: Application[] } }>(
+        request<{ data: TawaranTopik[] }>('/tawaran-topik'),
+        request<{ data: Application[] }>(
           '/tawaran-topik/applications',
         ),
       ]);
-      setTopics(topicsRes.data.data);
-      setApplications(appsRes.data.data);
+      setTopics(topicsRes.data);
+      setApplications(appsRes.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {

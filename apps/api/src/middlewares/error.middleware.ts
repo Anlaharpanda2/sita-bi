@@ -19,7 +19,7 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ): void => {
-  // console.error(err.stack);
+  console.error(err.stack);
 
   // Check if it's an instance of our HttpError
   if (err instanceof HttpError) {

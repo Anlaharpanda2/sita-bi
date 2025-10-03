@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronDown,
   User as UserIcon,
+  Users, // Add new icon
 } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -129,6 +130,10 @@ export default function DosenLayout({ children }: { children: ReactNode }) {
             <NavLink href="/dashboard/dosen/bimbingan">
               <BookUser size={20} />
               <span>Bimbingan</span>
+            </NavLink>
+            <NavLink href="/dashboard/dosen/pengajuan-bimbingan">
+              <Users size={20} />
+              <span>Pengajuan Bimbingan</span>
             </NavLink>
             <NavLink href="/dashboard/dosen/tawaran-topik">
               <Lightbulb size={20} />

@@ -9,6 +9,7 @@ import {
   createDosenSchema,
   updateDosenSchema,
   updateMahasiswaSchema,
+  createMahasiswaSchema,
 } from '../dto/users.dto';
 
 const router: Router = Router();
@@ -24,6 +25,16 @@ router.post(
   asyncHandler(async (req, res) => {
     const newDosen = await usersService.createDosen(req.body);
     res.status(201).json({ status: 'sukses', data: newDosen });
+  }),
+);
+
+router.post(
+  '/mahasiswa',
+  authorizeRoles([Role.admin]),
+  validate(createMahasiswaSchema),
+  asyncHandler(async (req, res) => {
+    const newMahasiswa = await usersService.createMahasiswa(req.body);
+    res.status(201).json({ status: 'sukses', data: newMahasiswa });
   }),
 );
 

@@ -3,6 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import AdminHeader from './components/AdminHeader';
+import Footer from '@/app/components/landing-page/Footer'; // Use the original footer
 import {
   Home,
   Users,
@@ -14,70 +17,71 @@ import {
   BookUser,
 } from 'lucide-react';
 
-// Komponen Header dan Footer diimpor dari direktori components, sesuai permintaan.
-import Header from '@/app/components/landing-page/Header';
-import Footer from '@/app/components/landing-page/Footer';
-
 const navItems = [
   { href: '/dashboard/admin', icon: Home, label: 'Dashboard' },
   { href: '/dashboard/admin/users', icon: Users, label: 'Kelola Pengguna' },
   { href: '/dashboard/admin/validasi-ta', icon: ClipboardList, label: 'Validasi TA' },
   { href: '/dashboard/admin/penugasan', icon: BookUser, label: 'Penugasan' },
-  { href: '/dashboard/admin/laporan', icon: FileText, label: 'Laporan' },
   { href: '/dashboard/admin/jadwal-sidang', icon: Calendar, label: 'Jadwal Sidang' },
-  { href: '/dashboard/admin/links', icon: Link2, label: 'Kelola Tautan' },
   { href: '/dashboard/admin/pengumuman', icon: Megaphone, label: 'Pengumuman' },
+  { href: '/dashboard/admin/links', icon: Link2, label: 'Kelola Tautan' },
+  { href: '/dashboard/admin/laporan', icon: FileText, label: 'Laporan' },
 ];
 
-const NavLink = ({ item }) => {
+const NavLink = ({ item }: { item: typeof navItems[0] }) => {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
   return (
-    <li className="px-3 py-1">
+    <li>
       <Link
         href={item.href}
-        className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+        className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
           isActive
-            ? 'bg-maroon-600 text-white shadow-sm'
-            : 'text-gray-600 hover:bg-maroon-50 hover:text-maroon-700'
+            ? 'bg-red-800 text-white shadow-sm'
+            : 'text-gray-700 hover:bg-red-50 hover:text-red-800'
         }`}
       >
-        <item.icon className="w-5 h-5 mr-3" />
-        {item.label}
+        <item.icon className="h-5 w-5" />
+        <span>{item.label}</span>
       </Link>
     </li>
   );
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+
+  if (!user?.roles?.some(role => role.name === 'admin')) {
+    return <div className="flex h-screen items-center justify-center">Unauthorized Access</div>;
+  }
+
+  // Dummy function for footer, as it expects a function prop
+  const scrollToSection = (id: string) => {
+    console.log(`Scroll to ${id} requested, but not implemented in this layout.`);
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-      {/* Header dari komponen digunakan di sini */}
-      <Header />
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <AdminHeader />
       <div className="flex flex-1">
-        <aside className="w-64 bg-white border-r border-gray-200/75">
-          <div className="p-6">
-            <h2 className="text-lg font-semibold text-gray-500 uppercase tracking-wider">
-              Menu Navigasi
-            </h2>
-          </div>
-          <nav className="mt-2">
-            <ul>
+        {/* Sidebar Navigation */}
+        <aside className="w-72 bg-white border-r border-gray-200/75 p-4">
+          <nav>
+            <ul className="space-y-1">
               {navItems.map((item) => (
                 <NavLink key={item.href} item={item} />
               ))}
             </ul>
           </nav>
         </aside>
+
+        {/* Main Content Area */}
         <main className="flex-1 p-6 lg:p-10">
-          <div className="bg-white p-6 lg:p-8 rounded-xl shadow-sm w-full h-full border border-gray-200/75">
-            {children}
-          </div>
+          {children}
         </main>
       </div>
-      {/* Footer dari komponen digunakan di sini */}
-      <Footer />
+      <Footer scrollToSection={scrollToSection} />
     </div>
   );
 }

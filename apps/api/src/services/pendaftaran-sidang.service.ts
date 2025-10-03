@@ -201,7 +201,7 @@ export class PendaftaranSidangService {
             pendaftaran_sidang_id: updatedPendaftaran.id,
             tugas_akhir_id: updatedPendaftaran.tugas_akhir_id,
             jenis_sidang: 'AKHIR',
-            status_hasil: 'dijadwalkan', // Initial status for a newly created sidang
+            status_hasil: 'menunggu_penjadwalan', // Initial status for a newly created sidang
           },
         });
 
