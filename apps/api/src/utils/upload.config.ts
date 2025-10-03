@@ -44,7 +44,7 @@ export const ensureDirectoryExists = (dirPath: string): void => {
 
 // Utility function untuk mendapatkan path upload lengkap di monorepo root
 export const getUploadPath = (subDir?: string): string => {
-  const monorepoRoot = getMonorerepoRoot();
+  const monorepoRoot = getMonorepoRoot();
   const basePath = path.join(monorepoRoot, uploadConfig.uploadsDir);
   
   if (subDir !== undefined && subDir.length > 0) {
