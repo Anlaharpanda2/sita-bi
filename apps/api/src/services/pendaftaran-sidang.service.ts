@@ -104,7 +104,8 @@ export class PendaftaranSidangService {
                 // Generate relative path untuk database
                 const relativePath = getRelativePath(uploadedFilePath);
 
-                const _fileRecord = await tx.pendaftaranSidangFile.create({
+                // Create file record (tidak disimpan ke variable karena tidak digunakan)
+                await tx.pendaftaranSidangFile.create({
                   data: {
                     pendaftaran_sidang_id: pendaftaran.id,
                     file_path: relativePath, // Save the relative path
@@ -134,10 +135,12 @@ export class PendaftaranSidangService {
           {
             status_pembimbing_1: 'menunggu',
             tugasAkhir: {
-            peranDosenTa: {
-              some: { dosen_id: dosenId, peran: 'pembimbing1' },
+              peranDosenTa: {
+                some: { dosen_id: dosenId, peran: 'pembimbing1' },
+              },
             },
           },
+          {
             status_pembimbing_2: 'menunggu',
             tugasAkhir: {
               peranDosenTa: {

@@ -3,10 +3,12 @@ import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 interface FooterProps {
-  scrollToSection: (id: string) => void;
+  scrollToSection: (_id: string) => void;
 }
 
-export default function Footer({ scrollToSection }: FooterProps) {
+export default function Footer({
+  scrollToSection: _scrollToSection,
+}: FooterProps) {
   return (
     <footer className="bg-gradient-to-br from-red-950 to-gray-900 text-white/80 py-16 relative">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-900 to-yellow-600" />
@@ -40,7 +42,7 @@ export default function Footer({ scrollToSection }: FooterProps) {
                   href="#hero"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('hero');
+                    _scrollToSection('hero');
                   }}
                   className="hover:text-yellow-600 transition-colors"
                 >
@@ -52,7 +54,7 @@ export default function Footer({ scrollToSection }: FooterProps) {
                   href="#pengumuman"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('pengumuman');
+                    _scrollToSection('pengumuman');
                   }}
                   className="hover:text-yellow-600 transition-colors"
                 >
@@ -64,7 +66,7 @@ export default function Footer({ scrollToSection }: FooterProps) {
                   href="#jadwal"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('jadwal');
+                    _scrollToSection('jadwal');
                   }}
                   className="hover:text-yellow-600 transition-colors"
                 >

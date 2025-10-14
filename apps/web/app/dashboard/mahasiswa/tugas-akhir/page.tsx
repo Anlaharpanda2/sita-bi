@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState, FormEvent, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import request from '@/lib/api';
 import { useAuth } from '../../../../context/AuthContext';
 import {
-  Send,
   CheckCircle,
   Clock,
   Search,

@@ -73,10 +73,8 @@ export default function AdminLayout({
   }
 
   // Dummy function for footer, as it expects a function prop
-  const scrollToSection = (id: string) => {
-    console.log(
-      `Scroll to ${id} requested, but not implemented in this layout.`,
-    );
+  const scrollToSection = () => {
+    // Dummy function, no implementation needed here.
   };
 
   return (

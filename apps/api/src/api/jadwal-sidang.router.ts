@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { JadwalSidangService } from '../services/jadwal-sidang.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { insecureAuthMiddleware, authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -11,14 +11,14 @@ const router: Router = Router();
 const jadwalSidangService = new JadwalSidangService();
 
 router.get(
-  '/approved-registrations',
-  asyncHandler(jwtAuthMiddleware),
+  '/',
+  asyncHandler(insecureAuthMiddleware),
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const registrations = await jadwalSidangService.getApprovedRegistrations(
       page,
       limit,
@@ -29,7 +29,7 @@ router.get(
 
 router.post(
   '/',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(insecureAuthMiddleware),
   authorizeRoles([Role.admin]),
   validate(createJadwalSchema),
   asyncHandler(async (req, res): Promise<void> => {
@@ -40,7 +40,7 @@ router.post(
 
 router.get(
   '/for-penguji',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.dosen]),
   asyncHandler(async (req, res): Promise<void> => {
     const dosenId = req.user?.dosen?.id;
@@ -52,9 +52,9 @@ router.get(
       return;
     }
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const sidang = await jadwalSidangService.getSidangForPenguji(
       dosenId,
       page,
@@ -66,7 +66,7 @@ router.get(
 
 router.get(
   '/for-mahasiswa',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   asyncHandler(async (req, res): Promise<void> => {
     const mahasiswaId = req.user?.mahasiswa?.id;

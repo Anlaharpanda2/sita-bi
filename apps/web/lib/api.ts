@@ -1,8 +1,4 @@
-import Cookies from 'js-cookie';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-console.log('API_URL configured:', API_URL);
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Definisikan tipe kustom untuk error agar bisa menyertakan detail
 export class FetchError extends Error {
@@ -27,8 +23,9 @@ async function request<T>(
   endpoint: string,
   options: CustomRequestInit = {},
 ): Promise<T> {
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  // Get user from localStorage to send user ID in header
+  const storedUser =
+    typeof window !== 'undefined' ? localStorage.getItem('user') : null;
 
   // Bangun konfigurasi secara manual untuk menghindari masalah dengan spread operator
   const config: RequestInit = {
@@ -43,9 +40,19 @@ async function request<T>(
     integrity: options.integrity,
   };
 
-  // Tambahkan token otorisasi jika ada
-  if (token) {
-    (config.headers as Headers).append('Authorization', `Bearer ${token}`);
+  // Add the x-user-id header if the user is logged in
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      if (user && user.id) {
+        (config.headers as Headers).append('x-user-id', user.id);
+      }
+    } catch (e) {
+      console.error(
+        'Failed to parse user from localStorage for API request',
+        e,
+      );
+    }
   }
 
   // Logika cerdas untuk body
@@ -63,12 +70,8 @@ async function request<T>(
   }
 
   const fullUrl = `${API_URL}/api${endpoint}`;
-  console.log('Making request to:', fullUrl);
-
   try {
     const response = await fetch(fullUrl, config);
-    console.log('Response status:', response.status);
-
     if (!response.ok) {
       const errorData = await response
         .json()
@@ -83,7 +86,6 @@ async function request<T>(
     }
 
     const result = await response.json();
-    console.log('Request successful:', result);
     return result;
   } catch (error) {
     console.error('Request error:', error);

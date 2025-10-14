@@ -1,88 +1,87 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { JwtPayload } from 'jsonwebtoken';
-import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@repo/db';
 import type { Role } from '@repo/types';
+import { CacheService } from '../config/cache';
+import prisma from '../config/database';
 
-const prisma = new PrismaClient();
-
-const JWT_SECRET = process.env.JWT_SECRET ?? 'supersecretjwtkey';
-
-// Interface untuk JWT payload yang kita expect
-interface CustomJwtPayload extends JwtPayload {
-  sub: string;
-}
-
-function isJsonWebTokenError(error: unknown): error is jwt.JsonWebTokenError {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'name' in error &&
-    (error as Error).name === 'JsonWebTokenError'
-  );
-}
-
-// Type guard untuk memastikan decoded token memiliki struktur yang benar
-function isValidJwtPayload(decoded: unknown): decoded is CustomJwtPayload {
-  return (
-    typeof decoded === 'object' &&
-    decoded !== null &&
-    'sub' in decoded &&
-    typeof (decoded as { sub: unknown }).sub === 'string'
-  );
-}
-
-export const jwtAuthMiddleware = async (
+/**
+ * Simple auth middleware menggunakan x-user-id header
+ * User ID disimpan di localStorage browser dan dikirim via header
+ * Cache TTL = selamanya (0) dan auto-invalidate saat data berubah
+ */
+export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      res.status(401).json({ message: 'Unauthorized: No token provided' });
+    const userId = req.headers['x-user-id'];
+
+    if (!userId || typeof userId !== 'string') {
+      res.status(401).json({ message: 'Unauthorized: No user ID provided' });
       return;
     }
 
-    const token = authHeader.split(' ')[1];
-
-    // Pastikan token ada setelah split
-    if (token === undefined || token === null || token === '') {
-      res.status(401).json({ message: 'Unauthorized: Invalid token format' });
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      res.status(401).json({ message: 'Unauthorized: Invalid user ID' });
       return;
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    // Try to get user from cache first (TTL selamanya)
+    const cacheKey = `user:${userIdNum}`;
+    let user = await CacheService.get<{
+      id: number;
+      email: string;
+      name: string;
+      phone_number: string;
+      roles: Array<{ name: string }>;
+      dosen: { id: number; nidn: string } | null;
+      mahasiswa: { id: number; nim: string } | null;
+    }>(cacheKey);
 
-    // Gunakan type guard untuk memvalidasi payload
-    if (!isValidJwtPayload(decoded)) {
-      res.status(401).json({ message: 'Unauthorized: Invalid token payload' });
-      return;
+    // If not in cache, fetch from database
+    if (!user) {
+      console.log(`[DB] Fetching user:${userIdNum} from SQLite (Cache Miss)`);
+      const dbUser = await prisma.user.findUnique({
+        where: { id: userIdNum },
+        include: {
+          dosen: true,
+          mahasiswa: true,
+          roles: true,
+        },
+      });
+
+      if (!dbUser) {
+        res.status(401).json({ message: 'Unauthorized: User not found' });
+        return;
+      }
+
+      if (dbUser.roles.length === 0) {
+        res.status(401).json({ message: 'Unauthorized: User has no roles' });
+        return;
+      }
+
+      // Store in cache SELAMANYA (TTL = 0)
+      // Cache akan otomatis di-invalidate saat ada update via Prisma middleware
+      user = {
+        id: dbUser.id,
+        email: dbUser.email,
+        name: dbUser.name,
+        phone_number: dbUser.phone_number,
+        roles: dbUser.roles.map((r) => ({ name: r.name })),
+        dosen: dbUser.dosen
+          ? { id: dbUser.dosen.id, nidn: dbUser.dosen.nidn }
+          : null,
+        mahasiswa: dbUser.mahasiswa
+          ? { id: dbUser.mahasiswa.id, nim: dbUser.mahasiswa.nim }
+          : null,
+      };
+
+      await CacheService.set(cacheKey, user, 0); // TTL 0 = selamanya
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: Number(decoded.sub) },
-      include: {
-        dosen: true,
-        mahasiswa: true,
-        roles: true,
-      },
-    });
-
-    // Pastikan user dan roles ada sebelum mengakses
-    if (user === null) {
-      res.status(401).json({ message: 'Unauthorized: User not found' });
-      return;
-    }
-
-    if (user.roles.length === 0) {
-      res.status(401).json({ message: 'Unauthorized: User has no roles' });
-      return;
-    }
-
-    // Pastikan user.roles[0] ada sebelum mengakses .name
     const userRole = user.roles[0];
-    if (userRole == null) {
+    if (!userRole) {
       res.status(401).json({ message: 'Unauthorized: User role not found' });
       return;
     }
@@ -90,24 +89,27 @@ export const jwtAuthMiddleware = async (
     req.user = {
       id: user.id,
       email: user.email,
-      role: userRole.name as Role, // Non-null assertion karena sudah dicek di atas
-      dosen:
-        user.dosen !== null
-          ? { id: user.dosen.id, nidn: user.dosen.nidn }
-          : undefined,
-      mahasiswa:
-        user.mahasiswa !== null
-          ? { id: user.mahasiswa.id, nim: user.mahasiswa.nim }
-          : undefined,
+      role: userRole.name as Role,
+      dosen: user.dosen
+        ? { 
+            id: user.dosen.id, 
+            nidn: user.dosen.nidn,
+          }
+        : null,
+      mahasiswa: user.mahasiswa
+        ? { 
+            id: user.mahasiswa.id, 
+            nim: user.mahasiswa.nim,
+          }
+        : null,
     };
 
     next();
   } catch (error: unknown) {
-    if (isJsonWebTokenError(error)) {
-      res.status(401).json({ message: 'Unauthorized: Invalid token' });
-      return;
-    }
-    // console.error('Auth Middleware Error:', error);
+    console.error('Auth Middleware Error:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+// Keep the old middleware name for backward compatibility
+export const insecureAuthMiddleware = authMiddleware;

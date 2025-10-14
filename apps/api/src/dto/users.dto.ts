@@ -9,6 +9,7 @@ export const createDosenSchema = z.object({
   email: z.email(),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
   nidn: z.string().min(1, 'NIDN cannot be empty'),
+  phone_number: z.string().optional(),
   roles: z
     .array(z.enum(Object.values(Role)))
     .optional()
@@ -56,6 +57,7 @@ export const createMahasiswaSchema = z.object({
   nim: z.string().min(1, 'NIM cannot be empty'),
   prodi: z.enum([Prodi.D3, Prodi.D4]),
   kelas: z.string().min(1, 'Kelas cannot be empty'),
+  phone_number: z.string().optional(),
 });
 
 export type CreateMahasiswaDto = z.infer<typeof createMahasiswaSchema>;

@@ -1,13 +1,13 @@
 import { PrismaClient } from '@repo/db';
-import { PenugasanService } from './penugasan.service';
+// import { PenugasanService } from './penugasan.service'; // Unused
 
 export class PengajuanService {
   private prisma: PrismaClient;
-  private penugasanService: PenugasanService;
+  // private penugasanService: PenugasanService; // Unused
 
   constructor() {
     this.prisma = new PrismaClient();
-    this.penugasanService = new PenugasanService();
+    // this.penugasanService = new PenugasanService(); // Unused
   }
 
   // Method untuk mahasiswa mengajukan ke dosen
@@ -202,7 +202,7 @@ export class PengajuanService {
           id: { not: pengajuanId },
           status: { in: ['MENUNGGU_PERSETUJUAN_DOSEN', 'MENUNGGU_PERSETUJUAN_MAHASISWA'] }
         },
-        data: { status: 'DIBATALKAN' }
+        data: { status: 'DIBATALKAN_MAHASISWA' } // Gunakan status yang ada di enum
       });
 
       return updatedPengajuan;
@@ -285,7 +285,7 @@ export class PengajuanService {
     // Update status menjadi dibatalkan
     const updatedPengajuan = await this.prisma.pengajuanBimbingan.update({
       where: { id: pengajuanId },
-      data: { status: 'DIBATALKAN' },
+      data: { status: 'DIBATALKAN_MAHASISWA' }, // Gunakan status yang ada di enum
       include: {
         mahasiswa: { include: { user: true } },
         dosen: { include: { user: true } }

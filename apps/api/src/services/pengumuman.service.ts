@@ -150,9 +150,15 @@ export class PengumumanService {
   }
 
   async update(id: number, dto: UpdatePengumumanDto): Promise<Pengumuman> {
+    // Filter out undefined values untuk exactOptionalPropertyTypes
+    const updateData: Record<string, any> = {};
+    if (dto['judul'] !== undefined) updateData['judul'] = dto['judul'];
+    if (dto['isi'] !== undefined) updateData['isi'] = dto['isi'];
+    if (dto['audiens'] !== undefined) updateData['audiens'] = dto['audiens'];
+    
     return this.prisma.pengumuman.update({
       where: { id },
-      data: dto,
+      data: updateData,
     });
   }
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
 import request from '@/lib/api';
-import { Plus, Search, Edit, Trash2, Loader, Info, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Loader, X } from 'lucide-react';
 
 // --- Interfaces (Updated) ---
 interface User {
@@ -54,7 +54,7 @@ const UserModal = ({
     setError('');
 
     let endpoint = '';
-    let body: any = {};
+    let body: Record<string, string | undefined> = {};
     const method = isEditing ? 'PATCH' : 'POST';
 
     if (formData.role === 'dosen') {
@@ -89,10 +89,12 @@ const UserModal = ({
       await request(endpoint, { method, body });
       alert(`User successfully ${isEditing ? 'updated' : 'created'}!`);
       onSave();
-    } catch (err: any) {
-      setError(
-        err.message || `Failed to ${isEditing ? 'update' : 'create'} user.`,
-      );
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(
+          err.message || `Failed to ${isEditing ? 'update' : 'create'} user.`,
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -113,11 +115,11 @@ const UserModal = ({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
+          {error ? (
             <div className="bg-red-100 text-red-700 p-3 rounded-md">
               {error}
             </div>
-          )}
+          ) : null}
           <div>
             <label
               htmlFor="role"
@@ -264,26 +266,28 @@ export default function KelolaPenggunaPage() {
       setLoading(true);
       setError('');
       const [dosenRes, mahasiswaRes] = await Promise.all([
-        request<{ data: { data: any[] } }>('/users/dosen'),
-        request<{ data: { data: any[] } }>('/users/mahasiswa'),
+        request<{ data: { data: User[] } }>('/users/dosen'),
+        request<{ data: { data: User[] } }>('/users/mahasiswa'),
       ]);
 
       // Backend now returns nested data for dosen, normalize it here
       const mappedDosen = dosenRes.data.data.map((u) => ({
         ...u,
-        roles: u.roles.map((r: { name: string }) => r.name),
+        roles: u.roles,
       }));
 
       const mappedMahasiswa = mahasiswaRes.data.data.map((u) => ({
         ...u,
-        roles: u.roles.map((r: { name: string }) => r.name),
+        roles: u.roles,
         nim: u.mahasiswa?.nim,
       }));
 
       const allUsers = [...mappedDosen, ...mappedMahasiswa];
       setUsers(allUsers);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch users');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to fetch users');
+      }
     } finally {
       setLoading(false);
     }
@@ -299,8 +303,10 @@ export default function KelolaPenggunaPage() {
       await request(`/users/${id}`, { method: 'DELETE' });
       alert('User deleted successfully');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 
@@ -459,13 +465,13 @@ export default function KelolaPenggunaPage() {
         </table>
       </div>
 
-      {isModalOpen && (
+      {isModalOpen ? (
         <UserModal
           user={editingUser}
           onClose={handleCloseModal}
           onSave={handleSave}
         />
-      )}
+      ) : null}
     </div>
   );
 }

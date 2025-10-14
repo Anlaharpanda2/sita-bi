@@ -1,23 +1,21 @@
 import type { Dosen, Mahasiswa, Role, User } from '@repo/db';
-import { PrismaClient } from '@repo/db';
 import type { LoginDto, RegisterDto } from '../dto/auth.dto';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { HttpError } from '../middlewares/error.middleware';
 import { EmailService } from './email.service';
+import { CacheService } from '../config/cache';
+import prisma from '../config/database';
 
 export class AuthService {
-  private prisma: PrismaClient;
   private emailService: EmailService;
 
   constructor() {
-    this.prisma = new PrismaClient();
     this.emailService = new EmailService();
   }
 
   async login(dto: LoginDto): Promise<{
-    token: string;
+    userId: number;
     user: Omit<
       User & {
         roles: Role[];
@@ -29,7 +27,7 @@ export class AuthService {
   }> {
     const { identifier, password } = dto;
 
-    const user = await this.prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: identifier },
@@ -61,26 +59,27 @@ export class AuthService {
       throw new HttpError(401, 'Email belum diverifikasi.');
     }
 
-    const jwtSecret = process.env.JWT_SECRET;
-    if (jwtSecret == null) {
-      // In a real app, you'd want to throw an error or have a more secure fallback.
-      // For this example, we'll proceed but it's not recommended for production.
-    }
-
-    const token = jwt.sign(
-      {
-        sub: user.id.toString(),
-        name: user.name,
-        email: user.email,
-        roles: user.roles.map((role) => role.name),
-      },
-      jwtSecret ?? 'supersecretjwtkey',
-      { expiresIn: '7d' },
-    );
+    // Cache user data in Redis dengan TTL selamanya (0)
+    const cacheKey = `user:${user.id}`;
+    const userCache = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      phone_number: user.phone_number,
+      roles: user.roles.map((r) => ({ name: r.name })),
+      dosen: user.dosen
+        ? { id: user.dosen.id, nidn: user.dosen.nidn }
+        : null,
+      mahasiswa: user.mahasiswa
+        ? { id: user.mahasiswa.id, nim: user.mahasiswa.nim }
+        : null,
+    };
+    await CacheService.set(cacheKey, userCache, 0); // TTL 0 = selamanya
 
     const { password: _, ...userWithoutPassword } = user;
 
-    return { token, user: userWithoutPassword };
+    // Return userId instead of JWT token
+    return { userId: user.id, user: userWithoutPassword };
   }
 
   async register(dto: RegisterDto): Promise<void> {
@@ -97,8 +96,14 @@ export class AuthService {
 
     const formattedPhoneNumber = formatPhoneNumber(phone_number);
 
-    const existingUser = await this.prisma.user.findFirst({
-      where: { OR: [{ email }, { mahasiswa: { nim } }, { phone_number: formattedPhoneNumber }] },
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { mahasiswa: { nim } },
+          { phone_number: formattedPhoneNumber },
+        ],
+      },
     });
 
     if (existingUser !== null) {
@@ -110,7 +115,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 4);
 
-    const user = await this.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         email,
@@ -131,7 +136,7 @@ export class AuthService {
 
     // Buat dan kirim token verifikasi email
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    await this.prisma.emailVerificationToken.upsert({
+    await prisma.emailVerificationToken.upsert({
       where: { email: user.email },
       update: { token: verificationToken, created_at: new Date() },
       create: { email: user.email, token: verificationToken },
@@ -146,10 +151,9 @@ export class AuthService {
   async verifyEmail(dto: { token: string }): Promise<void> {
     const { token } = dto;
 
-    const verificationToken =
-      await this.prisma.emailVerificationToken.findUnique({
-        where: { token },
-      });
+    const verificationToken = await prisma.emailVerificationToken.findUnique({
+      where: { token },
+    });
 
     if (verificationToken === null) {
       throw new HttpError(
@@ -165,12 +169,12 @@ export class AuthService {
       oneHour
     ) {
       // Hapus token yang sudah expired
-      await this.prisma.emailVerificationToken.delete({ where: { token } });
+      await prisma.emailVerificationToken.delete({ where: { token } });
       throw new HttpError(410, 'Token verifikasi sudah kedaluwarsa.');
     }
 
     // Gunakan transaksi untuk memastikan konsistensi data
-    await this.prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       // 1. Update status verifikasi user
       await tx.user.update({
         where: { email: verificationToken.email },

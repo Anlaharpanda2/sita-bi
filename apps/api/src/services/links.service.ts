@@ -1,4 +1,4 @@
-import { PrismaClient } from '@repo/db';
+// import { PrismaClient } from '@repo/db'; // Unused
 import type { CreateLinkDto, UpdateLinkDto } from '../dto/links.dto';
 import { paginate } from '../utils/pagination.util';
 
@@ -11,7 +11,7 @@ interface Link {
 }
 
 export class LinksService {
-  private prisma: PrismaClient;
+  // private prisma: PrismaClient; // Unused - commented out
   private readonly _links: Link[] = [
     {
       id: 0,
@@ -43,15 +43,16 @@ export class LinksService {
   ];
 
   constructor() {
-    this.prisma = new PrismaClient();
+    // this.prisma = new PrismaClient(); // Unused
   }
 
   create(createLinkDto: CreateLinkDto): unknown {
     // In a real scenario, this would interact with Prisma
-    const newLink = {
+    const newLink: Link = {
       id: this._links.length,
-      description: '',
-      ...createLinkDto,
+      title: createLinkDto.title,
+      url: createLinkDto.url,
+      description: createLinkDto.description || '',
     };
     this._links.push(newLink);
     return newLink;
@@ -74,11 +75,9 @@ export class LinksService {
     if (index > -1) {
       this._links[index] = {
         id: id,
-        title: '',
-        url: '',
-        description: '',
-        ...this._links[index],
-        ...updateLinkDto,
+        title: updateLinkDto.title || this._links[index]?.title || '',
+        url: updateLinkDto.url || this._links[index]?.url || '',
+        description: updateLinkDto.description || this._links[index]?.description || '',
       };
       return this._links[index];
     }

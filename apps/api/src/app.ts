@@ -46,7 +46,7 @@ const uploadsPath = getUploadPath();
 app.use('/uploads', express.static(uploadsPath));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),

@@ -32,13 +32,25 @@ export default function EditPengumumanPage() {
     const fetchAnnouncement = async () => {
       try {
         setLoading(true);
-        const response = await request<{ data: any }>(`/pengumuman/${id}`);
+        interface Pengumuman {
+          judul: string;
+          isi: string;
+          audiens: string;
+        }
+
+        // ...
+
+        const response = await request<{ data: Pengumuman }>(
+          `/pengumuman/${id}`,
+        );
         const data = response.data;
         setJudul(data.judul);
         setIsi(data.isi);
         setAudiens(data.audiens);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch announcement');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Failed to fetch announcement');
+        }
       } finally {
         setLoading(false);
       }
@@ -58,8 +70,10 @@ export default function EditPengumumanPage() {
       });
       alert('Pengumuman berhasil diperbarui!');
       router.push('/dashboard/admin/pengumuman');
-    } catch (err: any) {
-      setError(err.message || 'Gagal memperbarui pengumuman');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Gagal memperbarui pengumuman');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -74,8 +88,10 @@ export default function EditPengumumanPage() {
       await request(`/pengumuman/${id}`, { method: 'DELETE' });
       alert('Pengumuman berhasil dihapus.');
       router.push('/dashboard/admin/pengumuman');
-    } catch (err: any) {
-      setError(err.message || 'Gagal menghapus pengumuman');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Gagal menghapus pengumuman');
+      }
     }
   };
 
@@ -108,12 +124,12 @@ export default function EditPengumumanPage() {
         </Link>
       </div>
 
-      {error && (
+      {error ? (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6">
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
-      )}
+      ) : null}
 
       <form
         onSubmit={handleSubmit}

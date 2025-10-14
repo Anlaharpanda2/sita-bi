@@ -22,26 +22,25 @@ export default function LoginPage() {
     setError('');
 
     try {
-      console.log('Attempting login with:', { identifier, password: '***' });
-
-      // Use the request utility for proper error handling
+      // The API now returns { status: 'sukses', data: { userId, user } }
       const response = await request<{
         status: string;
-        data: { token: string; user: any };
+        data: { userId: number; user: { id: number; name: string; email: string; roles: Array<{ name: string }> } };
       }>('/auth/login', {
         method: 'POST',
         body: { identifier, password },
       });
 
-      console.log('Login response:', response);
-
       if (response.status !== 'sukses') {
         throw new Error('Login failed');
       }
 
-      const { token, user } = response.data;
-      login(token, user);
+      const user = response.data.user;
 
+      // Store user data in localStorage via AuthContext
+      login(user);
+
+      // Redirect based on role
       const userRole = user.roles[0]?.name;
 
       if (userRole === 'dosen') {

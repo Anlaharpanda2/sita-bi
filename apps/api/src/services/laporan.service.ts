@@ -15,11 +15,7 @@ export class LaporanService {
       _count: { prodi: true },
     });
 
-    const mahasiswaPerAngkatan = await this.prisma.mahasiswa.groupBy({
-      by: ['angkatan'],
-      _count: { angkatan: true },
-      orderBy: { angkatan: 'asc' },
-    });
+    // mahasiswaPerAngkatan dihapus karena field angkatan sudah tidak dipakai
 
     const sidangStatistik = await this.prisma.sidang.groupBy({
       by: ['jenis_sidang', 'status_hasil'],
@@ -68,7 +64,7 @@ export class LaporanService {
 
     return {
       mahasiswaPerProdi,
-      mahasiswaPerAngkatan,
+      mahasiswaPerAngkatan: [], // Empty array karena angkatan sudah tidak dipakai
       sidangStatistik,
       bimbinganPerDosen,
       dokumenStatistik,

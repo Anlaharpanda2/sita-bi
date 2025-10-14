@@ -22,15 +22,15 @@ export interface CustomUser {
   id: number;
   email: string;
   role: Role;
-  dosen?: DosenProfile;
-  mahasiswa?: MahasiswaProfile;
+  dosen?: DosenProfile | null;
+  mahasiswa?: MahasiswaProfile | null;
 }
 
 // This block extends the global Express namespace
 declare global {
   namespace Express {
     // Augment the User interface to include our custom properties
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-types
     interface User extends CustomUser {}
   }
 }

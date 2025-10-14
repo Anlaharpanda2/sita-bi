@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { UsersService } from '../services/users.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -16,7 +16,7 @@ const router: Router = Router();
 const usersService = new UsersService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 router.post(
   '/dosen',
@@ -43,9 +43,9 @@ router.get(
   // authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const dosenList = await usersService.findAllDosen(page, limit);
     res.status(200).json({ status: 'sukses', data: dosenList });
   }),
@@ -56,9 +56,9 @@ router.get(
   // authorizeRoles([Role.dosen]),
   asyncHandler(async (req, res) => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const mahasiswaList = await usersService.findAllMahasiswaTanpaPembimbing(page, limit);
     res.status(200).json({ status: 'sukses', data: mahasiswaList });
   }),
@@ -69,9 +69,9 @@ router.get(
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res) => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const mahasiswaList = await usersService.findAllMahasiswa(page, limit);
     res.status(200).json({ status: 'sukses', data: mahasiswaList });
   }),

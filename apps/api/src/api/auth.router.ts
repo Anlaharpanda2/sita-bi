@@ -7,6 +7,8 @@ import {
   registerSchema,
   verifyEmailSchema,
 } from '../dto/auth.dto';
+import { authMiddleware } from '../middlewares/auth.middleware';
+import { CacheService } from '../config/cache';
 
 const router: Router = Router();
 const authService = new AuthService();
@@ -40,6 +42,21 @@ router.post(
     res.status(200).json({
       status: 'sukses',
       message: 'Email berhasil diverifikasi. Silakan login.',
+    });
+  }),
+);
+
+// Logout endpoint - clear user cache
+router.post(
+  '/logout',
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    if (req.user) {
+      await CacheService.del(`user:${req.user.id}`);
+    }
+    res.status(200).json({
+      status: 'sukses',
+      message: 'Logout berhasil',
     });
   }),
 );

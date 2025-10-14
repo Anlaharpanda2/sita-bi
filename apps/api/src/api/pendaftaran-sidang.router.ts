@@ -2,7 +2,7 @@ import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PrismaClient } from '@repo/db';
 import { PendaftaranSidangService } from '../services/pendaftaran-sidang.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -13,7 +13,7 @@ const router: Router = Router();
 const pendaftaranSidangService = new PendaftaranSidangService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 router.post(
   '/',
@@ -33,15 +33,33 @@ router.post(
         include: { tugasAkhir: true }
       });
       
-      mahasiswa ??= await prisma.mahasiswa.create({
-        data: {
-          user_id: testUser.id,
-          nim: '12345678',
-          prodi: 'D4',
-          kelas: 'A',
-        },
-        include: { tugasAkhir: true }
-      });
+      if (!mahasiswa) {
+        // Create test user first if needed
+        let testUser = await prisma.user.findFirst({
+          where: { email: 'test@example.com' }
+        });
+        
+        if (!testUser) {
+          testUser = await prisma.user.create({
+            data: {
+              name: 'Test User',
+              email: 'test@example.com',
+              password: 'hashed_password',
+              phone_number: '+6281234567890',
+            }
+          });
+        }
+        
+        mahasiswa = await prisma.mahasiswa.create({
+          data: {
+            user_id: testUser.id,
+            nim: '12345678',
+            prodi: 'D4',
+            kelas: 'A',
+          },
+          include: { tugasAkhir: true }
+        });
+      }
       
       // Check if approved tugas akhir exists, create if not
       let tugasAkhir = await prisma.tugasAkhir.findFirst({

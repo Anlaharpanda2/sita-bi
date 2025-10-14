@@ -8,9 +8,9 @@ export interface UploadConfig {
 }
 
 export const uploadConfig: UploadConfig = {
-  uploadsDir: process.env.UPLOADS_DIR ?? 'uploads',
-  maxFileSize: parseInt(process.env.MAX_FILE_SIZE ?? '5242880', 10), // 5MB default
-  allowedFileTypes: process.env.ALLOWED_FILE_TYPES?.split(',') ?? [
+  uploadsDir: process.env['UPLOADS_DIR'] ?? 'uploads',
+  maxFileSize: parseInt(process.env['MAX_FILE_SIZE'] ?? '5242880', 10), // 5MB default
+  allowedFileTypes: process.env['ALLOWED_FILE_TYPES']?.split(',') ?? [
     'jpeg',
     'jpg',
     'png',

@@ -1,20 +1,9 @@
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import request from '@/lib/api';
 import { useAuth } from '../../../../context/AuthContext';
-import {
-  Book,
-  Plus,
-  Send,
-  CheckCircle,
-  Clock,
-  User,
-  Mail,
-  Shield,
-  X,
-  ThumbsUp,
-} from 'lucide-react';
+import { Send } from 'lucide-react';
 
 // --- Interfaces ---
 interface TugasAkhir {

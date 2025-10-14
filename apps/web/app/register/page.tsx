@@ -32,7 +32,7 @@ interface InputFieldProps {
 }
 
 const InputField = ({
-  id,
+  id: _id,
   name,
   type,
   placeholder,

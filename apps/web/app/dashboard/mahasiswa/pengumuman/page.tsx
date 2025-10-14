@@ -74,17 +74,17 @@ const PengumumanPage = () => {
       {loading && <p className="text-center text-gray-500">Memuat...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
 
-      {!loading && !error && (
+      {!loading && !error && pengumuman.length > 0 && (
         <div className="space-y-6">
-          {pengumuman.length > 0 ? (
-            pengumuman.map((item) => (
-              <PengumumanCard key={item.id} pengumuman={item} />
-            ))
-          ) : (
-            <div className="text-center py-12 px-6 bg-white rounded-lg shadow-md">
-              <p className="text-gray-500">Tidak ada pengumuman saat ini.</p>
-            </div>
-          )}
+          {pengumuman.map((item) => (
+            <PengumumanCard key={item.id} pengumuman={item} />
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && pengumuman.length === 0 && (
+        <div className="text-center py-12 px-6 bg-white rounded-lg shadow-md">
+          <p className="text-gray-500">Tidak ada pengumuman saat ini.</p>
         </div>
       )}
     </div>

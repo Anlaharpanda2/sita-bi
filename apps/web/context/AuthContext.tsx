@@ -7,8 +7,8 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import request from '../lib/api'; // Import the request function
 
+// User interface remains the same
 interface User {
   id: string;
   name: string;
@@ -23,10 +23,10 @@ interface User {
   };
 }
 
+// AuthContextType is simplified: no token
 interface AuthContextType {
-  token: string | null;
   user: User | null;
-  login: (token: string, user: User) => void;
+  login: (user: User) => void; // Login function only takes user object
   logout: () => void;
   loading: boolean;
 }
@@ -34,60 +34,47 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  // No more 'token' state
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const verifyUser = async () => {
-      const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        try {
-          // Set token for API requests
-          setToken(storedToken);
-          // Fetch fresh user profile
-          const profileResponse = await request<{ data: User }>('/profile');
-          const freshUser = profileResponse.data;
-
-          // Update user state and localStorage
-          setUser(freshUser);
-          localStorage.setItem('user', JSON.stringify(freshUser));
-        } catch (error) {
-          console.error(
-            'Failed to verify token or fetch profile, logging out.',
-            error,
-          );
-          // Token is invalid or expired, clear auth state
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setToken(null);
-          setUser(null);
+    // This effect now only runs once on mount to load user from localStorage
+    const loadUserFromStorage = () => {
+      setLoading(true);
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
         }
+      } catch (error) {
+        console.error('Failed to parse user from localStorage', error);
+        // Clear potentially corrupted data
+        localStorage.removeItem('user');
       }
       setLoading(false);
     };
 
-    verifyUser();
+    loadUserFromStorage();
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    setToken(newToken);
+  // Login function is simplified
+  const login = (newUser: User) => {
     setUser(newUser);
-    localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
   };
 
+  // Logout function is simplified
   const logout = () => {
-    setToken(null);
     setUser(null);
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
-    // Optionally, redirect to login page
+    // Redirect to login page
     window.location.href = '/login';
   };
 
+  // The provider value is simplified, no token
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

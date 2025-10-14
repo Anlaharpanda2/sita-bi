@@ -24,14 +24,6 @@ interface TugasAkhir {
   id: number;
 }
 
-interface Nilai {
-  id: number;
-  aspek: string;
-  skor: number;
-  komentar: string;
-  dosen: { user: { name: string } };
-}
-
 const fileInputs = [
   {
     name: 'file_ta',
@@ -76,6 +68,8 @@ function RegistrationForm({
     const { name, files: inputFiles } = e.target;
     if (inputFiles && inputFiles.length > 0) {
       const file = inputFiles[0];
+      if (!file) return;
+
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError(`File ${file.name} is too large. Maximum size is 5MB.`);
@@ -121,20 +115,17 @@ function RegistrationForm({
     }
 
     try {
-      console.log('Submitting form data...', Array.from(formData.entries()));
-
       // Use test upload endpoint instead of the authenticated one
-      const response = await request('/upload-test/sidang', {
+      await request('/upload-test/sidang', {
         method: 'POST',
         body: formData,
       });
 
-      console.log('Registration successful:', response);
       alert('Registration successful! Please wait for approval.');
       onRegistrationSuccess();
-    } catch (err: any) {
-      console.error('Registration error:', err);
-      setError(err.message || 'Failed to submit registration');
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Failed to submit registration');
     } finally {
       setIsSubmitting(false);
     }

@@ -9,7 +9,7 @@ const router: Router = Router();
 const prisma = new PrismaClient();
 
 // Debug endpoint untuk check database dan file system
-router.get('/check', asyncHandler(async (req: Request, res: Response): Promise<void> => {
+router.get('/check', asyncHandler(async (_req: Request, res: Response): Promise<void> => {
   const checks = {
     timestamp: new Date().toISOString(),
     monorepoRoot: getMonorepoRoot(),
@@ -23,9 +23,9 @@ router.get('/check', asyncHandler(async (req: Request, res: Response): Promise<v
       tugasAkhirCount: 0,
     },
     environment: {
-      NODE_ENV: process.env.NODE_ENV,
-      UPLOADS_DIR: process.env.UPLOADS_DIR,
-      MAX_FILE_SIZE: process.env.MAX_FILE_SIZE,
+      NODE_ENV: process.env['NODE_ENV'],
+      UPLOADS_DIR: process.env['UPLOADS_DIR'],
+      MAX_FILE_SIZE: process.env['MAX_FILE_SIZE'],
     }
   };
 
@@ -82,7 +82,7 @@ router.get('/check', asyncHandler(async (req: Request, res: Response): Promise<v
 }));
 
 // Create test data endpoint
-router.post('/create-test-data', asyncHandler(async (req: Request, res: Response): Promise<void> => {
+router.post('/create-test-data', asyncHandler(async (_req: Request, res: Response): Promise<void> => {
   try {
     // Create test user and mahasiswa if they don't exist
     let testUser = await prisma.user.findUnique({

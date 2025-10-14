@@ -25,15 +25,33 @@ router.post(
         include: { tugasAkhir: true }
       });
       
-      mahasiswa ??= await prisma.mahasiswa.create({
-        data: {
-          user_id: testUser.id,
-          nim: '12345678',
-          prodi: 'D4',
-          kelas: 'A',
-        },
-        include: { tugasAkhir: true }
-      });
+      if (!mahasiswa) {
+        // Create test user first if needed
+        let testUser = await prisma.user.findFirst({
+          where: { email: 'test-upload@example.com' }
+        });
+        
+        if (!testUser) {
+          testUser = await prisma.user.create({
+            data: {
+              name: 'Test Upload User',
+              email: 'test-upload@example.com',
+              password: 'hashed_password',
+              phone_number: '+6281234567890',
+            }
+          });
+        }
+        
+        mahasiswa = await prisma.mahasiswa.create({
+          data: {
+            user_id: testUser.id,
+            nim: '12345678',
+            prodi: 'D4',
+            kelas: 'A',
+          },
+          include: { tugasAkhir: true }
+        });
+      }
       
       // Check if approved tugas akhir exists, create if not
       let tugasAkhir = await prisma.tugasAkhir.findFirst({

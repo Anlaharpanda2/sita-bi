@@ -50,9 +50,11 @@ export default function PengajuanBimbinganPage() {
         '/users/mahasiswa-tanpa-pembimbing',
       );
       setAvailableMahasiswa(mahasiswaResponse.data.data || []);
-    } catch (err: any) {
-      console.error('Fetch error:', err);
-      setError(err.message || 'Failed to fetch data');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Fetch error:', err);
+        setError(err.message || 'Failed to fetch data');
+      }
     } finally {
       setLoading(false);
     }
@@ -73,10 +75,10 @@ export default function PengajuanBimbinganPage() {
         method: 'POST',
         body: { mahasiswaId },
       });
-      alert('Offer sent successfully!');
-      fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 
@@ -87,21 +89,23 @@ export default function PengajuanBimbinganPage() {
       return;
     try {
       await request(`/pengajuan/${pengajuanId}/terima`, { method: 'POST' });
-      alert('Student accepted successfully!');
-      fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 
-  const handleReject = async (pengajuanId: number) => {
+  const handleReject = async (_pengajuanId: number) => {
     if (!confirm('Are you sure you want to reject this student?')) return;
     try {
-      await request(`/pengajuan/${pengajuanId}/tolak`, { method: 'POST' });
+      await request(`/pengajuan/${_pengajuanId}/tolak`, { method: 'POST' });
       alert('Student rejected.');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 
@@ -111,8 +115,10 @@ export default function PengajuanBimbinganPage() {
       await request(`/pengajuan/${pengajuanId}/batalkan`, { method: 'POST' });
       alert('Offer cancelled.');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 

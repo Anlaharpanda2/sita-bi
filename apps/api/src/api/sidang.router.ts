@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { SidangService } from '../services/sidang.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { Role } from '@repo/types';
 
 const router: Router = Router();
 const sidangService = new SidangService();
 
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 router.get(
   '/unscheduled',

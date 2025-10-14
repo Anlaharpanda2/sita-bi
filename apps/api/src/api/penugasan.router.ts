@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PenugasanService } from '../services/penugasan.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -11,17 +11,17 @@ const router: Router = Router();
 const penugasanService = new PenugasanService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-// router.use(jwtAuthMiddleware);
+// router.use(authMiddleware);
 
 router.get(
   '/unassigned',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin, Role.kajur]),
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const unassignedTugasAkhir =
       await penugasanService.findUnassignedTugasAkhir(page, limit);
     res.status(200).json({ status: 'sukses', data: unassignedTugasAkhir });
@@ -30,7 +30,7 @@ router.get(
 
 router.post(
   '/:tugasAkhirId/assign',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin, Role.kajur]),
   validate(assignPembimbingSchema),
   asyncHandler(async (req: Request, res: Response): Promise<void> => {

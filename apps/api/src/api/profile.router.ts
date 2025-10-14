@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { ProfileService } from '../services/profile.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { updateProfileSchema } from '../dto/profile.dto';
 
@@ -9,7 +9,7 @@ const router: Router = Router();
 const profileService = new ProfileService();
 
 // Apply JWT Auth globally for this router
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 router.get(
   '/',

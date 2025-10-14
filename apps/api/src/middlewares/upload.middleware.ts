@@ -5,7 +5,7 @@ import { uploadConfig, getUploadPath, generateFileName } from '../utils/upload.c
 
 // Konfigurasi Local Storage
 const localStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (_req, _file, cb) {
     try {
       // Buat subdirectory berdasarkan jenis file
       const subDir = getUploadPath('sidang-files');
@@ -14,7 +14,7 @@ const localStorage = multer.diskStorage({
       cb(error as Error, '');
     }
   },
-  filename: function (req, file, cb) {
+  filename: function (_req, file, cb) {
     try {
       const fileName = generateFileName(file.originalname, file.fieldname);
       cb(null, fileName);
@@ -27,7 +27,7 @@ const localStorage = multer.diskStorage({
 const uploadLocal = multer({
   storage: localStorage,
   limits: { fileSize: uploadConfig.maxFileSize },
-  fileFilter: function (req, file, cb) {
+  fileFilter: function (_req, file, cb) {
     
     // Filter file types
     const allowedTypes = new RegExp(uploadConfig.allowedFileTypes.join('|'), 'i');
@@ -44,7 +44,7 @@ const uploadLocal = multer({
   },
 });
 
-export const uploadSidangFiles: RequestHandler = (req, res, next) => {
+export const uploadSidangFiles: RequestHandler = (_req, res, next) => {
   
   const multerMiddleware = uploadLocal.fields([
     { name: 'file_ta', maxCount: 1 },
@@ -54,7 +54,7 @@ export const uploadSidangFiles: RequestHandler = (req, res, next) => {
     { name: 'file_bebas_jurusan', maxCount: 1 },
   ]);
 
-  multerMiddleware(req, res, (err: unknown) => {
+  multerMiddleware(_req, res, (err: unknown) => {
     if (err) {
       next(err); return;
     }

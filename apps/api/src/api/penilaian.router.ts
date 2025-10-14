@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PenilaianService } from '../services/penilaian.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -11,7 +11,7 @@ const router: Router = Router();
 const penilaianService = new PenilaianService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 router.post(
   '/',

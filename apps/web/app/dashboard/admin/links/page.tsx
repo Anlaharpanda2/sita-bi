@@ -49,8 +49,10 @@ const LinkModal = ({
       });
       alert(`Link successfully ${isEditing ? 'updated' : 'created'}!`);
       onSave();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -143,8 +145,10 @@ export default function KelolaTautanPage() {
       setLoading(true);
       const response = await request<{ data: { data: Link[] } }>('/links');
       setLinks(response.data.data || []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch links');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to fetch links');
+      }
     } finally {
       setLoading(false);
     }
@@ -160,8 +164,10 @@ export default function KelolaTautanPage() {
       await request(`/links/${id}`, { method: 'DELETE' });
       alert('Link deleted successfully');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      }
     }
   };
 
@@ -250,13 +256,13 @@ export default function KelolaTautanPage() {
         </div>
       )}
 
-      {isModalOpen && (
+      {isModalOpen ? (
         <LinkModal
           link={editingLink}
           onClose={handleCloseModal}
           onSave={handleSave}
         />
-      )}
+      ) : null}
     </div>
   );
 }

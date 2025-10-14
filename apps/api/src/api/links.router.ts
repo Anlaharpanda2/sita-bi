@@ -3,7 +3,7 @@ import { LinksService } from '../services/links.service';
 import { validate } from '../middlewares/validation.middleware';
 import { createLinkSchema, updateLinkSchema } from '../dto/links.dto';
 import asyncHandler from 'express-async-handler';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { Role } from '@repo/types';
 
@@ -12,7 +12,7 @@ const linksService = new LinksService();
 
 router.post(
   '/',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   validate(createLinkSchema),
   asyncHandler(async (req, res): Promise<void> => {
@@ -25,9 +25,9 @@ router.get(
   '/',
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const links = await linksService.findAll(page, limit);
     res.status(200).json({ status: 'sukses', data: links });
   }),
@@ -54,7 +54,7 @@ router.get(
 
 router.patch(
   '/:id',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   validate(updateLinkSchema),
   asyncHandler(async (req, res): Promise<void> => {
@@ -76,7 +76,7 @@ router.patch(
 
 router.delete(
   '/:id',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;

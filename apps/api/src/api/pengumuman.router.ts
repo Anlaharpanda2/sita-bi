@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PengumumanService } from '../services/pengumuman.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -16,7 +16,7 @@ const pengumumanService = new PengumumanService();
 // --- Admin Routes (Protected) ---
 router.post(
   '/',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   validate(createPengumumanSchema),
   asyncHandler(async (req, res): Promise<void> => {
@@ -34,13 +34,13 @@ router.post(
 
 router.get(
   '/all',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const pengumumans = await pengumumanService.findAll(page, limit);
     res.status(200).json({ status: 'sukses', data: pengumumans });
   }),
@@ -48,7 +48,7 @@ router.get(
 
 router.patch(
   '/:id',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   validate(updatePengumumanSchema),
   asyncHandler(async (req, res): Promise<void> => {
@@ -69,7 +69,7 @@ router.patch(
 
 router.delete(
   '/:id',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res): Promise<void> => {
     const { id } = req.params;
@@ -91,9 +91,9 @@ router.get(
   '/public',
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const publicPengumumans = await pengumumanService.findPublic(page, limit);
     res.status(200).json({ status: 'sukses', data: publicPengumumans });
   }),
@@ -101,13 +101,13 @@ router.get(
 
 router.get(
   '/mahasiswa',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const mahasiswaPengumumans = await pengumumanService.findForMahasiswa(
       page,
       limit,
@@ -118,13 +118,13 @@ router.get(
 
 router.get(
   '/dosen',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.dosen]),
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const dosenPengumumans = await pengumumanService.findForDosen(page, limit);
     res.status(200).json({ status: 'sukses', data: dosenPengumumans });
   }),

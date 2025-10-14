@@ -13,11 +13,11 @@ interface LocalFile extends Express.Multer.File {
 
 // --- Konfigurasi Local Storage ---
 const localStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (_req, _file, cb) {
     const uploadPath = getUploadPath('test-uploads');
     cb(null, uploadPath);
   },
-  filename: function (req, file, cb) {
+  filename: function (_req, file, cb) {
     const fileName = generateFileName(file.originalname, 'test-upload');
     cb(null, fileName);
   },
@@ -26,7 +26,7 @@ const localStorage = multer.diskStorage({
 const testUpload = multer({
   storage: localStorage,
   limits: { fileSize: uploadConfig.maxFileSize },
-  fileFilter: function (req, file, cb) {
+  fileFilter: function (_req, file, cb) {
     // Filter file types
     const allowedTypes = new RegExp(uploadConfig.allowedFileTypes.join('|'), 'i');
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase().slice(1));
@@ -45,7 +45,7 @@ const testUpload = multer({
 router.post(
   '/',
   testUpload.single('file'),
-  asyncHandler((req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     if (req.file == null) {
       res
         .status(400)

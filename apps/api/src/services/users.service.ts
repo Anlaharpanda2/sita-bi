@@ -1,3 +1,4 @@
+import { CacheService } from '../config/cache';
 import type { User } from '@repo/db';
 import { PrismaClient, Prisma } from '@repo/db';
 import * as bcrypt from 'bcrypt';
@@ -42,6 +43,7 @@ export class UsersService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
+        phone_number: dto.phone_number || '', // Default empty string jika tidak ada
         roles: {
           connect: { name: Role.mahasiswa },
         },
@@ -49,7 +51,6 @@ export class UsersService {
           create: {
             nim: dto.nim,
             prodi: dto.prodi,
-            angkatan: dto.angkatan,
             kelas: dto.kelas,
           },
         },
@@ -81,6 +82,7 @@ export class UsersService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
+        phone_number: dto.phone_number || '', // Default empty string jika tidak ada
         roles: {
           connect: rolesToConnect,
         },
@@ -133,7 +135,7 @@ export class UsersService {
 
     if (dto.nim != null) mahasiswaData.nim = dto.nim;
     if (dto.prodi != null) mahasiswaData.prodi = dto.prodi;
-    if (dto.angkatan != null) mahasiswaData.angkatan = dto.angkatan;
+    // angkatan field sudah tidak dipakai
     if (dto.kelas != null) mahasiswaData.kelas = dto.kelas;
 
     if (Object.keys(mahasiswaData).length > 0) {
@@ -166,7 +168,7 @@ export class UsersService {
             select: {
               nim: true,
               prodi: true,
-              angkatan: true,
+              // angkatan field sudah tidak dipakai
               kelas: true,
             },
           },
@@ -201,7 +203,6 @@ export class UsersService {
       user: { id: number; name: string; email: string };
       nim: string;
       prodi: string;
-      angkatan: string;
       kelas: string;
     }[];
     page: number;
@@ -215,13 +216,7 @@ export class UsersService {
     const mahasiswaQuery = this.prisma.mahasiswa.findMany({
       where: {
         tugasAkhir: {
-          none: {
-            peranDosenTa: {
-              some: {
-                peran: { in: ['pembimbing1', 'pembimbing2'] }
-              }
-            }
-          }
+          is: null
         }
       },
       include: {
@@ -241,13 +236,7 @@ export class UsersService {
     const countQuery = this.prisma.mahasiswa.count({
       where: {
         tugasAkhir: {
-          none: {
-            peranDosenTa: {
-              some: {
-                peran: { in: ['pembimbing1', 'pembimbing2'] }
-              }
-            }
-          }
+          is: null
         }
       },
     });
@@ -257,7 +246,7 @@ export class UsersService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: mahasiswa,
+      data: mahasiswa as any, // Type assertion karena Prisma return type include semua field
       page,
       limit,
       total,
@@ -266,45 +255,50 @@ export class UsersService {
   }
 
   async findAllDosen(page = 1, limit = 50): Promise<unknown> {
-    const skip = (page - 1) * limit;
-    const take = limit;
+    const cacheKey = `dosen_list:page:${page}:limit:${limit}`;
+    
+    return CacheService.getOrSet(cacheKey, async () => {
+      console.log(`[DB] Fetching all dosen from SQLite (Cache Miss)`);
+      const skip = (page - 1) * limit;
+      const take = limit;
 
-    const [users, total] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        skip,
-        take,
-        where: { dosen: { isNot: null } },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          dosen: {
-            select: {
-              nidn: true,
+      const [users, total] = await this.prisma.$transaction([
+        this.prisma.user.findMany({
+          skip,
+          take,
+          where: { dosen: { isNot: null } },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            dosen: {
+              select: {
+                nidn: true,
+              },
+            },
+            roles: {
+              select: {
+                name: true,
+              },
             },
           },
-          roles: {
-            select: {
-              name: true,
-            },
+          orderBy: {
+            id: 'asc',
           },
-        },
-        orderBy: {
-          id: 'asc',
-        },
-      }),
-      this.prisma.user.count({ where: { dosen: { isNot: null } } }),
-    ]);
+        }),
+        this.prisma.user.count({ where: { dosen: { isNot: null } } }),
+      ]);
 
-    const data = users; // Return the nested structure directly
+      const data = users; // Return the nested structure directly
 
-    return {
-      data: data,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+      return {
+        data: data,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
+    });
   }
 
   async deleteUser(id: number): Promise<User> {

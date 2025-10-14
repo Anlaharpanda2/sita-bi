@@ -123,6 +123,9 @@ export class BimbinganService {
       },
     });
 
+    if (!bimbingan) {
+      throw new Error('Bimbingan session not found');
+    }
 
     const isMahasiswa = bimbingan.tugasAkhir.mahasiswa.user.id === authorId;
     const peranDosenList = bimbingan.tugasAkhir.peranDosenTa as {

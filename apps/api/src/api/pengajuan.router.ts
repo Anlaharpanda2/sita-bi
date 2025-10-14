@@ -1,33 +1,37 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { PengajuanService } from '../services/pengajuan.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router: Router = Router();
 const pengajuanService = new PengajuanService();
 
 // All routes in this router are protected
-router.use(asyncHandler(jwtAuthMiddleware));
+router.use(asyncHandler(authMiddleware));
 
 // Endpoint untuk mahasiswa mengajukan ke dosen
 router.post(
   '/mahasiswa',
   asyncHandler(async (req, res) => {
     if (typeof req.user?.mahasiswa?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Akses ditolak: Anda bukan mahasiswa' 
       });
+
+      return;
     }
 
     const mahasiswaId = req.user.mahasiswa.id;
     const { dosenId } = req.body;
 
     if (typeof dosenId !== 'number' && typeof dosenId !== 'string') {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'gagal',
         message: 'ID dosen diperlukan'
       });
+
+      return;
     }
 
     try {
@@ -47,10 +51,12 @@ router.get(
   '/mahasiswa',
   asyncHandler(async (req, res) => {
     if (typeof req.user?.mahasiswa?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Akses ditolak: Anda bukan mahasiswa' 
       });
+
+      return;
     }
 
     const mahasiswaId = req.user.mahasiswa.id;
@@ -72,20 +78,24 @@ router.post(
   '/dosen',
   asyncHandler(async (req, res) => {
     if (typeof req.user?.dosen?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Akses ditolak: Anda bukan dosen' 
       });
+
+      return;
     }
 
     const dosenId = req.user.dosen.id;
     const { mahasiswaId } = req.body;
 
     if (typeof mahasiswaId !== 'number' && typeof mahasiswaId !== 'string') {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'gagal',
         message: 'ID mahasiswa diperlukan'
       });
+
+      return;
     }
 
     try {
@@ -105,10 +115,12 @@ router.get(
   '/dosen',
   asyncHandler(async (req, res) => {
     if (typeof req.user?.dosen?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Akses ditolak: Anda bukan dosen' 
       });
+
+      return;
     }
 
     const dosenId = req.user.dosen.id;
@@ -131,17 +143,21 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (typeof id !== 'string' || id.length === 0) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         status: 'gagal', 
         message: 'ID pengajuan diperlukan' 
       });
+
+      return;
     }
 
     if (typeof req.user?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Unauthorized' 
       });
+
+      return;
     }
 
     try {
@@ -162,17 +178,21 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (typeof id !== 'string' || id.length === 0) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         status: 'gagal', 
         message: 'ID pengajuan diperlukan' 
       });
+
+      return;
     }
 
     if (typeof req.user?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Unauthorized' 
       });
+
+      return;
     }
 
     try {
@@ -193,17 +213,21 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (typeof id !== 'string' || id.length === 0) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         status: 'gagal', 
         message: 'ID pengajuan diperlukan' 
       });
+
+      return;
     }
 
     if (typeof req.user?.id !== 'number') {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         status: 'gagal', 
         message: 'Unauthorized' 
       });
+
+      return;
     }
 
     try {

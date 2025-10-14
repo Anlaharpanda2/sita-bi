@@ -5,7 +5,7 @@ import { pipeline } from '@xenova/transformers';
 
 // Helper function to compute cosine similarity
 function cosineSimilarity(v1: number[], v2: number[]): number {
-  const dotProduct = v1.reduce((sum, a, i) => sum + a * v2[i], 0);
+  const dotProduct = v1.reduce((sum, a, i) => sum + a * (v2[i] ?? 0), 0);
   const magnitude1 = Math.sqrt(v1.reduce((sum, a) => sum + a * a, 0));
   const magnitude2 = Math.sqrt(v2.reduce((sum, a) => sum + a * a, 0));
   if (magnitude1 === 0 || magnitude2 === 0) {
@@ -15,12 +15,15 @@ function cosineSimilarity(v1: number[], v2: number[]): number {
 }
 
 const SimilarityPipeline = {
-  task: 'feature-extraction',
+  task: 'feature-extraction' as const,
   model: 'Xenova/all-MiniLM-L6-v2',
-  instance: null as Promise<Pipeline> | null,
+  instance: null as Pipeline | null,
 
   async getInstance(progress_callback?: () => void): Promise<Pipeline> {
-    this.instance ??= pipeline(this.task, this.model, { progress_callback });
+    if (!this.instance) {
+      const options = progress_callback ? { progress_callback } : {};
+      this.instance = await pipeline(this.task, this.model, options) as Pipeline;
+    }
     return this.instance;
   },
 };
@@ -43,20 +46,23 @@ export async function calculateSimilarities(newTitle: string, existingTitles: { 
   });
 
   // Extract the embedding for the new title (it's the first one)
-  const newTitleEmbedding = Array.from(embeddings[0].data);
+  const newTitleEmbedding = Array.from(embeddings[0]?.data ?? []) as number[];
 
   const results = [];
 
   // Compare the new title with all existing titles
   for (let i = 0; i < existingTitles.length; i++) {
-    const existingTitleEmbedding = Array.from(embeddings[i + 1].data);
+    const existingTitleEmbedding = Array.from(embeddings[i + 1]?.data ?? []) as number[];
     const similarity = cosineSimilarity(newTitleEmbedding, existingTitleEmbedding);
 
-    results.push({
-      id: existingTitles[i].id,
-      judul: existingTitles[i].judul,
-      similarity: Math.round(similarity * 100),
-    });
+    const title = existingTitles[i];
+    if (title) {
+      results.push({
+        id: title.id,
+        judul: title.judul,
+        similarity: Math.round(similarity * 100),
+      });
+    }
   }
 
   // Sort by similarity and return

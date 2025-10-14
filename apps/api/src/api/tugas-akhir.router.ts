@@ -1,25 +1,26 @@
 import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { TugasAkhirService } from '../services/tugas-akhir.service';
-import { jwtAuthMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
 import {
   createTugasAkhirSchema,
-  rejectTugasAkhirSchema,
 } from '../dto/tugas-akhir.dto';
-import { tugasAkhirGuard } from '../middlewares/tugas-akhir.middleware';
+// NOTE: rejectTugasAkhirSchema dan tugasAkhirGuard di-comment karena method terkait belum diimplementasi
+// import { rejectTugasAkhirSchema } from '../dto/tugas-akhir.dto';
+// import { tugasAkhirGuard } from '../middlewares/tugas-akhir.middleware';
 
 const router: Router = Router();
 const tugasAkhirService = new TugasAkhirService();
 
 // Apply JWT Auth and Roles Guard globally for this router
-// router.use(jwtAuthMiddleware);
+// router.use(authMiddleware);
 
 router.post(
   '/check-similarity',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   validate(createTugasAkhirSchema),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
@@ -27,7 +28,7 @@ router.post(
     const { judul } = req.body;
     const results = await tugasAkhirService.checkSimilarity(judul);
 
-    const isBlocked = results.some(res => res.similarity >= SIMILARITY_BLOCK_THRESHOLD);
+    const isBlocked = results.some(result => result.similarity >= SIMILARITY_BLOCK_THRESHOLD);
 
     response.status(200).json({ 
       status: 'sukses', 
@@ -41,7 +42,7 @@ router.post(
 
 router.post(
   '/',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   validate(createTugasAkhirSchema),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
@@ -58,9 +59,11 @@ router.post(
   }),
 );
 
+// TODO: Implement findAllForValidation method in TugasAkhirService
+/*
 router.get(
   '/validasi',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
     if (req.user == null) {
@@ -68,9 +71,9 @@ router.get(
       return;
     }
     const page =
-      req.query.page != null ? parseInt(req.query.page as string) : undefined;
+      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
     const limit =
-      req.query.limit != null ? parseInt(req.query.limit as string) : undefined;
+      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
     const tugasAkhirList = await tugasAkhirService.findAllForValidation(
       req.user,
       page,
@@ -79,10 +82,13 @@ router.get(
     response.status(200).json({ status: 'sukses', data: tugasAkhirList });
   }),
 );
+*/
 
+// TODO: Implement approve method in TugasAkhirService
+/*
 router.patch(
   '/:id/approve',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   asyncHandler(tugasAkhirGuard), // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
@@ -108,10 +114,13 @@ router.patch(
     response.status(200).json({ status: 'sukses', data: approvedTugasAkhir });
   }),
 );
+*/
 
+// TODO: Implement reject method in TugasAkhirService
+/*
 router.patch(
   '/:id/reject',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   asyncHandler(tugasAkhirGuard), // Custom guard for Tugas Akhir
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   validate(rejectTugasAkhirSchema),
@@ -140,10 +149,13 @@ router.patch(
     response.status(200).json({ status: 'sukses', data: rejectedTugasAkhir });
   }),
 );
+*/
 
+// TODO: Implement cekKemiripan method in TugasAkhirService
+/*
 router.post(
   '/:id/cek-kemiripan',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.admin, Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4]),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
     const { id } = req.params;
@@ -159,10 +171,11 @@ router.post(
     response.status(200).json({ status: 'sukses', data: kemiripanResult });
   }),
 );
+*/
 
 router.get(
   '/my-ta',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
     const userId = req.user?.id;
@@ -180,7 +193,7 @@ router.get(
 
 router.delete(
   '/my-ta',
-  asyncHandler(jwtAuthMiddleware),
+  asyncHandler(authMiddleware),
   authorizeRoles([Role.mahasiswa]),
   asyncHandler(async (req: Request, response: Response): Promise<void> => {
     const userId = req.user?.id;
@@ -198,8 +211,8 @@ router.delete(
 
 router.get(
   '/all-titles',
-  asyncHandler(jwtAuthMiddleware),
-  asyncHandler(async (req: Request, response: Response): Promise<void> => {
+  asyncHandler(authMiddleware),
+  asyncHandler(async (_req: Request, response: Response): Promise<void> => {
     const titles = await tugasAkhirService.findAllTitles();
     response.status(200).json({ status: 'sukses', data: titles });
   }),

@@ -13,13 +13,13 @@ export class SimilarityError extends Error {
 
 export class TugasAkhirService {
   private prisma: PrismaClient;
-  private readonly SIMILARITY_THRESHOLD = 80; // 80%
+  // private readonly SIMILARITY_THRESHOLD = 80; // Unused for now // 80%
 
   constructor() {
     this.prisma = new PrismaClient();
   }
 
-  async checkSimilarity(judul: string): Promise<unknown[]> {
+  async checkSimilarity(judul: string): Promise<Array<{ id: number; judul: string; similarity: number }>> {
     const allTitles = await this.prisma.tugasAkhir.findMany({
       select: { id: true, judul: true },
     });
