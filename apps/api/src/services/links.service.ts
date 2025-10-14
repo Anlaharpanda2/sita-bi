@@ -42,9 +42,7 @@ export class LinksService {
     },
   ];
 
-  constructor() {
-    // this.prisma = new PrismaClient(); // Unused
-  }
+  // No-op constructor
 
   create(createLinkDto: CreateLinkDto): unknown {
     // In a real scenario, this would interact with Prisma
@@ -52,7 +50,7 @@ export class LinksService {
       id: this._links.length,
       title: createLinkDto.title,
       url: createLinkDto.url,
-      description: createLinkDto.description || '',
+      description: createLinkDto.description ?? '',
     };
     this._links.push(newLink);
     return newLink;
@@ -73,13 +71,16 @@ export class LinksService {
     // In a real scenario, this would interact with Prisma
     const index = this._links.findIndex((link) => link.id === id);
     if (index > -1) {
-      this._links[index] = {
-        id: id,
-        title: updateLinkDto.title || this._links[index]?.title || '',
-        url: updateLinkDto.url || this._links[index]?.url || '',
-        description: updateLinkDto.description || this._links[index]?.description || '',
-      };
-      return this._links[index];
+      const currentLink = this._links[index];
+      if (currentLink != null) {
+        this._links[index] = {
+          id: id,
+          title: updateLinkDto.title ?? currentLink.title,
+          url: updateLinkDto.url ?? currentLink.url,
+          description: updateLinkDto.description ?? currentLink.description,
+        };
+        return this._links[index];
+      }
     }
     return null;
   }

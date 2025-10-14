@@ -22,14 +22,21 @@ const SimilarityPipeline = {
   async getInstance(progress_callback?: () => void): Promise<Pipeline> {
     if (!this.instance) {
       const options = progress_callback ? { progress_callback } : {};
-      this.instance = await pipeline(this.task, this.model, options) as Pipeline;
+      this.instance = (await pipeline(
+        this.task,
+        this.model,
+        options,
+      )) as Pipeline;
     }
     return this.instance;
   },
 };
 
 // Batched and improved version
-export async function calculateSimilarities(newTitle: string, existingTitles: { id: number, judul: string }[]): Promise<{ id: number, judul: string, similarity: number }[]> {
+export async function calculateSimilarities(
+  newTitle: string,
+  existingTitles: { id: number; judul: string }[],
+): Promise<{ id: number; judul: string; similarity: number }[]> {
   const extractor = await SimilarityPipeline.getInstance();
 
   if (existingTitles.length === 0) {
@@ -37,7 +44,7 @@ export async function calculateSimilarities(newTitle: string, existingTitles: { 
   }
 
   // Create a single batch of all texts to be processed
-  const texts = [newTitle, ...existingTitles.map(t => t.judul)];
+  const texts = [newTitle, ...existingTitles.map((t) => t.judul)];
 
   // Generate embeddings for all texts in one go
   const embeddings = await extractor(texts, {
@@ -46,14 +53,20 @@ export async function calculateSimilarities(newTitle: string, existingTitles: { 
   });
 
   // Extract the embedding for the new title (it's the first one)
-  const newTitleEmbedding = Array.from(embeddings[0]?.data ?? []) as number[];
+  const newTitleEmbedding = Array.from(embeddings[0]?.data ?? []);
 
   const results = [];
 
   // Compare the new title with all existing titles
   for (let i = 0; i < existingTitles.length; i++) {
-    const existingTitleEmbedding = Array.from(embeddings[i + 1]?.data ?? []) as number[];
-    const similarity = cosineSimilarity(newTitleEmbedding, existingTitleEmbedding);
+    const embeddingData = embeddings[i + 1]?.data ?? [];
+    const existingTitleEmbedding = embeddingData.map((val: unknown) =>
+      Number(val),
+    ) as number[];
+    const similarity = cosineSimilarity(
+      newTitleEmbedding,
+      existingTitleEmbedding,
+    );
 
     const title = existingTitles[i];
     if (title) {

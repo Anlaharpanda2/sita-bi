@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { HttpError } from '../middlewares/error.middleware';
 import { EmailService } from './email.service';
-import { CacheService } from '../config/cache';
 import prisma from '../config/database';
 
 export class AuthService {
@@ -42,7 +41,9 @@ export class AuthService {
       },
     });
 
-    const isDosen = user?.roles.some((role) => role.name === 'dosen');
+    const isDosen = user?.roles.some(
+      (role: { name: string }) => role.name === 'dosen',
+    );
 
     if (user == null) {
       throw new HttpError(401, 'Email atau password salah.');
@@ -54,27 +55,10 @@ export class AuthService {
       throw new HttpError(401, 'Email atau password salah.');
     }
 
-    // Bypass verifikasi email untuk dosen
+    // Bypass email verification for dosen
     if (isDosen !== true && user.email_verified_at === null) {
       throw new HttpError(401, 'Email belum diverifikasi.');
     }
-
-    // Cache user data in Redis dengan TTL selamanya (0)
-    const cacheKey = `user:${user.id}`;
-    const userCache = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      phone_number: user.phone_number,
-      roles: user.roles.map((r) => ({ name: r.name })),
-      dosen: user.dosen
-        ? { id: user.dosen.id, nidn: user.dosen.nidn }
-        : null,
-      mahasiswa: user.mahasiswa
-        ? { id: user.mahasiswa.id, nim: user.mahasiswa.nim }
-        : null,
-    };
-    await CacheService.set(cacheKey, userCache, 0); // TTL 0 = selamanya
 
     const { password: _, ...userWithoutPassword } = user;
 
@@ -174,7 +158,8 @@ export class AuthService {
     }
 
     // Gunakan transaksi untuk memastikan konsistensi data
-    await prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await prisma.$transaction(async (tx: any) => {
       // 1. Update status verifikasi user
       await tx.user.update({
         where: { email: verificationToken.email },

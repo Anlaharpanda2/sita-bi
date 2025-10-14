@@ -2,7 +2,13 @@ import { Router, type Request, type Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import multer from 'multer';
 import * as path from 'path';
-import { uploadConfig, getUploadPath, generateFileName, getFileUrl, getRelativePath } from '../utils/upload.config';
+import {
+  uploadConfig,
+  getUploadPath,
+  generateFileName,
+  getFileUrl,
+  getRelativePath,
+} from '../utils/upload.config';
 
 const router: Router = Router();
 
@@ -28,15 +34,25 @@ const testUpload = multer({
   limits: { fileSize: uploadConfig.maxFileSize },
   fileFilter: function (_req, file, cb) {
     // Filter file types
-    const allowedTypes = new RegExp(uploadConfig.allowedFileTypes.join('|'), 'i');
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase().slice(1));
+    const allowedTypes = new RegExp(
+      uploadConfig.allowedFileTypes.join('|'),
+      'i',
+    );
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase().slice(1),
+    );
     const mimetype = allowedTypes.test(file.mimetype.split('/')[1] ?? '');
 
     if (mimetype && extname) {
-      cb(null, true); return;
+      cb(null, true);
+      return;
     } else {
       const allowedTypesStr = uploadConfig.allowedFileTypes.join(', ');
-      cb(new Error(`File type not allowed. Only ${allowedTypesStr} files are allowed.`));
+      cb(
+        new Error(
+          `File type not allowed. Only ${allowedTypesStr} files are allowed.`,
+        ),
+      );
     }
   },
 });
@@ -45,7 +61,7 @@ const testUpload = multer({
 router.post(
   '/',
   testUpload.single('file'),
-  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  asyncHandler((req: Request, res: Response): void => {
     if (req.file == null) {
       res
         .status(400)

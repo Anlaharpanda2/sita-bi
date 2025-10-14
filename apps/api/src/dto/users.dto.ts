@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Prodi } from '@prisma/client';
+import { Prodi } from '@repo/db';
 import { Role } from '@repo/types';
 
 const validRoles = [Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4, Role.dosen];
@@ -11,7 +11,7 @@ export const createDosenSchema = z.object({
   nidn: z.string().min(1, 'NIDN cannot be empty'),
   phone_number: z.string().optional(),
   roles: z
-    .array(z.enum(Object.values(Role)))
+    .array(z.enum([Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4, Role.dosen]))
     .optional()
     .refine(
       (roles) => {
@@ -35,7 +35,7 @@ export const updateDosenSchema = z.object({
     .optional(),
   nidn: z.string().optional(),
   roles: z
-    .array(z.enum(Object.values(Role)))
+    .array(z.enum([Role.kajur, Role.kaprodi_d3, Role.kaprodi_d4, Role.dosen]))
     .optional()
     .refine(
       (roles) => {

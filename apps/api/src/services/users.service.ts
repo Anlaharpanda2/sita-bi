@@ -1,4 +1,3 @@
-import { CacheService } from '../config/cache';
 import type { User } from '@repo/db';
 import { PrismaClient, Prisma } from '@repo/db';
 import * as bcrypt from 'bcrypt';
@@ -43,7 +42,7 @@ export class UsersService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
-        phone_number: dto.phone_number || '', // Default empty string jika tidak ada
+        phone_number: dto.phone_number ?? '', // Default empty string jika tidak ada
         roles: {
           connect: { name: Role.mahasiswa },
         },
@@ -82,7 +81,7 @@ export class UsersService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
-        phone_number: dto.phone_number || '', // Default empty string jika tidak ada
+        phone_number: dto.phone_number ?? '', // Default empty string jika tidak ada
         roles: {
           connect: rolesToConnect,
         },
@@ -216,8 +215,8 @@ export class UsersService {
     const mahasiswaQuery = this.prisma.mahasiswa.findMany({
       where: {
         tugasAkhir: {
-          is: null
-        }
+          is: null,
+        },
       },
       include: {
         user: {
@@ -236,8 +235,8 @@ export class UsersService {
     const countQuery = this.prisma.mahasiswa.count({
       where: {
         tugasAkhir: {
-          is: null
-        }
+          is: null,
+        },
       },
     });
 
@@ -246,6 +245,7 @@ export class UsersService {
     const totalPages = Math.ceil(total / limit);
 
     return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: mahasiswa as any, // Type assertion karena Prisma return type include semua field
       page,
       limit,
@@ -255,50 +255,45 @@ export class UsersService {
   }
 
   async findAllDosen(page = 1, limit = 50): Promise<unknown> {
-    const cacheKey = `dosen_list:page:${page}:limit:${limit}`;
-    
-    return CacheService.getOrSet(cacheKey, async () => {
-      console.log(`[DB] Fetching all dosen from SQLite (Cache Miss)`);
-      const skip = (page - 1) * limit;
-      const take = limit;
+    const skip = (page - 1) * limit;
+    const take = limit;
 
-      const [users, total] = await this.prisma.$transaction([
-        this.prisma.user.findMany({
-          skip,
-          take,
-          where: { dosen: { isNot: null } },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            dosen: {
-              select: {
-                nidn: true,
-              },
-            },
-            roles: {
-              select: {
-                name: true,
-              },
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        skip,
+        take,
+        where: { dosen: { isNot: null } },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          dosen: {
+            select: {
+              nidn: true,
             },
           },
-          orderBy: {
-            id: 'asc',
+          roles: {
+            select: {
+              name: true,
+            },
           },
-        }),
-        this.prisma.user.count({ where: { dosen: { isNot: null } } }),
-      ]);
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      }),
+      this.prisma.user.count({ where: { dosen: { isNot: null } } }),
+    ]);
 
-      const data = users; // Return the nested structure directly
+    const data = users; // Return the nested structure directly
 
-      return {
-        data: data,
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    });
+    return {
+      data: data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async deleteUser(id: number): Promise<User> {

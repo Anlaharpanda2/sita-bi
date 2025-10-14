@@ -199,10 +199,7 @@ export class TawaranTopikService {
         include: { tawaranTopik: true, mahasiswa: true },
       });
 
-      if (
-        application === null ||
-        application.tawaranTopik.user_id !== dosenId
-      ) {
+      if (application?.tawaranTopik.user_id !== dosenId) {
         throw new Error('Application not found or you do not own this topic.');
       }
 
@@ -255,7 +252,7 @@ export class TawaranTopikService {
       include: { tawaranTopik: true },
     });
 
-    if (application === null || application.tawaranTopik.user_id !== dosenId) {
+    if (application?.tawaranTopik.user_id !== dosenId) {
       throw new Error('Application not found or you do not own this topic.');
     }
 

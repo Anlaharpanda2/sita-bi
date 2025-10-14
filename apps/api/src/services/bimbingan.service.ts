@@ -1,4 +1,4 @@
-import type { Prisma} from '@repo/db';
+import type { Prisma } from '@repo/db';
 import { PrismaClient, StatusTugasAkhir } from '@repo/db';
 
 // Interface untuk return types
@@ -132,9 +132,12 @@ export class BimbinganService {
       dosen_id: number | null;
     }[];
 
-    const isPembimbing =
-      bimbingan.dosen_id !== null &&
-      peranDosenList.some((p) => p.dosen_id === bimbingan.dosen_id);
+    const isPembimbing = ((): boolean => {
+      const dosenId = bimbingan.dosen_id;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (dosenId === null) return false;
+      return peranDosenList.some((p) => p.dosen_id === dosenId);
+    })();
 
     if (!(isMahasiswa || isPembimbing)) {
       throw new Error(
@@ -163,7 +166,12 @@ export class BimbinganService {
         where: { tugas_akhir_id: tugasAkhirId, dosen_id: dosenId },
       });
 
-      if (!peranDosen?.peran?.startsWith('pembimbing')) {
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain, @typescript-eslint/no-unnecessary-condition
+      if (peranDosen == null || peranDosen.peran == null) {
+        throw new Error('You are not a supervisor for this final project.');
+      }
+
+      if (!peranDosen.peran.startsWith('pembimbing')) {
         throw new Error('You are not a supervisor for this final project.');
       }
 
@@ -187,8 +195,7 @@ export class BimbinganService {
     _dosenId: number,
   ): Promise<unknown> {
     return this.prisma.$transaction(async (tx) => {
-      const bimbingan = await tx.bimbinganTA.findFirst({
-      });
+      const bimbingan = await tx.bimbinganTA.findFirst({});
       if (bimbingan === null) {
         throw new Error(
           'Supervision session not found or you are not authorized to modify it.',
@@ -270,4 +277,3 @@ export class BimbinganService {
     });
   }
 }
-

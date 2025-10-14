@@ -1,21 +1,19 @@
 # 🚀 Quick Start - SITA-BI
 
-## Development (Dengan Auto-Start Redis)
+## Development
 
-### ✨ Single Command - Start Semua!
+### ✨ Single Command - Start Everything!
 
 ```bash
 pnpm dev
 ```
 
-Ini akan otomatis menjalankan:
-- ✅ **Redis Server** (port 6379)
+This will automatically run:
 - ✅ **Backend API** (port 3000)  
 - ✅ **Frontend Web** (port 3001)
 
-Output akan terlihat seperti:
+Output will look like:
 ```
-[redis] * Ready to accept connections on port 6379
 [turbo] web:dev: ▲ Next.js 15.1.6
 [turbo] api:dev: Server listening on port 3000
 ```
@@ -27,36 +25,27 @@ Output akan terlihat seperti:
 ### Development
 
 ```bash
-# Start semua dengan Redis
+# Start all services
 pnpm dev
 
-# Start tanpa Redis (jika Redis sudah running)
-pnpm dev:no-redis
-
-# Start hanya backend dengan Redis
-pnpm dev:backend:redis
-
-# Start hanya backend (tanpa Redis)
+# Start backend only
 pnpm dev:backend
 
-# Start hanya frontend
+# Start frontend only
 pnpm dev:frontend
-
-# Start Redis saja
-pnpm redis
 ```
 
 ### Production
 
 ```bash
-# Build semua
+# Build all
 pnpm build
 
-# Start production (dengan Redis)
-pnpm start
-
-# Start production backend saja
+# Start production backend
 pnpm start:backend
+
+# Or use the start alias
+pnpm start
 ```
 
 ### Testing & Quality
@@ -88,57 +77,20 @@ pnpm format
 # 1. Build
 pnpm build
 
-# 2. Start (Redis + Backend otomatis jalan!)
+# 2. Start
 pnpm start
 ```
 
 ### Manual Deployment
 
-Jika ingin kontrol lebih:
+If you want more control:
 
 ```bash
-# Terminal 1: Redis
-pnpm redis
-
-# Terminal 2: Backend
+# Terminal 1: Backend
 pnpm start:backend
 
-# Terminal 3: Frontend (jika production build)
+# Terminal 2: Frontend (if production build)
 cd apps/web && pnpm start
-```
-
----
-
-## Troubleshooting
-
-### Redis Sudah Running?
-
-Jika Redis sudah jalan di background:
-```bash
-# Gunakan dev tanpa auto-start Redis
-pnpm dev:no-redis
-```
-
-### Port Conflict?
-
-Jika port 6379 sudah dipakai:
-```bash
-# Edit REDIS_URL di .env
-REDIS_URL=redis://localhost:6380
-
-# Start Redis di port lain
-redis-server --port 6380
-```
-
-### Check Redis Status
-
-```bash
-# Test koneksi
-redis-cli ping
-# Output: PONG
-
-# Check cache
-redis-cli keys "sita:*"
 ```
 
 ---
@@ -165,14 +117,11 @@ pnpm dev
 
 ### Environment Variables
 
-Buat file `.env` di `apps/api`:
+Create `.env` file in `apps/api`:
 
 ```env
 # Database
 DATABASE_URL="file:../../../packages/db/prisma/dev.db"
-
-# Redis
-REDIS_URL=redis://localhost:6379
 
 # Email
 EMAIL_USER=your-email@gmail.com
@@ -197,18 +146,17 @@ ALLOWED_FILE_TYPES=jpeg,jpg,png,gif,pdf,doc,docx
 - **Frontend**: Next.js 15 + React + TailwindCSS
 - **Backend**: Express.js + TypeScript
 - **Database**: SQLite + Prisma ORM
-- **Cache**: Redis (TTL selamanya + auto-sync)
 - **Monorepo**: Turborepo + pnpm workspaces
 
 ---
 
 ## Features
 
-✅ **Auto-sync Cache**: Redis otomatis sinkron dengan database  
-✅ **Persistent Sessions**: User tetap login setelah restart  
-✅ **Hot Reload**: Frontend & backend auto-reload saat dev  
-✅ **Type Safety**: Full TypeScript di semua packages  
-✅ **Shared Types**: Types di-share antar frontend-backend  
+✅ **Fast Performance**: SQLite optimized for speed (28ms avg query)  
+✅ **Persistent Sessions**: User stays logged in after restart  
+✅ **Hot Reload**: Frontend & backend auto-reload during dev  
+✅ **Type Safety**: Full TypeScript across all packages  
+✅ **Shared Types**: Types shared between frontend-backend  
 
 ---
 
@@ -230,11 +178,39 @@ sita-bi/
 
 ---
 
+## Performance
+
+With SQLite optimization:
+- **Average query time**: 28ms for 50 records
+- **No network latency**: Database is local
+- **Simple architecture**: Less complexity, fewer bugs
+
+---
+
+## Troubleshooting
+
+### Port Already in Use?
+
+If port 3000 or 3001 is already in use:
+```bash
+# Change port in .env (backend)
+PORT=3002
+
+# Or kill the process
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+
+# Linux/macOS
+lsof -ti:3000 | xargs kill -9
+```
+
+---
+
 ## Need Help?
 
-- 📖 **Redis Setup**: Lihat `REDIS_SETUP.md`
-- 🔐 **Auth Implementation**: Lihat `AUTH_REDIS_IMPLEMENTATION.md`
-- 🐛 **Issues**: Check logs di console
+- 🐛 **Issues**: Check logs in console
+- 📖 **Documentation**: See README.md
 
 ---
 

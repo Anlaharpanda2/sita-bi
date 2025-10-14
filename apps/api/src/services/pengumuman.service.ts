@@ -18,7 +18,9 @@ export class PengumumanService {
   ): Promise<Pengumuman> {
     return this.prisma.pengumuman.create({
       data: {
-        ...dto,
+        judul: dto.judul,
+        isi: dto.isi,
+        audiens: dto.audiens,
         dibuat_oleh: authorId,
         tanggal_dibuat: new Date(),
       },
@@ -151,11 +153,12 @@ export class PengumumanService {
 
   async update(id: number, dto: UpdatePengumumanDto): Promise<Pengumuman> {
     // Filter out undefined values untuk exactOptionalPropertyTypes
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: Record<string, any> = {};
-    if (dto['judul'] !== undefined) updateData['judul'] = dto['judul'];
-    if (dto['isi'] !== undefined) updateData['isi'] = dto['isi'];
-    if (dto['audiens'] !== undefined) updateData['audiens'] = dto['audiens'];
-    
+    if (dto.judul !== undefined) updateData['judul'] = dto.judul;
+    if (dto.isi !== undefined) updateData['isi'] = dto.isi;
+    if (dto.audiens !== undefined) updateData['audiens'] = dto.audiens;
+
     return this.prisma.pengumuman.update({
       where: { id },
       data: updateData,

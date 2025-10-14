@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { JadwalSidangService } from '../services/jadwal-sidang.service';
-import { insecureAuthMiddleware, authMiddleware } from '../middlewares/auth.middleware';
+import {
+  insecureAuthMiddleware,
+  authMiddleware,
+} from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
@@ -16,9 +19,13 @@ router.get(
   authorizeRoles([Role.admin]),
   asyncHandler(async (req, res): Promise<void> => {
     const page =
-      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
+      req.query['page'] != null
+        ? parseInt(req.query['page'] as string)
+        : undefined;
     const limit =
-      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
+      req.query['limit'] != null
+        ? parseInt(req.query['limit'] as string)
+        : undefined;
     const registrations = await jadwalSidangService.getApprovedRegistrations(
       page,
       limit,
@@ -52,9 +59,13 @@ router.get(
       return;
     }
     const page =
-      req.query['page'] != null ? parseInt(req.query['page'] as string) : undefined;
+      req.query['page'] != null
+        ? parseInt(req.query['page'] as string)
+        : undefined;
     const limit =
-      req.query['limit'] != null ? parseInt(req.query['limit'] as string) : undefined;
+      req.query['limit'] != null
+        ? parseInt(req.query['limit'] as string)
+        : undefined;
     const sidang = await jadwalSidangService.getSidangForPenguji(
       dosenId,
       page,

@@ -19,7 +19,9 @@ export class TugasAkhirService {
     this.prisma = new PrismaClient();
   }
 
-  async checkSimilarity(judul: string): Promise<Array<{ id: number; judul: string; similarity: number }>> {
+  async checkSimilarity(
+    judul: string,
+  ): Promise<{ id: number; judul: string; similarity: number }[]> {
     const allTitles = await this.prisma.tugasAkhir.findMany({
       select: { id: true, judul: true },
     });
@@ -29,14 +31,15 @@ export class TugasAkhirService {
     }
 
     const similarities = await calculateSimilarities(judul, allTitles);
-    
+
     // Return top 5 results or any result above 50%
-    return similarities
-      .filter(res => res.similarity > 50)
-      .slice(0, 5);
+    return similarities.filter((res) => res.similarity > 50).slice(0, 5);
   }
 
-  async createFinal(dto: CreateTugasAkhirDto, userId: number): Promise<TugasAkhir> {
+  async createFinal(
+    dto: CreateTugasAkhirDto,
+    userId: number,
+  ): Promise<TugasAkhir> {
     const mahasiswa = await this.prisma.mahasiswa.findUnique({
       where: { user_id: userId },
     });
@@ -50,16 +53,18 @@ export class TugasAkhirService {
     });
 
     if (existingTugasAkhir) {
-      throw new Error('Anda sudah memiliki Tugas Akhir dan tidak dapat mengajukan lagi.');
+      throw new Error(
+        'Anda sudah memiliki Tugas Akhir dan tidak dapat mengajukan lagi.',
+      );
     }
 
     // Check for exact title match just in case
     const existingTitle = await this.prisma.tugasAkhir.findFirst({
-        where: { judul: { equals: dto.judul } },
+      where: { judul: { equals: dto.judul } },
     });
 
     if (existingTitle) {
-        throw new Error(`Judul "${dto.judul}" sudah pernah diajukan.`);
+      throw new Error(`Judul "${dto.judul}" sudah pernah diajukan.`);
     }
 
     return this.prisma.tugasAkhir.create({

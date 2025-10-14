@@ -20,36 +20,33 @@ router.post(
   // authorizeRoles([Role.mahasiswa]), // Dikomenkan untuk sementara untuk testing
   uploadSidangFiles, // Multer middleware to handle file uploads
   asyncHandler(async (req, res): Promise<void> => {
-    
     try {
       // ID Mahasiswa di-hardcode untuk testing karena otentikasi dinonaktifkan
       const mahasiswaId = 1; // Ganti dengan ID mahasiswa yang valid dari database Anda jika perlu
-      
+
       // Check if mahasiswa exists, if not create test data
       const prisma = new PrismaClient();
-      
+
       let mahasiswa = await prisma.mahasiswa.findUnique({
         where: { id: mahasiswaId },
-        include: { tugasAkhir: true }
+        include: { tugasAkhir: true },
       });
-      
+
       if (!mahasiswa) {
         // Create test user first if needed
         let testUser = await prisma.user.findFirst({
-          where: { email: 'test@example.com' }
+          where: { email: 'test@example.com' },
         });
-        
-        if (!testUser) {
-          testUser = await prisma.user.create({
-            data: {
-              name: 'Test User',
-              email: 'test@example.com',
-              password: 'hashed_password',
-              phone_number: '+6281234567890',
-            }
-          });
-        }
-        
+
+        testUser ??= await prisma.user.create({
+          data: {
+            name: 'Test User',
+            email: 'test@example.com',
+            password: 'hashed_password',
+            phone_number: '+6281234567890',
+          },
+        });
+
         mahasiswa = await prisma.mahasiswa.create({
           data: {
             user_id: testUser.id,
@@ -57,30 +54,30 @@ router.post(
             prodi: 'D4',
             kelas: 'A',
           },
-          include: { tugasAkhir: true }
+          include: { tugasAkhir: true },
         });
       }
-      
+
       // Check if approved tugas akhir exists, create if not
       let tugasAkhir = await prisma.tugasAkhir.findFirst({
-        where: { mahasiswa_id: mahasiswa.id, status: 'DISETUJUI' }
+        where: { mahasiswa_id: mahasiswa.id, status: 'DISETUJUI' },
       });
-      
+
       tugasAkhir ??= await prisma.tugasAkhir.create({
         data: {
           mahasiswa_id: mahasiswa.id,
           judul: 'Test Thesis Title',
           status: 'DISETUJUI',
           tanggal_pengajuan: new Date(),
-        }
+        },
       });
-      
+
       // req.files will contain the uploaded files after multer processes them
       const pendaftaran = await pendaftaranSidangService.registerForSidang(
         mahasiswa.id,
         req.files,
       );
-      
+
       res.status(201).json({ status: 'sukses', data: pendaftaran });
     } catch (error) {
       console.error('Registration error:', error);

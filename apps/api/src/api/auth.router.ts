@@ -8,7 +8,6 @@ import {
   verifyEmailSchema,
 } from '../dto/auth.dto';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { CacheService } from '../config/cache';
 
 const router: Router = Router();
 const authService = new AuthService();
@@ -46,19 +45,17 @@ router.post(
   }),
 );
 
-// Logout endpoint - clear user cache
+// Logout endpoint
 router.post(
   '/logout',
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   authMiddleware,
-  asyncHandler(async (req, res) => {
-    if (req.user) {
-      await CacheService.del(`user:${req.user.id}`);
-    }
+  (_req, res) => {
     res.status(200).json({
       status: 'sukses',
       message: 'Logout berhasil',
     });
-  }),
+  },
 );
 
 export default router;

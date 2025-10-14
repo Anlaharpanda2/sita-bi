@@ -5,9 +5,7 @@ import { authMiddleware } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/roles.middleware';
 import { validate } from '../middlewares/validation.middleware';
 import { Role } from '@repo/types';
-import {
-  createTugasAkhirSchema,
-} from '../dto/tugas-akhir.dto';
+import { createTugasAkhirSchema } from '../dto/tugas-akhir.dto';
 // NOTE: rejectTugasAkhirSchema dan tugasAkhirGuard di-comment karena method terkait belum diimplementasi
 // import { rejectTugasAkhirSchema } from '../dto/tugas-akhir.dto';
 // import { tugasAkhirGuard } from '../middlewares/tugas-akhir.middleware';
@@ -28,14 +26,16 @@ router.post(
     const { judul } = req.body;
     const results = await tugasAkhirService.checkSimilarity(judul);
 
-    const isBlocked = results.some(result => result.similarity >= SIMILARITY_BLOCK_THRESHOLD);
+    const isBlocked = results.some(
+      (result) => result.similarity >= SIMILARITY_BLOCK_THRESHOLD,
+    );
 
-    response.status(200).json({ 
-      status: 'sukses', 
-      data: { 
+    response.status(200).json({
+      status: 'sukses',
+      data: {
         results,
-        isBlocked 
-      }
+        isBlocked,
+      },
     });
   }),
 );
@@ -205,7 +205,9 @@ router.delete(
       return;
     }
     await tugasAkhirService.deleteMyTa(userId);
-    response.status(200).json({ status: 'sukses', message: 'Tugas Akhir berhasil dihapus.' });
+    response
+      .status(200)
+      .json({ status: 'sukses', message: 'Tugas Akhir berhasil dihapus.' });
   }),
 );
 

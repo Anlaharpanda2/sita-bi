@@ -1,6 +1,6 @@
 import { PrismaClient } from '@repo/db';
 import type { StatistikDto } from '../dto/laporan.dto';
-import { PeranDosen } from '@prisma/client';
+import { PeranDosen } from '@repo/db';
 
 export class LaporanService {
   private prisma: PrismaClient;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Prodi } from '@prisma/client';
+import { Prodi } from '@repo/db';
 
 export const loginSchema = z.object({
   identifier: z.string().min(1, 'Identifier tidak boleh kosong'),
