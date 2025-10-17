@@ -137,7 +137,7 @@ function RegistrationForm({
         Register for a New Defense
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-        {error && (
+        {!!error && (
           <p className="text-sm text-red-600 p-3 bg-red-50 rounded-lg">
             {error}
           </p>
@@ -147,7 +147,7 @@ function RegistrationForm({
             <div key={input.name}>
               <label className="block text-sm font-medium text-gray-700">
                 {input.label}{' '}
-                {input.required && <span className="text-red-500">*</span>}
+                {!!input.required && <span className="text-red-500">*</span>}
               </label>
               <div className="mt-1 flex items-center gap-4">
                 <input
@@ -166,7 +166,7 @@ function RegistrationForm({
                   <UploadCloud size={16} />
                   Choose File
                 </label>
-                {files[input.name] && (
+                {!!files[input.name] && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <FileIcon size={16} />
                     <span>{files[input.name]?.name}</span>
@@ -246,9 +246,9 @@ export default function PendaftaranSidangPage() {
           setPendaftaran(null);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching data:', err);
-      setError(err.message || 'Failed to fetch data');
+      setError((err as Error).message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -285,7 +285,7 @@ export default function PendaftaranSidangPage() {
             </span>
             <StatusPill status={pendaftaran.status_pembimbing_2} />
           </div>
-          {pendaftaran.catatan_admin && (
+          {!!pendaftaran.catatan_admin && (
             <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
               <p className="font-semibold text-yellow-800">Admin Notes:</p>
               <p className="text-yellow-700">{pendaftaran.catatan_admin}</p>

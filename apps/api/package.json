@@ -27,7 +27,9 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "qrcode-terminal": "^0.12.0",
     "string-similarity": "^4.0.4",
+    "whatsapp-web.js": "^1.26.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -40,6 +42,7 @@
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
+    "@types/qrcode-terminal": "^0.12.2",
     "@types/string-similarity": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",

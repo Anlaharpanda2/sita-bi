@@ -25,7 +25,15 @@ export default function LoginPage() {
       // The API now returns { status: 'sukses', data: { userId, user } }
       const response = await request<{
         status: string;
-        data: { userId: number; user: { id: number; name: string; email: string; roles: Array<{ name: string }> } };
+        data: {
+          userId: number;
+          user: {
+            id: number;
+            name: string;
+            email: string;
+            roles: Array<{ name: string }>;
+          };
+        };
       }>('/auth/login', {
         method: 'POST',
         body: { identifier, password },
@@ -38,7 +46,7 @@ export default function LoginPage() {
       const user = response.data.user;
 
       // Store user data in localStorage via AuthContext
-      login(user);
+      login({ ...user, id: String(user.id) });
 
       // Redirect based on role
       const userRole = user.roles[0]?.name;
@@ -157,7 +165,7 @@ export default function LoginPage() {
               </div>
 
               {/* Error message */}
-              {error && (
+              {!!error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                   <p className="text-red-700 text-sm font-medium">{error}</p>
                 </div>

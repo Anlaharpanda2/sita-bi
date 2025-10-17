@@ -24,7 +24,7 @@ interface InputFieldProps {
   type: string;
   placeholder: string;
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (_e: ChangeEvent<HTMLInputElement>) => void;
   icon: ComponentType<{ className?: string }>;
   isPassword?: boolean;
   showPasswordState?: boolean;
@@ -32,7 +32,7 @@ interface InputFieldProps {
 }
 
 const InputField = ({
-  id: _id,
+  id,
   name,
   type,
   placeholder,
@@ -57,7 +57,7 @@ const InputField = ({
       placeholder={placeholder}
       required
     />
-    {isPassword && (
+    {!!isPassword && (
       <button
         type="button"
         onClick={toggleShowPassword}
@@ -260,7 +260,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
               />
 
-              {error && (
+              {!!error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                   <p className="text-red-700 text-sm font-medium">{error}</p>
                 </div>

@@ -1,112 +1,129 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { ArrowUp } from 'lucide-react';
-import Header from './components/landing-page/Header';
-import Footer from './components/landing-page/Footer';
-import HomeContent from './components/landing-page/HomeContent';
+// Server Component (RSC) with streaming for better performance
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import HeroSection from './components/landing-page/HeroSection';
+import {
+  SectionSkeleton,
+  TeamCardSkeleton,
+} from './components/Suspense/LoadingFallback';
+
+// Dynamic imports for below-the-fold sections (lazy load)
+const TawaranTopikSection = dynamic(
+  () => import('./components/landing-page/TawaranTopikSection'),
+  {
+    loading: () => <SectionSkeleton />,
+  },
+);
+
+const JadwalSection = dynamic(
+  () => import('./components/landing-page/JadwalSection'),
+  {
+    loading: () => <SectionSkeleton />,
+  },
+);
+
+const PengumumanSection = dynamic(
+  () => import('./components/landing-page/PengumumanSection'),
+  {
+    loading: () => <SectionSkeleton />,
+  },
+);
+
+const TeamSection = dynamic(
+  () => import('./components/landing-page/TeamSection'),
+  {
+    loading: () => (
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+        {[...Array(4)].map((_, i) => (
+          <TeamCardSkeleton key={i} />
+        ))}
+      </div>
+    ),
+  },
+);
+
+const FooterWrapper = dynamic(
+  () => import('./components/landing-page/FooterWrapper'),
+);
+
+// Lazy load client components for better performance - Import in client component
+const ClientWrapperComponent = dynamic(
+  () => import('./components/landing-page/ClientWrapper'),
+);
+
+// Team data - can be fetched from API in real scenario
+const teamMembers = [
+  {
+    name: 'Erland Agsya Agustian',
+    role: 'Frontend Developer',
+    id: '2311083007',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
+  },
+  {
+    name: 'Nabil Achmad Khoir',
+    role: 'Project Manager',
+    id: '2311082032',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
+  },
+  {
+    name: 'Kasih Ananda Nardi',
+    role: 'Sistem Analis',
+    id: '2311081021',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
+  },
+  {
+    name: 'Gilang Dwi Yuwana',
+    role: 'Backend Developer',
+    id: '2311081016',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
+  },
+];
 
 export default function SitaBIHomepage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight;
-      const documentHeight =
-        document.documentElement.scrollHeight - windowHeight;
-      const scrolled = (window.scrollY / documentHeight) * 100;
-      setScrollProgress(scrolled);
-      setShowScrollTop(window.scrollY > 300);
-
-      const sections = ['hero', 'tawarantopik', 'jadwal', 'pengumuman', 'team'];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 150 && rect.bottom >= 150;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
-    }
-  };
-
-  const teamMembers = [
-    {
-      name: 'Erland Agsya Agustian',
-      role: 'Frontend Developer',
-      id: '2311083007',
-      image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
-    },
-    {
-      name: 'Nabil Achmad Khoir',
-      role: 'Project Manager',
-      id: '2311082032',
-      image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
-    },
-    {
-      name: 'Kasih Ananda Nardi',
-      role: 'Sistem Analis',
-      id: '2311081021',
-      image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
-    },
-    {
-      name: 'Gilang Dwi Yuwana',
-      role: 'Backend Developer',
-      id: '2311081016',
-      image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-white">
-      {/* Progress Bar */}
-      <div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-red-900 to-yellow-600 z-50 transition-all duration-100"
-        style={{ width: `${scrollProgress}%` }}
-      />
+      {/* Client-side interactive components (progress bar, header, scroll button) */}
+      <ClientWrapperComponent />
 
-      <Header
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        activeSection={activeSection}
-        scrollToSection={scrollToSection}
-      />
+      {/* Hero section - Above the fold, render immediately */}
+      <HeroSection />
 
-      <HomeContent teamMembers={teamMembers} />
+      {/* Below-the-fold sections with Suspense streaming */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <TawaranTopikSection />
+      </Suspense>
 
-      <Footer scrollToSection={scrollToSection} />
+      <Suspense fallback={<SectionSkeleton />}>
+        <JadwalSection />
+      </Suspense>
 
-      {/* Scroll to Top Button */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-110 transition-all z-30"
-        >
-          <ArrowUp size={24} />
-        </button>
-      )}
+      <Suspense fallback={<SectionSkeleton />}>
+        <PengumumanSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <div className="py-24 bg-gradient-to-b from-white to-orange-50">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+                {[...Array(4)].map((_, i) => (
+                  <TeamCardSkeleton key={i} />
+                ))}
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <TeamSection teamMembers={teamMembers} />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-40" />}>
+        <FooterWrapper />
+      </Suspense>
     </div>
   );
 }

@@ -46,16 +46,11 @@ router.post(
 );
 
 // Logout endpoint
-router.post(
-  '/logout',
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  authMiddleware,
-  (_req, res) => {
-    res.status(200).json({
-      status: 'sukses',
-      message: 'Logout berhasil',
-    });
-  },
-);
+router.post('/logout', authMiddleware, (_req, res) => {
+  res.status(200).json({
+    status: 'sukses',
+    message: 'Logout berhasil',
+  });
+});
 
 export default router;

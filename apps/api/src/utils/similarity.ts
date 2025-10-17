@@ -53,7 +53,9 @@ export async function calculateSimilarities(
   });
 
   // Extract the embedding for the new title (it's the first one)
-  const newTitleEmbedding = Array.from(embeddings[0]?.data ?? []);
+  const newTitleEmbedding = Array.from(embeddings[0]?.data ?? []).map(
+    (val: unknown) => Number(val),
+  );
 
   const results = [];
 

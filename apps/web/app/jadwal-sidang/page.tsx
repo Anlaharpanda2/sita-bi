@@ -21,14 +21,14 @@ export default function JadwalSidangPage() {
   const [schedule, setSchedule] = useState<Sidang[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { token, user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     if (authLoading) {
       return; // Wait for auth state
     }
 
-    if (!token || !user) {
+    if (!user) {
       setError('You must be logged in to view this page.');
       setLoading(false);
       return;
@@ -41,9 +41,7 @@ export default function JadwalSidangPage() {
     const fetchSchedule = async () => {
       setLoading(true);
       try {
-        const response = await fetch(endpoint, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetch(endpoint);
         const data = await response.json();
 
         if (!response.ok) {
@@ -66,7 +64,7 @@ export default function JadwalSidangPage() {
     };
 
     fetchSchedule();
-  }, [token, user, authLoading]);
+  }, [user, authLoading]);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('id-ID', {

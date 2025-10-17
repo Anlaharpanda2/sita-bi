@@ -20,14 +20,14 @@ export default function TawaranTopikPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { token, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     if (authLoading) {
       return; // Wait for auth state to be loaded
     }
 
-    if (!token) {
+    if (!user) {
       setError('You must be logged in to view this page.');
       setLoading(false);
       // Optional: redirect to login
@@ -38,11 +38,7 @@ export default function TawaranTopikPage() {
     const fetchTopics = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/tawaran-topik/available', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch('/api/tawaran-topik/available');
 
         const data = await response.json();
 
@@ -60,7 +56,7 @@ export default function TawaranTopikPage() {
     };
 
     fetchTopics();
-  }, [token, authLoading]);
+  }, [user, authLoading]);
 
   return (
     <div className="bg-gray-50 min-h-screen">

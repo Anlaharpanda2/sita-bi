@@ -62,8 +62,8 @@ export default function BimbinganPage() {
         );
         setAvailableDosen(dosenResponse.data.data || []);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -89,8 +89,8 @@ export default function BimbinganPage() {
       });
       alert('Request sent successfully!');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Error: ${(err as Error).message}`);
     }
   };
 
@@ -100,8 +100,8 @@ export default function BimbinganPage() {
       await request(`/pengajuan/${pengajuanId}/batalkan`, { method: 'POST' });
       alert('Request cancelled.');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Error: ${(err as Error).message}`);
     }
   };
 
@@ -112,8 +112,8 @@ export default function BimbinganPage() {
       await request(`/pengajuan/${pengajuanId}/terima`, { method: 'POST' });
       alert('Offer accepted! You now have a supervisor.');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Error: ${(err as Error).message}`);
     }
   };
 
@@ -123,8 +123,8 @@ export default function BimbinganPage() {
       await request(`/pengajuan/${pengajuanId}/tolak`, { method: 'POST' });
       alert('Offer rejected.');
       fetchData();
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Error: ${(err as Error).message}`);
     }
   };
 

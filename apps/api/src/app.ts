@@ -22,8 +22,10 @@ import debugRouter from './api/debug.router'; // Router untuk debugging
 import ruanganRouter from './api/ruangan.router';
 import sidangRouter from './api/sidang.router';
 import authRouter from './api/auth.router';
+import whatsappRouter from './api/whatsapp.router'; // WhatsApp router
 import { errorHandler } from './middlewares/error.middleware';
 import { getUploadPath, getMonorepoRoot } from './utils/upload.config';
+import { whatsappService } from './services/whatsapp.service'; // WhatsApp service
 
 const app: express.Express = express();
 
@@ -45,13 +47,30 @@ const uploadsPath = getUploadPath();
 // Serve static files from uploads directory (from monorepo root)
 app.use('/uploads', express.static(uploadsPath));
 
+// Initialize WhatsApp service on startup
+void (async (): Promise<void> => {
+  try {
+    console.warn('🔄 Initializing WhatsApp service...');
+    await whatsappService.initialize();
+    console.warn('✅ WhatsApp service initialized');
+  } catch (error) {
+    console.error('❌ Failed to initialize WhatsApp service:', error);
+    console.warn('⚠️  Server will continue without WhatsApp functionality');
+  }
+})();
+
 // Health check endpoint
 app.get('/health', (_req, res) => {
+  const whatsappStatus = whatsappService.getStatus();
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
     uploadsPath: uploadsPath,
     monorepoRoot: getMonorepoRoot(),
+    whatsapp: {
+      isReady: whatsappStatus.isReady,
+      hasQR: whatsappStatus.hasQR,
+    },
   });
 });
 
@@ -78,6 +97,7 @@ app.use('/api/test-upload', testUploadRouter); // Rute untuk testing upload loka
 app.use('/api/files', filesRouter); // Rute untuk file management
 app.use('/api/ruangan', ruanganRouter);
 app.use('/api/sidang', sidangRouter);
+app.use('/api/whatsapp', whatsappRouter); // WhatsApp routes
 
 // Error Handling Middleware
 app.use(errorHandler);

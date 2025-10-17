@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { AuthProvider } from '../context/AuthContext';
 import './globals.css';
@@ -6,15 +6,26 @@ import './globals.css';
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
   variable: '--font-geist-sans',
+  display: 'swap',
+  preload: true,
 });
 const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
   title: 'SITA-BI',
   description: 'Sistem Informasi Tugas Akhir & Bimbingan',
+  metadataBase: new URL('http://localhost:3001'),
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#991b1b',
 };
 
 export default function RootLayout({
@@ -23,8 +34,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="id" suppressHydrationWarning>
+      <head>
+        <link rel="dns-prefetch" href="http://localhost:3000" />
+        <link rel="preconnect" href="http://localhost:3000" />
+        {/* Inline critical CSS for faster FCP */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --background: #FFFFFF;
+                --foreground: #800000;
+                --primary: #800000;
+              }
+              html, body {
+                max-width: 100vw;
+                overflow-x: hidden;
+                margin: 0;
+                padding: 0;
+              }
+              body {
+                color: var(--foreground);
+                background: var(--background);
+              }
+              * {
+                box-sizing: border-box;
+              }
+            `,
+          }}
+        />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

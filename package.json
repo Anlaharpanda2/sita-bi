@@ -18,7 +18,8 @@
     "dev:backend": "pnpm --filter api dev",
     "check:backend": "pnpm --filter api lint && pnpm --filter api run format:check && pnpm --filter api run build && pnpm --filter api run test",
     "check:frontend": "pnpm --filter web lint && prettier --write apps/web/**/*.{ts,tsx,js,jsx,json} && set ANALYZE=true && pnpm --filter web build",
-    "check": "pnpm --filter web lint && prettier --write apps/web/**/*.{ts,tsx,js,jsx,json} && set ANALYZE=true && pnpm --filter web build && pnpm --filter api lint && pnpm --filter api run format:check && pnpm --filter api run build && pnpm --filter api run test"
+    "check": "pnpm --filter web lint && prettier --write apps/web/**/*.{ts,tsx,js,jsx,json} && set ANALYZE=true && pnpm --filter web build && pnpm --filter api lint && pnpm --filter api run format:check && pnpm --filter api run build && pnpm --filter api run test",
+    "check:fast": "pnpm --filter web lint && prettier --check apps/web/**/*.{ts,tsx,js,jsx,json} && pnpm --filter api lint && pnpm --filter api run format:check"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
