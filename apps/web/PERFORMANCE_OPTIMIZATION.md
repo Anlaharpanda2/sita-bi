@@ -1,53 +1,65 @@
 # Performance Optimization Guide
 
 ## Overview
+
 This guide explains the performance optimization techniques applied to the SITA-BI frontend application.
 
 ## Techniques Implemented
 
 ### 1. **Separation of Concerns: Logic vs UI**
-   - **Hooks** (`/hooks`): Contains all data fetching and business logic
-   - **Components** (`/app/components`): Pure presentation components
-   - **Benefits**: Better code reusability, easier testing, smaller component bundles
+
+- **Hooks** (`/hooks`): Contains all data fetching and business logic
+- **Components** (`/app/components`): Pure presentation components
+- **Benefits**: Better code reusability, easier testing, smaller component bundles
 
 ### 2. **UI Streaming with Suspense**
-   ```tsx
-   <Suspense fallback={<SkeletonCard />}>
-     <HeavyComponent />
-   </Suspense>
-   ```
-   - Allows progressive rendering
-   - Shows skeleton loaders while data is loading
-   - Improves perceived performance
+
+```tsx
+<Suspense fallback={<SkeletonCard />}>
+  <HeavyComponent />
+</Suspense>
+```
+
+- Allows progressive rendering
+- Shows skeleton loaders while data is loading
+- Improves perceived performance
 
 ### 3. **Lazy Loading for Heavy Components**
-   ```tsx
-   const HeavyComponent = lazy(() => import('./HeavyComponent'));
-   ```
-   - Components are loaded only when needed
-   - Reduces initial bundle size
-   - Faster Time to Interactive (TTI)
+
+```tsx
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
+```
+
+- Components are loaded only when needed
+- Reduces initial bundle size
+- Faster Time to Interactive (TTI)
 
 ### 4. **Automatic Code Splitting**
-   - Next.js automatically splits code per route
-   - Each page only loads what it needs
-   - Configured in `next.config.js`:
-     ```javascript
-     webpack: (config) => {
-       config.optimization.splitChunks = {
-         chunks: 'all',
-         cacheGroups: {
-           vendor: { /* vendor chunk */ },
-           common: { /* common chunk */ }
-         }
-       }
-     }
-     ```
+
+- Next.js automatically splits code per route
+- Each page only loads what it needs
+- Configured in `next.config.js`:
+  ```javascript
+  webpack: (config) => {
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          /* vendor chunk */
+        },
+        common: {
+          /* common chunk */
+        },
+      },
+    };
+  };
+  ```
 
 ### 5. **Strategic Loading States**
-   - Page-level: `loading.tsx` for each route
-   - Component-level: Skeleton components
-   - Global: Root `loading.tsx`
+
+- Page-level: `loading.tsx` for each route
+- Component-level: Skeleton components
+- Global: Root `loading.tsx`
 
 ## File Structure
 
@@ -82,35 +94,36 @@ apps/web/
 ## How to Optimize a New Page
 
 ### Step 1: Extract Logic to Hooks
+
 ```typescript
 // hooks/useMyFeature.ts
 export function useMyFeature() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const fetchData = async () => {
     // ... fetch logic
   };
-  
-  useEffect(() => { fetchData(); }, []);
-  
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return { data, loading, refetch: fetchData };
 }
 ```
 
 ### Step 2: Create UI Components
+
 ```tsx
 // app/components/ui/MyComponent.tsx
 export default function MyComponent({ data }) {
-  return (
-    <Card>
-      {/* Pure presentation */}
-    </Card>
-  );
+  return <Card>{/* Pure presentation */}</Card>;
 }
 ```
 
 ### Step 3: Create Loading States
+
 ```tsx
 // app/my-page/loading.tsx
 export default function Loading() {
@@ -119,15 +132,16 @@ export default function Loading() {
 ```
 
 ### Step 4: Use Lazy Loading & Suspense
+
 ```tsx
 // app/my-page/page.tsx
 const HeavyComponent = lazy(() => import('./HeavyComponent'));
 
 export default function Page() {
   const { data, loading } = useMyFeature();
-  
+
   if (loading) return <PageLoader />;
-  
+
   return (
     <div>
       {/* Critical content */}
@@ -176,24 +190,26 @@ pnpm run dev
 ## Example: Optimized vs Original
 
 ### Original (500KB, 3s load)
+
 ```tsx
 export default function Page() {
   const [data1, setData1] = useState(null);
   const [data2, setData2] = useState(null);
   const [data3, setData3] = useState(null);
   // 200 lines of mixed logic and UI
-  return <div>{/* Everything at once */}</div>
+  return <div>{/* Everything at once */}</div>;
 }
 ```
 
 ### Optimized (100KB initial, 1s load)
+
 ```tsx
 const Table = lazy(() => import('./Table'));
 const Chart = lazy(() => import('./Chart'));
 
 export default function Page() {
   const { data } = useData(); // Hook handles logic
-  
+
   return (
     <>
       <CriticalContent data={data} />

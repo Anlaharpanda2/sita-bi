@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3000/api/:path*',
+        destination: 'http://localhost:3002/api/:path*', // Updated to correct port
       },
     ];
   },
@@ -29,6 +29,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // PPR disabled - requires Next.js canary version
+    // ppr: true,
   },
   // Enable module concatenation for smaller bundles
   webpack: (config, { isServer }) => {

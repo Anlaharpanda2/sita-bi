@@ -1,10 +1,10 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, Router as ExpressRouter } from 'express';
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { whatsappService } from '../services/whatsapp.service';
 import { authMiddleware } from '../middlewares/auth.middleware';
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 /**
  * GET /api/whatsapp/status

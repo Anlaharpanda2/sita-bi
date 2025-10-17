@@ -8,12 +8,14 @@ const geistSans = localFont({
   variable: '--font-geist-sans',
   display: 'swap',
   preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   display: 'swap',
   preload: true,
+  fallback: ['monospace'],
 });
 
 export const metadata: Metadata = {
@@ -36,8 +38,13 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        <link rel="dns-prefetch" href="http://localhost:3000" />
-        <link rel="preconnect" href="http://localhost:3000" />
+        {/* DNS Prefetch & Preconnect untuk faster API calls */}
+        <link rel="dns-prefetch" href="http://localhost:3002" />
+        <link
+          rel="preconnect"
+          href="http://localhost:3002"
+          crossOrigin="anonymous"
+        />
         {/* Inline critical CSS for faster FCP */}
         <style
           dangerouslySetInnerHTML={{

@@ -9,10 +9,12 @@ pnpm dev
 ```
 
 This will automatically run:
-- ✅ **Backend API** (port 3000)  
+
+- ✅ **Backend API** (port 3000)
 - ✅ **Frontend Web** (port 3001)
 
 Output will look like:
+
 ```
 [turbo] web:dev: ▲ Next.js 15.1.6
 [turbo] api:dev: Server listening on port 3000
@@ -156,7 +158,7 @@ ALLOWED_FILE_TYPES=jpeg,jpg,png,gif,pdf,doc,docx
 ✅ **Persistent Sessions**: User stays logged in after restart  
 ✅ **Hot Reload**: Frontend & backend auto-reload during dev  
 ✅ **Type Safety**: Full TypeScript across all packages  
-✅ **Shared Types**: Types shared between frontend-backend  
+✅ **Shared Types**: Types shared between frontend-backend
 
 ---
 
@@ -181,6 +183,7 @@ sita-bi/
 ## Performance
 
 With SQLite optimization:
+
 - **Average query time**: 28ms for 50 records
 - **No network latency**: Database is local
 - **Simple architecture**: Less complexity, fewer bugs
@@ -192,6 +195,7 @@ With SQLite optimization:
 ### Port Already in Use?
 
 If port 3000 or 3001 is already in use:
+
 ```bash
 # Change port in .env (backend)
 PORT=3002
