@@ -2,6 +2,7 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import HeroSection from './components/landing-page/HeroSection';
+import ChatBot from './components/ChatBot/ChatBot';
 import {
   SectionSkeleton,
   TeamCardSkeleton,
@@ -88,6 +89,9 @@ export default function SitaBIHomepage() {
     <div className="min-h-screen bg-white">
       {/* Client-side interactive components (progress bar, header, scroll button) */}
       <ClientWrapperComponent />
+
+      {/* AI Chatbot - Floating button */}
+      <ChatBot />
 
       {/* Hero section - Above the fold, render immediately */}
       <HeroSection />

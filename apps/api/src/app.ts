@@ -23,6 +23,7 @@ import ruanganRouter from './api/ruangan.router';
 import sidangRouter from './api/sidang.router';
 import authRouter from './api/auth.router';
 import whatsappRouter from './api/whatsapp.router'; // WhatsApp router
+import geminiRouter from './api/gemini.router'; // Gemini AI chatbot router
 import { errorHandler } from './middlewares/error.middleware';
 import { getUploadPath, getMonorepoRoot } from './utils/upload.config';
 import { whatsappService } from './services/whatsapp.service'; // WhatsApp service
@@ -98,6 +99,7 @@ app.use('/api/files', filesRouter); // Rute untuk file management
 app.use('/api/ruangan', ruanganRouter);
 app.use('/api/sidang', sidangRouter);
 app.use('/api/whatsapp', whatsappRouter); // WhatsApp routes
+app.use('/api/gemini', geminiRouter); // Gemini AI chatbot routes
 
 // Error Handling Middleware
 app.use(errorHandler);
