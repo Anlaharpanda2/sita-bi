@@ -123,7 +123,7 @@ export class BimbinganService {
       },
     });
 
-    if (!bimbingan) {
+    if (bimbingan === null) {
       throw new Error('Bimbingan session not found');
     }
 
@@ -132,12 +132,9 @@ export class BimbinganService {
       dosen_id: number | null;
     }[];
 
-    const isPembimbing = ((): boolean => {
-      const dosenId = bimbingan.dosen_id;
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (dosenId === null) return false;
-      return peranDosenList.some((p) => p.dosen_id === dosenId);
-    })();
+    const isPembimbing = peranDosenList.some(
+      (p) => p.dosen_id === bimbingan.dosen_id,
+    );
 
     if (!(isMahasiswa || isPembimbing)) {
       throw new Error(
@@ -166,8 +163,7 @@ export class BimbinganService {
         where: { tugas_akhir_id: tugasAkhirId, dosen_id: dosenId },
       });
 
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain, @typescript-eslint/no-unnecessary-condition
-      if (peranDosen == null || peranDosen.peran == null) {
+      if (peranDosen?.peran == null) {
         throw new Error('You are not a supervisor for this final project.');
       }
 
@@ -246,7 +242,7 @@ export class BimbinganService {
         where: { tugas_akhir_id: bimbingan.tugasAkhir.id, dosen_id: dosenId },
       });
 
-      if (peranDosen) {
+      if (peranDosen !== null) {
         const updateData: Prisma.DokumenTaUpdateInput = {};
         if (peranDosen.peran === 'pembimbing1') {
           updateData.validatorP1 = { connect: { id: dosenId } };

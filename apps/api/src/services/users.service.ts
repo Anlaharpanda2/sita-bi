@@ -245,8 +245,7 @@ export class UsersService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: mahasiswa as any, // Type assertion karena Prisma return type include semua field
+      data: mahasiswa, // Type assertion karena Prisma return type include semua field
       page,
       limit,
       total,

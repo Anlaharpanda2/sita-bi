@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { sendChatMessage, ChatMessage } from '@/lib/gemini-api';
+import { streamChatMessage, type ChatMessage } from '@/lib/gemini-api';
 
 export function useGeminiChat() {
   const [loading, setLoading] = useState(false);
@@ -12,57 +12,73 @@ export function useGeminiChat() {
   const chat = async (message: string, token?: string) => {
     setLoading(true);
     setError(null);
-    
+
     // Add user message to conversation
     const userMessage: ChatMessage = {
       role: 'user',
       content: message,
       timestamp: new Date(),
     };
-    
-    setConversation(prev => [...prev, userMessage]);
-    
+
+    setConversation((prev) => [...prev, userMessage]);
+
     try {
-      const response = await sendChatMessage(message, token);
-      
-      if (!response.success) {
-        throw new Error(response.error || 'Failed to get response');
+      let aiMessageContent = '';
+
+      // Create placeholder AI message
+      const aiMessage: ChatMessage = {
+        role: 'ai',
+        content: '',
+        timestamp: new Date(),
+      };
+
+      setConversation((prev) => [...prev, aiMessage]);
+
+      // Stream the response
+      for await (const chunk of streamChatMessage(message, token)) {
+        if (chunk.type === 'chunk' && chunk.text) {
+          aiMessageContent += chunk.text;
+
+          // Update the AI message in real-time
+          setConversation((prev) => {
+            const newConv = [...prev];
+            const lastMessage = newConv[newConv.length - 1];
+            if (lastMessage && lastMessage.role === 'ai') {
+              lastMessage.content = aiMessageContent;
+            }
+            return newConv;
+          });
+        } else if (chunk.type === 'error') {
+          throw new Error(chunk.error || 'Streaming error');
+        } else if (chunk.type === 'done') {
+          break;
+        }
       }
-      
-      // Add AI response to conversation
-      if (response.data) {
-        const aiMessage: ChatMessage = {
-          role: 'ai',
-          content: response.data.message,
-          timestamp: new Date(),
-        };
-        setConversation(prev => [...prev, aiMessage]);
-      }
-      
-      return response.data;
+
+      return { message: aiMessageContent };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
-      
-      // Remove user message if error
-      setConversation(prev => prev.slice(0, -1));
-      
+
+      // Remove incomplete AI message
+      setConversation((prev) => prev.slice(0, -1));
+
       throw err;
     } finally {
       setLoading(false);
     }
   };
-  
+
   const clearConversation = () => {
     setConversation([]);
     setError(null);
   };
-  
-  return { 
-    chat, 
-    loading, 
-    error, 
+
+  return {
+    chat,
+    loading,
+    error,
     conversation,
-    clearConversation 
+    clearConversation,
   };
 }

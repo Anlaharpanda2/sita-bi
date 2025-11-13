@@ -80,3 +80,6 @@ export const authMiddleware = async (
 
 // Keep the old middleware name for backward compatibility
 export const insecureAuthMiddleware = authMiddleware;
+
+// Export as authenticate for consistency with other parts of the codebase
+export const authenticate = authMiddleware;

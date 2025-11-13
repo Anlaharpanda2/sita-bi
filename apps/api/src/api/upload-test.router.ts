@@ -24,7 +24,7 @@ router.post(
         include: { tugasAkhir: true },
       });
 
-      if (!mahasiswa) {
+      if (mahasiswa === null) {
         // Create test user first if needed
         let testUser = await prisma.user.findFirst({
           where: { email: 'test-upload@example.com' },

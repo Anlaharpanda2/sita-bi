@@ -18,7 +18,10 @@ export class PengajuanService {
       include: { peranDosenTa: true },
     });
 
-    if (existingTugasAkhir && existingTugasAkhir.peranDosenTa.length > 0) {
+    if (
+      existingTugasAkhir !== null &&
+      existingTugasAkhir.peranDosenTa.length > 0
+    ) {
       throw new Error('Anda sudah memiliki pembimbing');
     }
 
@@ -33,7 +36,7 @@ export class PengajuanService {
       },
     });
 
-    if (existingPengajuan) {
+    if (existingPengajuan !== null) {
       throw new Error('Pengajuan ke dosen ini sudah ada');
     }
 
@@ -80,7 +83,10 @@ export class PengajuanService {
       include: { peranDosenTa: true },
     });
 
-    if (existingTugasAkhir && existingTugasAkhir.peranDosenTa.length > 0) {
+    if (
+      existingTugasAkhir !== null &&
+      existingTugasAkhir.peranDosenTa.length > 0
+    ) {
       throw new Error('Mahasiswa sudah memiliki pembimbing');
     }
 
@@ -95,7 +101,7 @@ export class PengajuanService {
       },
     });
 
-    if (existingPengajuan) {
+    if (existingPengajuan !== null) {
       throw new Error('Pengajuan dengan mahasiswa ini sudah ada');
     }
 
@@ -143,7 +149,7 @@ export class PengajuanService {
         },
       });
 
-      if (!pengajuan) {
+      if (pengajuan === null) {
         throw new Error('Pengajuan tidak ditemukan');
       }
 
@@ -175,7 +181,7 @@ export class PengajuanService {
       });
 
       let tugasAkhir;
-      if (existingTugasAkhir) {
+      if (existingTugasAkhir !== null) {
         if (existingTugasAkhir.peranDosenTa.length > 0) {
           throw new Error('Mahasiswa sudah memiliki pembimbing');
         }
@@ -240,7 +246,7 @@ export class PengajuanService {
       },
     });
 
-    if (!pengajuan) {
+    if (pengajuan === null) {
       throw new Error('Pengajuan tidak ditemukan');
     }
 
@@ -292,7 +298,7 @@ export class PengajuanService {
       },
     });
 
-    if (!pengajuan) {
+    if (pengajuan === null) {
       throw new Error('Pengajuan tidak ditemukan');
     }
 

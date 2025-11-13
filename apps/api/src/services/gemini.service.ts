@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -16,13 +16,13 @@ interface GeminiRequest {
 }
 
 interface GeminiResponse {
-  candidates?: Array<{
+  candidates?: {
     content: {
-      parts: Array<{
+      parts: {
         text: string;
-      }>;
+      }[];
     };
-  }>;
+  }[];
   error?: {
     message: string;
     code?: number;
@@ -31,9 +31,11 @@ interface GeminiResponse {
 
 class GeminiService {
   private apiKeys: string[] = [];
-  private currentKeyIndex: number = 0;
+  private currentKeyIndex = 0;
   private readonly baseUrl =
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+  private readonly streamBaseUrl =
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent';
 
   constructor() {
     this.loadApiKeys();
@@ -43,24 +45,21 @@ class GeminiService {
     // Load all 10 API keys from environment variables
     for (let i = 1; i <= 10; i++) {
       const key = process.env[`GEMINI_API_KEY_${i}`];
-      if (key && key !== `your-gemini-api-key-${i}`) {
+      if (typeof key === 'string' && key !== `your-gemini-api-key-${i}`) {
         this.apiKeys.push(key);
       }
     }
 
     if (this.apiKeys.length === 0) {
       console.warn(
-        '⚠️  No valid Gemini API keys found. Please configure GEMINI_API_KEY_1 to GEMINI_API_KEY_10 in .env file'
+        '⚠️  No valid Gemini API keys found. Please configure GEMINI_API_KEY_1 to GEMINI_API_KEY_10 in .env file',
       );
     } else {
-      console.log(`✅ Loaded ${this.apiKeys.length} Gemini API key(s)`);
+      console.warn(`✅ Loaded ${this.apiKeys.length} Gemini API key(s)`);
     }
   }
 
-  private async callGeminiApi(
-    prompt: string,
-    apiKey: string
-  ): Promise<string> {
+  private async callGeminiApi(prompt: string, apiKey: string): Promise<string> {
     const requestBody: GeminiRequest = {
       contents: [
         {
@@ -73,21 +72,27 @@ class GeminiService {
       ],
     };
 
-    const response = await axios.post<GeminiResponse>(this.baseUrl, requestBody, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': apiKey,
+    const response = await axios.post<GeminiResponse>(
+      this.baseUrl,
+      requestBody,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
+        },
       },
-    });
+    );
 
-    if (response.data.error) {
+    if (response.data.error !== undefined) {
       throw new Error(response.data.error.message);
     }
 
     if (
-      !response.data.candidates ||
+      response.data.candidates === undefined ||
       response.data.candidates.length === 0 ||
-      !response.data.candidates[0].content.parts[0]
+      response.data.candidates[0] === undefined ||
+      response.data.candidates[0].content.parts.length === 0 ||
+      response.data.candidates[0].content.parts[0] === undefined
     ) {
       throw new Error('Invalid response from Gemini API');
     }
@@ -96,59 +101,65 @@ class GeminiService {
   }
 
   private isRateLimitError(error: unknown): boolean {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      // Check for rate limit status codes
-      if (axiosError.response?.status === 429) {
-        return true;
-      }
-      // Check for quota exceeded error messages
-      const errorMessage = JSON.stringify(axiosError.response?.data).toLowerCase();
-      return (
-        errorMessage.includes('quota') ||
-        errorMessage.includes('rate limit') ||
-        errorMessage.includes('resource_exhausted')
-      );
+    if (!axios.isAxiosError(error)) {
+      return false;
     }
-    return false;
+
+    const axiosError = error as AxiosError;
+    // Check for rate limit status codes
+    if (axiosError.response?.status === 429) {
+      return true;
+    }
+    // Check for quota exceeded error messages
+    const errorMessage = JSON.stringify(
+      axiosError.response?.data ?? '',
+    ).toLowerCase();
+    return (
+      errorMessage.includes('quota') ||
+      errorMessage.includes('rate limit') ||
+      errorMessage.includes('resource_exhausted')
+    );
   }
 
   async generateContent(prompt: string): Promise<string> {
     if (this.apiKeys.length === 0) {
       throw new Error(
-        'No Gemini API keys configured. Please add API keys to .env file'
+        'No Gemini API keys configured. Please add API keys to .env file',
       );
     }
 
     const attemptedKeys = new Set<number>();
-    let lastError: Error | null = null;
 
     // Try all API keys starting from current index
     while (attemptedKeys.size < this.apiKeys.length) {
       const apiKey = this.apiKeys[this.currentKeyIndex];
+      if (apiKey === undefined) {
+        break;
+      }
+
       const keyNumber = this.currentKeyIndex + 1;
 
-      console.log(`🔄 Attempting request with API key #${keyNumber}`);
+      console.warn(`🔄 Attempting request with API key #${keyNumber}`);
 
       try {
         const result = await this.callGeminiApi(prompt, apiKey);
-        console.log(`✅ Success with API key #${keyNumber}`);
+        console.warn(`✅ Success with API key #${keyNumber}`);
         return result;
       } catch (error) {
         attemptedKeys.add(this.currentKeyIndex);
-        lastError = error as Error;
 
         if (this.isRateLimitError(error)) {
           console.warn(
-            `⚠️  API key #${keyNumber} hit rate limit. Trying next key...`
+            `⚠️  API key #${keyNumber} hit rate limit. Trying next key...`,
           );
           // Move to next API key
-          this.currentKeyIndex = (this.currentKeyIndex + 1) % this.apiKeys.length;
+          this.currentKeyIndex =
+            (this.currentKeyIndex + 1) % this.apiKeys.length;
         } else {
           // For non-rate-limit errors, throw immediately
           console.error(
             `❌ Error with API key #${keyNumber}:`,
-            (error as Error).message
+            (error as Error).message,
           );
           throw error;
         }
@@ -158,12 +169,115 @@ class GeminiService {
     // All API keys have been exhausted
     console.error('❌ All Gemini API keys have reached their limits');
     throw new Error(
-      'Anda sudah mencapai limit. Semua API key Gemini telah mencapai batas penggunaan.'
+      'Anda sudah mencapai limit. Semua API key Gemini telah mencapai batas penggunaan.',
     );
   }
 
   async chat(message: string): Promise<string> {
     return this.generateContent(message);
+  }
+
+  // Stream generate content with SSE
+  async *streamGenerateContent(
+    prompt: string,
+  ): AsyncGenerator<string, void, unknown> {
+    if (this.apiKeys.length === 0) {
+      throw new Error(
+        'No Gemini API keys configured. Please add API keys to .env file',
+      );
+    }
+
+    const attemptedKeys = new Set<number>();
+
+    // Try all API keys starting from current index
+    while (attemptedKeys.size < this.apiKeys.length) {
+      const apiKey = this.apiKeys[this.currentKeyIndex];
+      if (apiKey === undefined) {
+        break;
+      }
+
+      const keyNumber = this.currentKeyIndex + 1;
+      console.warn(
+        `🔄 Attempting streaming request with API key #${keyNumber}`,
+      );
+
+      try {
+        const response = await axios.post<ReadableStream>(
+          `${this.streamBaseUrl}?key=${apiKey}&alt=sse`,
+          {
+            contents: [
+              {
+                parts: [{ text: prompt }],
+              },
+            ],
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            responseType: 'stream',
+          },
+        );
+
+        const stream = response.data;
+        let buffer = '';
+
+        // Process stream chunks
+        for await (const chunk of stream as unknown as AsyncIterable<Buffer>) {
+          buffer += chunk.toString();
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') {
+                console.warn(
+                  `✅ Streaming completed with API key #${keyNumber}`,
+                );
+                return;
+              }
+
+              try {
+                const parsed = JSON.parse(data) as GeminiResponse;
+                if (
+                  parsed.candidates?.[0]?.content.parts[0]?.text !== undefined
+                ) {
+                  yield parsed.candidates[0].content.parts[0].text;
+                }
+              } catch {
+                // Skip invalid JSON
+                continue;
+              }
+            }
+          }
+        }
+
+        console.warn(`✅ Streaming success with API key #${keyNumber}`);
+        return;
+      } catch (error) {
+        attemptedKeys.add(this.currentKeyIndex);
+
+        if (this.isRateLimitError(error)) {
+          console.warn(
+            `⚠️  API key #${keyNumber} hit rate limit. Trying next key...`,
+          );
+          this.currentKeyIndex =
+            (this.currentKeyIndex + 1) % this.apiKeys.length;
+        } else {
+          console.error(
+            `❌ Error with API key #${keyNumber}:`,
+            (error as Error).message,
+          );
+          throw error;
+        }
+      }
+    }
+
+    console.error('❌ All Gemini API keys have reached their limits');
+    throw new Error(
+      'Anda sudah mencapai limit. Semua API key Gemini telah mencapai batas penggunaan.',
+    );
   }
 
   // Get current API key status
@@ -182,7 +296,7 @@ class GeminiService {
   // Reset to first API key (useful for testing or manual reset)
   resetToFirstKey(): void {
     this.currentKeyIndex = 0;
-    console.log('🔄 Reset to first API key');
+    console.warn('🔄 Reset to first API key');
   }
 }
 

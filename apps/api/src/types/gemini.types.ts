@@ -35,5 +35,5 @@ export interface GeminiResetResponse {
 export type GeminiApiResponse =
   | GeminiChatResponse
   | GeminiErrorResponse
-  | GeminiStatusResponse
-  | GeminiResetResponse;
+  | GeminiResetResponse
+  | GeminiStatusResponse;

@@ -44,7 +44,7 @@ export class TugasAkhirService {
       where: { user_id: userId },
     });
 
-    if (!mahasiswa) {
+    if (mahasiswa === null) {
       throw new Error('Profil mahasiswa tidak ditemukan.');
     }
 
@@ -52,7 +52,7 @@ export class TugasAkhirService {
       where: { mahasiswa_id: mahasiswa.id },
     });
 
-    if (existingTugasAkhir) {
+    if (existingTugasAkhir !== null) {
       throw new Error(
         'Anda sudah memiliki Tugas Akhir dan tidak dapat mengajukan lagi.',
       );
@@ -63,7 +63,7 @@ export class TugasAkhirService {
       where: { judul: { equals: dto.judul } },
     });
 
-    if (existingTitle) {
+    if (existingTitle !== null) {
       throw new Error(`Judul "${dto.judul}" sudah pernah diajukan.`);
     }
 
@@ -82,7 +82,7 @@ export class TugasAkhirService {
       where: { user_id: userId },
     });
 
-    if (!mahasiswa) {
+    if (mahasiswa === null) {
       throw new Error('Profil mahasiswa tidak ditemukan.');
     }
 
@@ -132,7 +132,7 @@ export class TugasAkhirService {
       include: { tugasAkhir: true },
     });
 
-    if (!mahasiswa?.tugasAkhir) {
+    if (mahasiswa?.tugasAkhir == null) {
       throw new Error('Tugas Akhir not found for this student.');
     }
 

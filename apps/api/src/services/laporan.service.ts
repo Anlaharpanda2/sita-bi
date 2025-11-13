@@ -49,7 +49,8 @@ export class LaporanService {
 
     const pengujiStatCounts = pengujiData.reduce<Record<number, number>>(
       (acc, curr) => {
-        acc[curr.dosen_id] = (acc[curr.dosen_id] ?? 0) + 1;
+        const dosenId = curr.dosen_id;
+        acc[dosenId] = (acc[dosenId] ?? 0) + 1;
         return acc;
       },
       {},

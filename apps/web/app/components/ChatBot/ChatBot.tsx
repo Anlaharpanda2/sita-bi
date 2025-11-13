@@ -8,7 +8,8 @@ import { MessageCircle, X, Send, Trash2, Loader2 } from 'lucide-react';
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const { chat, loading, error, conversation, clearConversation } = useGeminiChat();
+  const { chat, loading, error, conversation, clearConversation } =
+    useGeminiChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,12 +29,12 @@ export default function ChatBot() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!message.trim() || loading) return;
-    
+
     const userMessage = message;
     setMessage('');
-    
+
     try {
       await chat(userMessage);
     } catch (err) {
@@ -64,7 +65,7 @@ export default function ChatBot() {
       )}
 
       {/* Chat Window */}
-      {isOpen && (
+      {!!isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200">
           {/* Header */}
           <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 flex items-center justify-between">
@@ -116,7 +117,9 @@ export default function ChatBot() {
                       Apa itu SITA BI?
                     </button>
                     <button
-                      onClick={() => setMessage('Bagaimana cara mengajukan judul TA?')}
+                      onClick={() =>
+                        setMessage('Bagaimana cara mengajukan judul TA?')
+                      }
                       className="text-xs bg-orange-50 text-orange-600 px-3 py-2 rounded-lg hover:bg-orange-100 transition-colors w-full"
                     >
                       Cara mengajukan judul TA?
@@ -141,19 +144,21 @@ export default function ChatBot() {
                   <p className="text-sm whitespace-pre-wrap break-words">
                     {msg.content}
                   </p>
-                  <p className={`text-xs mt-1 ${
-                    msg.role === 'user' ? 'text-orange-100' : 'text-gray-400'
-                  }`}>
+                  <p
+                    className={`text-xs mt-1 ${
+                      msg.role === 'user' ? 'text-orange-100' : 'text-gray-400'
+                    }`}
+                  >
                     {new Date(msg.timestamp).toLocaleTimeString('id-ID', {
                       hour: '2-digit',
-                      minute: '2-digit'
+                      minute: '2-digit',
                     })}
                   </p>
                 </div>
               </div>
             ))}
 
-            {loading && (
+            {!!loading && (
               <div className="flex justify-start">
                 <div className="bg-white text-gray-800 rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
                   <div className="flex items-center gap-2">
@@ -164,7 +169,7 @@ export default function ChatBot() {
               </div>
             )}
 
-            {error && (
+            {!!error && (
               <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3">
                 <p className="text-sm font-medium mb-1">Error</p>
                 <p className="text-xs">{error}</p>
