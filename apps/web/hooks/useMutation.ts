@@ -2,12 +2,12 @@ import { useState } from 'react';
 import api from '@/lib/api';
 
 interface UseMutationOptions<TData> {
-  onSuccess?: (_data: TData) => void;
-  onError?: (_error: Error) => void;
+  onSuccess?: (data: TData) => void;
+  onError?: (error: Error) => void;
 }
 
 interface UseMutationReturn<TData, TVariables> {
-  mutate: (_variables: TVariables) => Promise<void>;
+  mutate: (variables: TVariables) => Promise<void>;
   data: TData | null;
   loading: boolean;
   error: string | null;

@@ -26,7 +26,7 @@ interface User {
 // AuthContextType is simplified: no token
 interface AuthContextType {
   user: User | null;
-  login: (_user: User) => void;
+  login: (user: User) => void; // Login function only takes user object
   logout: () => void;
   loading: boolean;
 }

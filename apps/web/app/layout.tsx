@@ -45,40 +45,6 @@ export default function RootLayout({
           href="http://localhost:3002"
           crossOrigin="anonymous"
         />
-        {/* Remove browser extension elements before hydration */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                if (typeof window !== 'undefined') {
-                  const removeExtensionElements = function() {
-                    const selectors = [
-                      '.translate-tooltip-mtz',
-                      '.translator-hidden',
-                      '[class*="translate-"]',
-                      '[class*="translator-"]',
-                      '[id*="translate"]',
-                      '[id*="translator"]'
-                    ];
-                    selectors.forEach(function(selector) {
-                      try {
-                        const elements = document.querySelectorAll(selector);
-                        elements.forEach(function(el) { el.remove(); });
-                      } catch (e) {}
-                    });
-                  };
-                  if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', removeExtensionElements);
-                  } else {
-                    removeExtensionElements();
-                  }
-                  const observer = new MutationObserver(removeExtensionElements);
-                  observer.observe(document.documentElement, { childList: true, subtree: true });
-                }
-              })();
-            `,
-          }}
-        />
         {/* Inline critical CSS for faster FCP */}
         <style
           dangerouslySetInnerHTML={{
@@ -100,17 +66,6 @@ export default function RootLayout({
               }
               * {
                 box-sizing: border-box;
-              }
-              .translate-tooltip-mtz,
-              .translator-hidden,
-              [class*="translate-"],
-              [class*="translator-"],
-              [id*="translate"],
-              [id*="translator"] {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                pointer-events: none !important;
               }
             `,
           }}

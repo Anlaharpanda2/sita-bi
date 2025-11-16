@@ -1,5 +1,7 @@
 // Server Component
 import Image from 'next/image';
+import ClientOnly from '../ClientOnly';
+import SitaBotButton from '../SitaBot/SitaBotButton';
 
 export default function HeroSection() {
   return (
@@ -32,12 +34,15 @@ export default function HeroSection() {
               >
                 Get Started
               </a>
-              <a
-                href="#tawarantopik"
-                className="border-2 border-red-900 text-red-900 px-10 py-4 rounded-full font-semibold bg-white hover:bg-red-900 hover:text-white hover:-translate-y-1 transition-all"
+              <ClientOnly
+                fallback={
+                  <button className="border-2 border-red-900 text-red-900 px-10 py-4 rounded-full font-semibold bg-white opacity-50 cursor-not-allowed">
+                    Loading...
+                  </button>
+                }
               >
-                Learn More
-              </a>
+                <SitaBotButton />
+              </ClientOnly>
             </div>
           </div>
           <div className="relative p-5">

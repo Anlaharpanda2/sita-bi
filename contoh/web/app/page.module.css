@@ -1,0 +1,798 @@
+.wDefault {
+  	width: 100%;
+  	position: relative;
+  	background-color: #f9f9f9;
+  	height: 671px;
+  	overflow-y: auto;
+  	text-align: center;
+  	font-size: 14.17px;
+  	color: #2a2a2e;
+  	font-family: Inter;
+}
+.appRootMain {
+  	position: absolute;
+  	width: calc(100% + 1px);
+  	top: 60.34px;
+  	right: -0.58px;
+  	left: -0.42px;
+  	background-color: #f9f9f9;
+  	height: 611px;
+  	overflow-y: auto;
+}
+.appFeature {
+  	position: absolute;
+  	width: 100%;
+  	top: 22px;
+  	right: 0px;
+  	left: 0px;
+  	height: 605px;
+}
+.appHomepage {
+  	position: absolute;
+  	width: 100%;
+  	top: -0.26px;
+  	right: 0px;
+  	left: 0px;
+  	background-color: #fff;
+  	height: 539px;
+}
+.sectionJobRoleSection {
+  	position: absolute;
+  	width: 100%;
+  	top: -21.66px;
+  	right: 0px;
+  	left: 0px;
+  	background-color: #dff0ff;
+  	height: 438.6px;
+}
+.container {
+  	position: absolute;
+  	width: 100%;
+  	top: 0px;
+  	right: 0px;
+  	left: 0px;
+  	height: 438.6px;
+}
+.heading1 {
+  	position: absolute;
+  	top: 28.14px;
+  	left: calc(50% - 258.94px);
+  	font-size: 24.29px;
+  	line-height: 32.39px;
+  	display: flex;
+  	color: #0069b1;
+  	align-items: center;
+  	justify-content: center;
+  	width: 512.5px;
+  	height: 32.4px;
+}
+.kamiMenyediakanKursus {
+  	position: absolute;
+  	top: 74.23px;
+  	left: calc(50% - 603.83px);
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	color: #57575b;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 1208.9px;
+  	height: 16.9px;
+}
+.memperkuatPosisiAnda {
+  	position: absolute;
+  	top: 94.53px;
+  	left: calc(50% - 229.79px);
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	color: #57575b;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 315px;
+  	height: 17px;
+}
+.link {
+  	position: absolute;
+  	top: 94.47px;
+  	left: calc(50% + 84.72px);
+  	width: 156.8px;
+  	height: 16.9px;
+  	color: #048caa;
+}
+.pelajariSelengkapnya {
+  	position: absolute;
+  	top: 0px;
+  	left: calc(50% - 78.4px);
+  	text-decoration: underline;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 157.1px;
+  	height: 16.9px;
+}
+.chipsSlider {
+  	position: absolute;
+  	width: calc(100% - 300.4px);
+  	top: calc(50% - 81.65px);
+  	right: 276.11px;
+  	left: 24.29px;
+  	height: 37.8px;
+  	overflow: auto;
+  	text-align: left;
+}
+.chipItem {
+  	position: absolute;
+  	top: 0px;
+  	left: 0px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #048caa;
+  	border: 1px solid #048caa;
+  	box-sizing: border-box;
+  	width: 73.8px;
+  	height: 37.8px;
+  	color: #fff;
+}
+.semua {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.82px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 48.4px;
+  	height: 16.9px;
+}
+.wDefaultChipItem {
+  	position: absolute;
+  	top: 0px;
+  	left: 81.93px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 71.1px;
+  	height: 37.8px;
+}
+.teknik {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.81px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 45.6px;
+  	height: 16.9px;
+}
+.chipItem2 {
+  	position: absolute;
+  	top: 0px;
+  	left: 161.08px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 95px;
+  	height: 37.8px;
+}
+.teknologi {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.81px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 69.6px;
+  	height: 16.9px;
+}
+.chipItem3 {
+  	position: absolute;
+  	top: 0px;
+  	left: 264.17px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 166.5px;
+  	height: 37.8px;
+}
+.bisnisManajemen {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.82px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 141px;
+  	height: 16.9px;
+}
+.chipItem4 {
+  	position: absolute;
+  	top: 0px;
+  	left: 438.73px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 134.5px;
+  	height: 37.8px;
+}
+.mediaKreatif {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.82px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 109px;
+  	height: 16.9px;
+}
+.chipItem5 {
+  	position: absolute;
+  	top: 0px;
+  	left: 581.28px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 189.6px;
+  	height: 37.8px;
+}
+.pariwisataPelayanan {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.82px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 164.2px;
+  	height: 16.9px;
+}
+.chipItem6 {
+  	position: absolute;
+  	top: 0px;
+  	left: 779.02px;
+  	box-shadow: 0px 1.0121217966079712px 2.02px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	border: 1px solid #d8d8d9;
+  	box-sizing: border-box;
+  	width: 200.5px;
+  	height: 37.8px;
+}
+.kesehatanGaya {
+  	position: absolute;
+  	top: calc(50% - 8.78px);
+  	left: 12.81px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 175.1px;
+  	height: 16.9px;
+}
+.careerOptionCard {
+  	position: absolute;
+  	height: calc(100% - 276.7px);
+  	width: calc(100% - 877.6px);
+  	top: 199.73px;
+  	right: 853.31px;
+  	bottom: 76.97px;
+  	left: 24.29px;
+  	box-shadow: 0px 2.0242435932159424px 10.12px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	overflow: hidden;
+  	text-align: left;
+  	font-size: 12.15px;
+}
+.recruitmentOfficerIcon {
+  	position: absolute;
+  	height: 100%;
+  	top: 0px;
+  	bottom: 0px;
+  	left: calc(50% - 200.7px);
+  	max-height: 100%;
+  	width: 161.9px;
+  	object-fit: cover;
+}
+.tanyaVocabot {
+  	position: absolute;
+  	top: 12.15px;
+  	left: 174.08px;
+  	font-size: 14.17px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 141.4px;
+  	height: 20.2px;
+}
+.skillBadgeYang {
+  	position: absolute;
+  	top: 44.53px;
+  	left: 174.08px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	color: #57575b;
+  	display: flex;
+  	align-items: center;
+  	width: 178px;
+  	height: 20.2px;
+}
+.list {
+  	position: absolute;
+  	width: calc(100% - 186.3px);
+  	top: 72.87px;
+  	right: 12.22px;
+  	left: 174.08px;
+  	height: 76.9px;
+  	color: #7e7e81;
+}
+.item {
+  	position: absolute;
+  	width: 100%;
+  	top: 0px;
+  	right: 0px;
+  	left: 0px;
+  	height: 24.3px;
+}
+.employeeOnboardingIcon {
+  	position: absolute;
+  	top: calc(50% - 12.15px);
+  	left: 0px;
+  	width: 24.3px;
+  	height: 24.3px;
+  	object-fit: cover;
+}
+.wDefaultContainer {
+  	position: absolute;
+  	top: calc(50% - 10.13px);
+  	left: 32.39px;
+  	width: 179.7px;
+  	height: 20.2px;
+  	overflow: hidden;
+}
+.beginner {
+  	position: absolute;
+  	top: 2.69px;
+  	left: 0px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 179.9px;
+  	height: 14.2px;
+}
+.wDefaultItem {
+  	position: absolute;
+  	width: 100%;
+  	top: 28.34px;
+  	right: 0px;
+  	left: 0px;
+  	height: 24.3px;
+}
+.container2 {
+  	position: absolute;
+  	top: calc(50% - 10.13px);
+  	left: 32.39px;
+  	width: 183.8px;
+  	height: 20.2px;
+  	overflow: hidden;
+}
+.intermediateBasic {
+  	position: absolute;
+  	top: 2.69px;
+  	left: 0px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 122.5px;
+  	height: 14.2px;
+}
+.item2 {
+  	position: absolute;
+  	top: 56.68px;
+  	left: 0px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 64.5px;
+  	height: 20.2px;
+}
+.wDefaultCareerOptionCard {
+  	position: absolute;
+  	height: calc(100% - 276.7px);
+  	width: calc(100% - 877.6px);
+  	top: 199.73px;
+  	right: 438.79px;
+  	bottom: 76.97px;
+  	left: 438.81px;
+  	box-shadow: 0px 2.0242435932159424px 10.12px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	overflow: hidden;
+  	text-align: left;
+  	font-size: 12.15px;
+}
+.wDefaultSpesialisRisetPasar {
+  	position: absolute;
+  	top: 12.15px;
+  	left: 174.08px;
+  	font-size: 14.17px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 145.2px;
+  	height: 20.2px;
+}
+.wDefaultList {
+  	position: absolute;
+  	width: calc(100% - 186.3px);
+  	top: 72.87px;
+  	right: 12.22px;
+  	left: 174.08px;
+  	height: 52.6px;
+  	color: #7e7e81;
+}
+.container3 {
+  	position: absolute;
+  	top: calc(50% - 10.13px);
+  	left: 32.39px;
+  	width: 147.2px;
+  	height: 20.2px;
+  	overflow: hidden;
+}
+.wDefaultIntermediateBasic {
+  	position: absolute;
+  	top: 2.69px;
+  	left: 0px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 147.4px;
+  	height: 14.2px;
+}
+.container4 {
+  	position: absolute;
+  	top: calc(50% - 10.13px);
+  	left: 32.39px;
+  	width: 155.6px;
+  	height: 20.2px;
+  	overflow: hidden;
+}
+.intermediateBasic2 {
+  	position: absolute;
+  	top: 2.69px;
+  	left: 0px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 155.8px;
+  	height: 14.2px;
+}
+.careerOptionCard2 {
+  	position: absolute;
+  	height: calc(100% - 276.7px);
+  	width: calc(100% - 877.6px);
+  	top: 199.73px;
+  	right: 24.28px;
+  	bottom: 76.97px;
+  	left: 853.32px;
+  	box-shadow: 0px 2.0242435932159424px 10.12px rgba(0, 0, 0, 0.1);
+  	border-radius: 12.15px;
+  	background-color: #fff;
+  	overflow: hidden;
+  	text-align: left;
+  	font-size: 12.15px;
+}
+.koordinatorProduk {
+  	position: absolute;
+  	top: 12.15px;
+  	left: 174.09px;
+  	font-size: 14.17px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 140.6px;
+  	height: 20.2px;
+}
+.skillBadgeYang2 {
+  	position: absolute;
+  	top: 44.53px;
+  	left: 174.09px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	color: #57575b;
+  	display: flex;
+  	align-items: center;
+  	width: 178px;
+  	height: 20.2px;
+}
+.list2 {
+  	position: absolute;
+  	width: calc(100% - 186.3px);
+  	top: 72.87px;
+  	right: 12.21px;
+  	left: 174.09px;
+  	height: 52.6px;
+  	color: #7e7e81;
+}
+.wDefaultLink {
+  	position: absolute;
+  	width: calc(100% - 48.6px);
+  	top: 385.96px;
+  	right: 24.31px;
+  	left: 24.29px;
+  	height: 20.2px;
+  	font-size: 16.19px;
+  	color: #048caa;
+}
+.lihatSemuaProfesi {
+  	position: absolute;
+  	top: 0px;
+  	left: calc(50% - 81.44px);
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 162.1px;
+  	height: 19.6px;
+}
+.sectionCourseWhatDoYouW {
+  	position: absolute;
+  	width: calc(100% + 0.1px);
+  	top: 417px;
+  	right: -0.1px;
+  	left: 0px;
+  	background-color: #fff;
+  	height: 121.5px;
+  	font-size: 24.29px;
+  	color: #0069b1;
+}
+.container7 {
+  	position: absolute;
+  	width: 100%;
+  	top: 0px;
+  	right: 0px;
+  	left: 0px;
+  	height: 121.5px;
+}
+.wDefaultHeading1 {
+  	position: absolute;
+  	top: 32.39px;
+  	left: calc(50% - 230.89px);
+  	line-height: 32.39px;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 464.5px;
+  	height: 32.4px;
+}
+.highlightedSelfpaced {
+  	position: absolute;
+  	width: calc(100% - 48.5px);
+  	top: 89.07px;
+  	right: 24.21px;
+  	left: 24.29px;
+  	height: 32.4px;
+  	font-size: 14.17px;
+  	color: #2a2a2e;
+}
+.belajarTanpaBatas {
+  	position: absolute;
+  	top: 0px;
+  	left: calc(50% - 144.46px);
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 289.6px;
+  	height: 20.2px;
+}
+.header {
+  	position: absolute;
+  	top: 0.34px;
+  	left: -0.42px;
+  	box-shadow: 0px 2.0242435932159424px 8.1px rgba(0, 0, 0, 0.05);
+  	background-color: #fff;
+  	width: 1280px;
+  	height: 59.7px;
+  	text-align: left;
+  	color: #fff;
+}
+.container8 {
+  	position: absolute;
+  	height: calc(100% - 16.2px);
+  	width: calc(100% - 51.2px);
+  	top: 8.1px;
+  	right: 25.6px;
+  	bottom: 8.1px;
+  	left: 25.6px;
+}
+.input {
+  	position: absolute;
+  	width: calc(100% - 648.9px);
+  	top: 3.04px;
+  	right: 513.57px;
+  	left: 135.33px;
+  	border-radius: 4.05px;
+  	background-color: #fff;
+  	border: 1px solid #dee2e6;
+  	box-sizing: border-box;
+  	height: 40.5px;
+  	overflow: hidden;
+  	color: #b9b9cb;
+}
+.container9 {
+  	position: absolute;
+  	width: calc(100% - 23.9px);
+  	top: 11.14px;
+  	right: 11.75px;
+  	left: 12.15px;
+  	height: 16.9px;
+  	overflow: hidden;
+}
+.cariKursus {
+  	position: absolute;
+  	top: 0px;
+  	left: 0px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 79.7px;
+  	height: 16.9px;
+}
+.iconSearch {
+  	position: absolute;
+  	height: 55.86%;
+  	top: 25.59%;
+  	right: 529.73px;
+  	bottom: 18.54%;
+  	max-height: 100%;
+  	width: 24.3px;
+  	object-fit: cover;
+}
+.background {
+  	position: absolute;
+  	top: calc(50% - 13.65px);
+  	right: 408.75px;
+  	border-radius: 20.24px;
+  	background-color: #0069b1;
+  	width: 88.6px;
+  	height: 30.4px;
+}
+.iconHomeSvg {
+  	position: absolute;
+  	top: 3.04px;
+  	left: 16.19px;
+  	width: 24.3px;
+  	height: 24.3px;
+}
+.beli {
+  	position: absolute;
+  	top: 5.06px;
+  	left: 45.55px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 27.1px;
+  	height: 20.2px;
+}
+.container10 {
+  	position: absolute;
+  	top: calc(50% - 17.5px);
+  	right: 85.36px;
+  	width: 114px;
+  	height: 30.4px;
+  	cursor: pointer;
+  	color: #2a2a30;
+}
+.iconMyCoursesSvg {
+  	position: absolute;
+  	top: 3.04px;
+  	left: 0px;
+  	width: 24.3px;
+  	height: 24.3px;
+}
+.kursusSaya {
+  	position: absolute;
+  	top: 5.06px;
+  	left: 29.35px;
+  	line-height: 20.24px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	width: 84.9px;
+  	height: 20.2px;
+}
+.container11 {
+  	position: absolute;
+  	top: calc(50% - 13.65px);
+  	right: -0.03px;
+  	width: 70.4px;
+  	height: 30.4px;
+  	text-align: center;
+}
+.button {
+  	position: absolute;
+  	top: -2.2px;
+  	left: 0px;
+  	border-radius: 8.1px;
+  	background-color: #0069b1;
+  	width: 70.4px;
+  	height: 34.7px;
+}
+.daftar {
+  	position: absolute;
+  	top: calc(50% - 8.57px);
+  	left: calc(50% - 22.38px);
+  	line-height: 21.25px;
+  	font-weight: 500;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	width: 44.9px;
+  	height: 16.9px;
+}
+.link2 {
+  	position: absolute;
+  	top: 11.13px;
+  	left: -0.29px;
+  	width: 117.4px;
+  	height: 23.3px;
+  	font-size: 18.2px;
+  	color: #000;
+  	font-family: 'Noto Sans Math';
+}
+.vocalink {
+  	position: absolute;
+  	top: 4.84px;
+  	left: 32.88px;
+  	line-height: 24.29px;
+  	display: flex;
+  	align-items: center;
+  	width: 104.2px;
+  	height: 11.1px;
+}
+.vocalinkTxt {
+  	line-break: anywhere;
+  	width: 100%;
+}
+.link3 {
+  	font-size: 20.2px;
+  	font-family: 'Oleo Script';
+  	color: #4b4b4b;
+}
+.chatgptImage6Sep2025122 {
+  	position: absolute;
+  	top: -5.28px;
+  	left: 0.49px;
+  	width: 32.4px;
+  	height: 32.4px;
+  	object-fit: cover;
+}
+

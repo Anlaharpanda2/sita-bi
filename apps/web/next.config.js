@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3002/api/:path*', // Updated to correct port
+        destination: 'http://localhost:3002/api/:path*',
       },
     ];
   },
@@ -18,26 +18,16 @@ const nextConfig = {
       },
     ],
   },
-  // Performance optimizations
   reactStrictMode: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Suppress hydration warnings from browser extensions
-  onDemandEntries: {
-    maxInactiveAge: 25 * 1000,
-    pagesBufferLength: 2,
-  },
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    // Enable streaming SSR for faster page loads
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // PPR disabled - requires Next.js canary version
-    // ppr: true,
   },
-  // Enable module concatenation for smaller bundles
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks = {
@@ -45,14 +35,12 @@ const nextConfig = {
         cacheGroups: {
           default: false,
           vendors: false,
-          // Vendor chunk
           vendor: {
             name: 'vendor',
             chunks: 'all',
             test: /node_modules/,
             priority: 20,
           },
-          // Common chunk
           common: {
             name: 'common',
             minChunks: 2,

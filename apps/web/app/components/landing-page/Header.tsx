@@ -17,8 +17,8 @@ export default function Header({
   scrollToSection,
 }: HeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg z-40" suppressHydrationWarning>
-      <div className="max-w-7xl mx-auto px-6" suppressHydrationWarning>
+    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg z-40">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between py-5">
           <a
             href="#hero"
@@ -41,8 +41,8 @@ export default function Header({
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-10" suppressHydrationWarning>
-            {['hero', 'tawarantopik', 'jadwal', 'pengumuman', 'team'].map(
+          <nav className="hidden md:flex items-center gap-10">
+            {['hero', 'tawarantopik', 'jadwal', 'pengumuman'].map(
               (section) => (
                 <a
                   key={section}
@@ -68,6 +68,12 @@ export default function Header({
               ),
             )}
             <a
+              href="/dokumentasi"
+              className="relative font-medium text-gray-800 hover:text-red-900 transition-colors"
+            >
+              Dokumentasi
+            </a>
+            <a
               href="/login"
               className="bg-gradient-to-r from-red-900 to-red-800 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
             >
@@ -85,32 +91,40 @@ export default function Header({
         </div>
 
         {/* Mobile Navigation */}
-        <nav className={`md:hidden py-6 border-t border-red-900/10 ${isMenuOpen ? 'block' : 'hidden'}`} suppressHydrationWarning>
-          {['hero', 'tawarantopik', 'jadwal', 'pengumuman', 'team'].map(
-            (section) => (
-              <a
-                key={section}
-                href={`#${section}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(section);
-                }}
-                className="block py-3 text-gray-800 hover:text-red-900 font-medium"
-              >
-                {section === 'hero'
-                  ? 'Home'
-                  : section.charAt(0).toUpperCase() +
-                    section.slice(1).replace('topik', ' Topik')}
-              </a>
-            ),
-          )}
-          <a
-            href="/login"
-            className="block text-center bg-gradient-to-r from-red-900 to-red-800 text-white px-8 py-3 rounded-full font-semibold mt-4"
-          >
-            Login
-          </a>
-        </nav>
+        {isMenuOpen ? (
+          <nav className="md:hidden py-6 border-t border-red-900/10">
+            {['hero', 'tawarantopik', 'jadwal', 'pengumuman'].map(
+              (section) => (
+                <a
+                  key={section}
+                  href={`#${section}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(section);
+                  }}
+                  className="block py-3 text-gray-800 hover:text-red-900 font-medium"
+                >
+                  {section === 'hero'
+                    ? 'Home'
+                    : section.charAt(0).toUpperCase() +
+                      section.slice(1).replace('topik', ' Topik')}
+                </a>
+              ),
+            )}
+            <a
+              href="/dokumentasi"
+              className="block py-3 text-gray-800 hover:text-red-900 font-medium"
+            >
+              Dokumentasi
+            </a>
+            <a
+              href="/login"
+              className="block text-center bg-gradient-to-r from-red-900 to-red-800 text-white px-8 py-3 rounded-full font-semibold mt-4"
+            >
+              Login
+            </a>
+          </nav>
+        ) : null}
       </div>
     </header>
   );
