@@ -23,6 +23,11 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Suppress hydration warnings from browser extensions
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
   experimental: {
     optimizePackageImports: ['lucide-react'],
     // Enable streaming SSR for faster page loads

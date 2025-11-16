@@ -8,8 +8,15 @@ export default function ClientWrapper() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
       const documentHeight =
@@ -32,7 +39,7 @@ export default function ClientWrapper() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mounted]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -51,7 +58,8 @@ export default function ClientWrapper() {
       {/* Progress Bar */}
       <div
         className="fixed top-0 left-0 h-1 bg-gradient-to-r from-red-900 to-yellow-600 z-50 transition-all duration-100"
-        style={{ width: `${scrollProgress}%` }}
+        style={{ width: `${mounted ? scrollProgress : 0}%` }}
+        suppressHydrationWarning
       />
 
       <Header
@@ -61,16 +69,17 @@ export default function ClientWrapper() {
         scrollToSection={scrollToSection}
       />
 
-      {/* Scroll to Top Button */}
-      {showScrollTop ? (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-110 transition-all z-30"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp size={24} />
-        </button>
-      ) : null}
+      {/* Scroll to Top Button - Always render but control visibility */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-110 transition-all z-30 ${
+          mounted && showScrollTop ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+        aria-label="Scroll to top"
+        suppressHydrationWarning
+      >
+        <ArrowUp size={24} />
+      </button>
     </>
   );
 }
