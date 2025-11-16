@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   ChevronRight, Users, BookOpen, Layout, Shield, Zap, Code, 
   Home, Settings, FileText, Calendar, Bell, GraduationCap, UserCheck,
-  CheckCircle, AlertCircle, ArrowRight, CalendarDays
+  CheckCircle, AlertCircle, ArrowRight, CalendarDays, CodeXml
 } from 'lucide-react';
 import Link from 'next/link';
 import TeamMemberCard from '../components/landing-page/TeamMemberCard';
@@ -42,8 +42,8 @@ const teamMembers = [
 const nextGenDeveloper = {
   name: 'Anla Harpanda',
   role: 'Full-Stack Developer',
-  id: 'Project IT 2025',
-  image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s',
+  id: '2311083015',
+  image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvPh9hd-Nonod-jOedev2EWsldcuYjabXayQ&s',
 };
 
 // Menu dokumentasi - Struktur hirarkis seperti NestJS
@@ -289,15 +289,16 @@ export default function DocumentationContent() {
             
             {/* Pengembang Section - Development Roadmap */}
             <section id="team" className="mb-20 scroll-mt-24">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Pengembang</h2>
-                <p className="text-base text-gray-600 max-w-2xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-6">Pengembang</h1>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                  <CodeXml className="mr-3 text-red-900" size={28} />
                   Evolusi tim pengembang sistem SITA-BI
-                </p>
+                </h2>
               </div>
 
               {/* Team 7 PBL 2025 - Maret - Juli 2025 */}
-              <div className="mb-12">
+              <div className="mb-12 pt-10">
                 <div className="flex items-center justify-center mb-6">
                   <div className="bg-gradient-to-r from-red-900 to-red-800 text-white px-5 py-2 rounded-full shadow-lg flex items-center space-x-2">
                     <CalendarDays size={20} />
@@ -318,17 +319,15 @@ export default function DocumentationContent() {
                 </div>
               </div>
 
-              {/* Animated Connecting Line/Arrow */}
+              {/* Animated Connecting Line/Arrow - Simple style */}
               <div className="flex justify-center mb-12 roadmap-line-container">
                 <div className="flex flex-col items-center relative">
-                  <div className="w-0.5 h-16 bg-gray-200 relative overflow-hidden">
-                    <div className="roadmap-line-animated absolute top-0 left-0 w-full h-0 bg-gradient-to-b from-red-900 to-blue-600"></div>
+                  <div className="w-px h-16 bg-gray-300 relative overflow-hidden">
+                    <div className="roadmap-line-animated absolute top-0 left-0 w-full h-0 bg-red-900"></div>
                   </div>
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-900 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                    <ArrowRight className="text-white rotate-90" size={14} />
-                  </div>
-                  <div className="w-0.5 h-16 bg-gray-200 relative overflow-hidden">
-                    <div className="roadmap-line-animated absolute top-0 left-0 w-full h-0 bg-gradient-to-b from-blue-600 to-blue-700"></div>
+                  <div className="w-3 h-3 bg-red-900 rounded-full"></div>
+                  <div className="w-px h-16 bg-gray-300 relative overflow-hidden">
+                    <div className="roadmap-line-animated absolute top-0 left-0 w-full h-0 bg-red-900"></div>
                   </div>
                 </div>
               </div>
@@ -336,21 +335,19 @@ export default function DocumentationContent() {
               {/* Project IT 2025 - Agustus - Desember 2025 */}
               <div>
                 <div className="flex items-center justify-center mb-6">
-                  <div className="bg-gradient-to-r from-blue-700 to-blue-600 text-white px-5 py-2 rounded-full shadow-lg flex items-center space-x-2">
+                  <div className="bg-gradient-to-r from-red-900 to-red-800 text-white px-5 py-2 rounded-full shadow-lg flex items-center space-x-2">
                     <CalendarDays size={20} />
                     <span className="font-semibold text-base">Agustus - Desember 2025</span>
                   </div>
                 </div>
                 
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6">
+                <div className="w-1/2 mx-auto bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Project IT 2025</h3>
                   <p className="text-center text-gray-600 mb-6 text-sm">Evolusi dan enhancement sistem</p>
                   
-                  {/* Single card centered */}
-                  <div className="flex justify-center">
-                    <div className="w-full max-w-sm">
-                      <TeamMemberCard member={nextGenDeveloper} index={0} />
-                    </div>
+                  {/* 4 cards in 1 row - same as Phase 1 */}
+                  <div className="grid grid-cols-1 gap-6">
+                    <TeamMemberCard member={nextGenDeveloper} index={0} />
                   </div>
                 </div>
               </div>
@@ -358,7 +355,7 @@ export default function DocumentationContent() {
 
             <style jsx>{`
               .roadmap-line-animated {
-                animation: expandLine 1s ease-out forwards;
+                animation: expandLine 0.8s ease-in-out forwards;
                 animation-play-state: paused;
               }
 
