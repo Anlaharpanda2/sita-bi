@@ -1681,10 +1681,7 @@ export default function DocumentationContent() {
               </div>
               
               <div className="text-center text-gray-600">
-                <p className="mb-2">© 2024 SITA-BI - Sistem Informasi Tugas Akhir Business Intelligence</p>
-                <p className="text-sm">
-                  Dikembangkan oleh <strong>Team 7</strong> - Proyek Semester 5
-                </p>
+                <p className="mb-2">© 2024 SITA-BI - Sistem Informasi Tugas Akhir Bahasa Inggris</p>
                 <p className="text-xs mt-4 text-gray-500">
                   Version 1.0.0 | Last Updated: November 2024
                 </p>

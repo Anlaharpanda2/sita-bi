@@ -16,6 +16,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'bing.pnp.ac.id',
+        port: '',
+        pathname: '/wp-content/uploads/**',
+      },
     ],
   },
   reactStrictMode: true,
@@ -55,5 +61,4 @@ const nextConfig = {
     return config;
   },
 };
-
 export default nextConfig;

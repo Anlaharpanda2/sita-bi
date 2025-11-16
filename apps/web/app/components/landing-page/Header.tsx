@@ -29,7 +29,7 @@ export default function Header({
             className="flex items-center gap-3 transition-transform hover:scale-105"
           >
             <Image
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s"
+              src="https://bing.pnp.ac.id/wp-content/uploads/2025/01/cropped-LOGO-BAHASA-INGGRIS-PNP-TEXT-300x300-1.png"
               alt="Logo"
               width={48}
               height={48}
