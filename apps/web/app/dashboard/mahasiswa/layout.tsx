@@ -55,7 +55,7 @@ export default function MahasiswaLayout({ children }: { children: ReactNode }) {
         </Suspense>
         
         <main className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-          <div className="p-6 lg:p-8 max-w-7xl mx-auto w-full">
+          <div className="p-6 lg:p-8 max-w-7xl mx-auto w-full bg-gray-100">
             {children}
           </div>
         </main>

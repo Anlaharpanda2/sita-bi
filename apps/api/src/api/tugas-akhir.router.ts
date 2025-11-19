@@ -220,4 +220,90 @@ router.get(
   }),
 );
 
+// Get pending TA for dosen to approve/reject
+router.get(
+  '/pending',
+  asyncHandler(authMiddleware),
+  authorizeRoles([Role.dosen]),
+  asyncHandler(async (req: Request, response: Response): Promise<void> => {
+    const userId = req.user?.id;
+    if (userId === undefined) {
+      response.status(401).json({
+        status: 'gagal',
+        message: 'Akses ditolak: ID pengguna tidak ditemukan.',
+      });
+      return;
+    }
+    const pendingList = await tugasAkhirService.getPendingForDosen(userId);
+    response.status(200).json({ status: 'sukses', data: pendingList });
+  }),
+);
+
+// Approve tugas akhir
+router.patch(
+  '/:id/approve',
+  asyncHandler(authMiddleware),
+  authorizeRoles([Role.dosen]),
+  asyncHandler(async (req: Request, response: Response): Promise<void> => {
+    const { id } = req.params;
+    if (id == null) {
+      response
+        .status(400)
+        .json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
+      return;
+    }
+    const approverId = req.user?.id;
+    if (approverId === undefined) {
+      response.status(401).json({
+        status: 'gagal',
+        message: 'Akses ditolak: ID pemberi persetujuan tidak ditemukan.',
+      });
+      return;
+    }
+    const approvedTugasAkhir = await tugasAkhirService.approve(
+      parseInt(id, 10),
+      approverId,
+    );
+    response.status(200).json({ status: 'sukses', data: approvedTugasAkhir });
+  }),
+);
+
+// Reject tugas akhir
+router.patch(
+  '/:id/reject',
+  asyncHandler(authMiddleware),
+  authorizeRoles([Role.dosen]),
+  asyncHandler(async (req: Request, response: Response): Promise<void> => {
+    const { id } = req.params;
+    if (id == null) {
+      response
+        .status(400)
+        .json({ status: 'gagal', message: 'ID Tugas Akhir diperlukan' });
+      return;
+    }
+    const rejecterId = req.user?.id;
+    if (rejecterId === undefined) {
+      response.status(401).json({
+        status: 'gagal',
+        message: 'Akses ditolak: ID penolak tidak ditemukan.',
+      });
+      return;
+    }
+    const { alasan_penolakan } = req.body;
+    if (!alasan_penolakan) {
+      response.status(400).json({
+        status: 'gagal',
+        message: 'Alasan penolakan diperlukan',
+      });
+      return;
+    }
+    const rejectedTugasAkhir = await tugasAkhirService.reject(
+      parseInt(id, 10),
+      rejecterId,
+      alasan_penolakan,
+    );
+    response.status(200).json({ status: 'sukses', data: rejectedTugasAkhir });
+  }),
+);
+
 export default router;

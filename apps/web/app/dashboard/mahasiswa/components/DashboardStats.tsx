@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import {
   BookOpen,
   MessagesSquare,
@@ -25,48 +24,32 @@ interface StatsData {
     status: string;
     tanggal: string | null;
   };
+  progress: {
+    percentage: number;
+    tahap: string;
+  };
 }
 
-export default function DashboardStats() {
-  const [stats, setStats] = useState<StatsData | null>(null);
-  const [loading, setLoading] = useState(true);
+interface DashboardStatsProps {
+  stats: StatsData | null;
+  loading: boolean;
+}
 
-  useEffect(() => {
-    // Simulate API call - replace with actual API
-    setTimeout(() => {
-      setStats({
-        tugasAkhir: {
-          total: 3,
-          disetujui: 1,
-          pending: 1,
-          ditolak: 1,
-        },
-        bimbingan: {
-          total: 12,
-          bulanIni: 4,
-          rataRata: 3,
-        },
-        sidang: {
-          status: 'Terdaftar',
-          tanggal: '2025-12-15',
-        },
-      });
-      setLoading(false);
-    }, 500);
-  }, []);
-
+export default function DashboardStats({ stats, loading }: DashboardStatsProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse"
-          >
-            <div className="h-12 bg-gray-200 rounded-lg mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded w-2/3"></div>
-          </div>
+          <div key={i} className="animate-pulse bg-gray-200 rounded-2xl h-32" />
         ))}
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="text-center text-gray-500 py-8">
+        Silakan login terlebih dahulu untuk melihat statistik
       </div>
     );
   }
@@ -74,28 +57,30 @@ export default function DashboardStats() {
   const statsCards = [
     {
       title: 'Total Pengajuan',
-      value: stats?.tugasAkhir.total || 0,
-      subtitle: `${stats?.tugasAkhir.disetujui || 0} Disetujui`,
+      value: stats.tugasAkhir.total,
+      subtitle: `${stats.tugasAkhir.disetujui} Disetujui`,
       icon: BookOpen,
       gradient: 'from-blue-500 to-cyan-500',
       iconBg: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      trend: '+12%',
+      trend: stats.tugasAkhir.disetujui > 0 ? '+100%' : '',
     },
     {
       title: 'Sesi Bimbingan',
-      value: stats?.bimbingan.total || 0,
-      subtitle: `${stats?.bimbingan.bulanIni || 0} Bulan ini`,
+      value: stats.bimbingan.total,
+      subtitle: `${stats.bimbingan.bulanIni} Bulan ini`,
       icon: MessagesSquare,
       gradient: 'from-emerald-500 to-green-500',
       iconBg: 'bg-emerald-50',
       iconColor: 'text-emerald-600',
-      trend: '+8%',
+      trend: stats.bimbingan.bulanIni > 0 ? `+${Math.round((stats.bimbingan.bulanIni / stats.bimbingan.total) * 100)}%` : '',
     },
     {
       title: 'Status Sidang',
-      value: stats?.sidang.status || 'Belum',
-      subtitle: stats?.sidang.tanggal ? new Date(stats.sidang.tanggal).toLocaleDateString('id-ID') : 'Belum dijadwalkan',
+      value: stats.sidang.status,
+      subtitle: stats.sidang.tanggal 
+        ? new Date(stats.sidang.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+        : 'Belum dijadwalkan',
       icon: Calendar,
       gradient: 'from-purple-500 to-pink-500',
       iconBg: 'bg-purple-50',
@@ -104,13 +89,13 @@ export default function DashboardStats() {
     },
     {
       title: 'Progress TA',
-      value: '75%',
-      subtitle: 'Menuju sidang',
+      value: `${stats.progress.percentage}%`,
+      subtitle: stats.progress.tahap,
       icon: Award,
       gradient: 'from-amber-500 to-orange-500',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
-      trend: '+5%',
+      trend: stats.progress.percentage > 50 ? '+5%' : '',
     },
   ];
 

@@ -1,26 +1,59 @@
-// Server Component with Suspense for better streaming
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { DashboardCardSkeleton } from '../../components/Suspense/LoadingFallback';
 
 // Dynamically import client components
 const WelcomeSection = dynamic(() => import('./components/WelcomeSection'), {
-  ssr: true,
+  ssr: false,
 });
 
 const DashboardStats = dynamic(() => import('./components/DashboardStats'));
-
 const SubmissionChart = dynamic(() => import('./components/SubmissionChart'));
-
 const ProgressTimeline = dynamic(() => import('./components/ProgressTimeline'));
-
-const RecentActivity = dynamic(() => import('./components/RecentActivity'));
-
 const QuickActions = dynamic(() => import('./components/QuickActions'));
-
 const UpcomingSchedule = dynamic(() => import('./components/UpcomingSchedule'));
 
 export default function MahasiswaDashboardPage() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const userId = localStorage.getItem('userId') || localStorage.getItem('token');
+        
+        if (!userId) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('http://localhost:3002/api/dashboard/mahasiswa/stats', {
+          headers: {
+            'x-user-id': userId,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setStats(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const handleStatsUpdate = (newStats: any) => {
+    setStats(newStats);
+  };
+
   return (
     <div className="space-y-8 pb-8">
       {/* Welcome Section */}
@@ -42,7 +75,7 @@ export default function MahasiswaDashboardPage() {
           </div>
         }
       >
-        <DashboardStats />
+        <DashboardStats stats={stats} loading={loading} />
       </Suspense>
 
       {/* Main Content Grid */}
@@ -51,30 +84,25 @@ export default function MahasiswaDashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Submission Chart */}
           <Suspense fallback={<DashboardCardSkeleton />}>
-            <SubmissionChart />
+            <SubmissionChart stats={stats} loading={loading} />
           </Suspense>
 
           {/* Progress Timeline */}
           <Suspense fallback={<DashboardCardSkeleton />}>
-            <ProgressTimeline />
+            <ProgressTimeline stats={stats} loading={loading} />
           </Suspense>
 
-          {/* Quick Actions */}
+          {/* System Statistics */}
           <Suspense fallback={<DashboardCardSkeleton />}>
             <QuickActions />
           </Suspense>
         </div>
 
-        {/* Right Column - Activity & Schedule */}
+        {/* Right Column - Schedule only */}
         <div className="space-y-6">
           {/* Upcoming Schedule */}
           <Suspense fallback={<DashboardCardSkeleton />}>
             <UpcomingSchedule />
-          </Suspense>
-
-          {/* Recent Activity */}
-          <Suspense fallback={<DashboardCardSkeleton />}>
-            <RecentActivity />
           </Suspense>
         </div>
       </div>

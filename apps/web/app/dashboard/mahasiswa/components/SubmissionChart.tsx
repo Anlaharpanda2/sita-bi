@@ -1,14 +1,37 @@
 'use client';
 
-import { useState } from 'react';
 import { FileCheck, FileX, FileClock, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 
-export default function SubmissionChart() {
-  const [data] = useState({
-    disetujui: 1,
-    pending: 1,
-    ditolak: 1,
-  });
+interface SubmissionChartProps {
+  stats: any;
+  loading: boolean;
+}
+
+export default function SubmissionChart({ stats, loading }: SubmissionChartProps) {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="animate-pulse space-y-6">
+          <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+          <div className="flex items-center justify-center">
+            <div className="w-48 h-48 bg-gray-200 rounded-full"></div>
+          </div>
+          <div className="space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-12 bg-gray-200 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const data = {
+    disetujui: stats?.tugasAkhir?.disetujui || 0,
+    pending: stats?.tugasAkhir?.pending || 0,
+    ditolak: stats?.tugasAkhir?.ditolak || 0,
+  };
 
   const total = data.disetujui + data.pending + data.ditolak;
   const approvalRate = total > 0 ? ((data.disetujui / total) * 100).toFixed(0) : 0;
@@ -152,9 +175,11 @@ export default function SubmissionChart() {
 
       {/* Quick action */}
       <div className="mt-6 pt-6 border-t border-gray-100">
-        <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-medium text-sm transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
-          Ajukan Judul Baru
-        </button>
+        <Link href="/dashboard/mahasiswa/tugas-akhir">
+          <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-medium text-sm transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
+            Ajukan Judul Baru
+          </button>
+        </Link>
       </div>
     </div>
   );

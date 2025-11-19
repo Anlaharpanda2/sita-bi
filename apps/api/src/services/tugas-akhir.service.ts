@@ -162,5 +162,187 @@ export class TugasAkhirService {
       },
     });
   }
+
+  /**
+   * Approve tugas akhir by pembimbing
+   * Only pembimbing can approve their student's TA
+   */
+  async approve(tugasAkhirId: number, approverId: number): Promise<TugasAkhir> {
+    // Check if tugas akhir exists
+    const tugasAkhir = await this.prisma.tugasAkhir.findUnique({
+      where: { id: tugasAkhirId },
+      include: {
+        peranDosenTa: {
+          include: {
+            dosen: true,
+          },
+        },
+      },
+    });
+
+    if (!tugasAkhir) {
+      throw new Error('Tugas Akhir tidak ditemukan.');
+    }
+
+    // Check if already approved or not in DIAJUKAN status
+    if (tugasAkhir.status !== StatusTugasAkhir.DIAJUKAN) {
+      throw new Error(
+        `Tugas Akhir dengan status "${tugasAkhir.status}" tidak dapat disetujui.`,
+      );
+    }
+
+    // Get dosen from approver userId
+    const dosen = await this.prisma.dosen.findUnique({
+      where: { user_id: approverId },
+    });
+
+    if (!dosen) {
+      throw new Error('Profil dosen tidak ditemukan.');
+    }
+
+    // Check if this dosen is pembimbing1 or pembimbing2
+    const isPembimbing = tugasAkhir.peranDosenTa.some(
+      (peran) =>
+        peran.dosen_id === dosen.id &&
+        (peran.peran === 'pembimbing1' || peran.peran === 'pembimbing2'),
+    );
+
+    if (!isPembimbing) {
+      throw new Error('Hanya pembimbing yang dapat menyetujui judul tugas akhir ini.');
+    }
+
+    // Approve the tugas akhir
+    return this.prisma.tugasAkhir.update({
+      where: { id: tugasAkhirId },
+      data: {
+        status: StatusTugasAkhir.DISETUJUI,
+        disetujui_oleh: approverId,
+      },
+      include: {
+        mahasiswa: {
+          include: {
+            user: true,
+          },
+        },
+        approver: true,
+      },
+    });
+  }
+
+  /**
+   * Reject tugas akhir by pembimbing
+   */
+  async reject(
+    tugasAkhirId: number,
+    rejecterId: number,
+    alasanPenolakan: string,
+  ): Promise<TugasAkhir> {
+    // Check if tugas akhir exists
+    const tugasAkhir = await this.prisma.tugasAkhir.findUnique({
+      where: { id: tugasAkhirId },
+      include: {
+        peranDosenTa: {
+          include: {
+            dosen: true,
+          },
+        },
+      },
+    });
+
+    if (!tugasAkhir) {
+      throw new Error('Tugas Akhir tidak ditemukan.');
+    }
+
+    // Check if in DIAJUKAN status
+    if (tugasAkhir.status !== StatusTugasAkhir.DIAJUKAN) {
+      throw new Error(
+        `Tugas Akhir dengan status "${tugasAkhir.status}" tidak dapat ditolak.`,
+      );
+    }
+
+    // Get dosen from rejecter userId
+    const dosen = await this.prisma.dosen.findUnique({
+      where: { user_id: rejecterId },
+    });
+
+    if (!dosen) {
+      throw new Error('Profil dosen tidak ditemukan.');
+    }
+
+    // Check if this dosen is pembimbing
+    const isPembimbing = tugasAkhir.peranDosenTa.some(
+      (peran) =>
+        peran.dosen_id === dosen.id &&
+        (peran.peran === 'pembimbing1' || peran.peran === 'pembimbing2'),
+    );
+
+    if (!isPembimbing) {
+      throw new Error('Hanya pembimbing yang dapat menolak judul tugas akhir ini.');
+    }
+
+    // Reject the tugas akhir
+    return this.prisma.tugasAkhir.update({
+      where: { id: tugasAkhirId },
+      data: {
+        status: StatusTugasAkhir.DITOLAK,
+        ditolak_oleh: rejecterId,
+        alasan_penolakan: alasanPenolakan,
+      },
+      include: {
+        mahasiswa: {
+          include: {
+            user: true,
+          },
+        },
+        rejecter: true,
+      },
+    });
+  }
+
+  /**
+   * Get all pending tugas akhir for dosen to approve/reject
+   */
+  async getPendingForDosen(dosenId: number): Promise<TugasAkhir[]> {
+    const dosen = await this.prisma.dosen.findUnique({
+      where: { user_id: dosenId },
+    });
+
+    if (!dosen) {
+      throw new Error('Profil dosen tidak ditemukan.');
+    }
+
+    return this.prisma.tugasAkhir.findMany({
+      where: {
+        status: StatusTugasAkhir.DIAJUKAN,
+        peranDosenTa: {
+          some: {
+            dosen_id: dosen.id,
+            peran: {
+              in: ['pembimbing1', 'pembimbing2'],
+            },
+          },
+        },
+      },
+      include: {
+        mahasiswa: {
+          include: {
+            user: true,
+          },
+        },
+        peranDosenTa: {
+          include: {
+            dosen: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        tanggal_pengajuan: 'asc',
+      },
+    });
+  }
   // NOTE: The old `cekKemiripan` method is now removed.
 }

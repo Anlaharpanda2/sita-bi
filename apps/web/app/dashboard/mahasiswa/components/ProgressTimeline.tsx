@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
 
 interface TimelineItem {
@@ -10,31 +9,55 @@ interface TimelineItem {
   date?: string;
 }
 
-export default function ProgressTimeline() {
-  const [timeline] = useState<TimelineItem[]>([
+interface ProgressTimelineProps {
+  stats: any;
+  loading: boolean;
+}
+
+export default function ProgressTimeline({ stats, loading }: ProgressTimelineProps) {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex gap-4">
+              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const timeline: TimelineItem[] = [
     {
       title: 'Pengajuan Judul',
-      description: 'Judul tugas akhir telah disetujui',
-      status: 'completed',
-      date: '15 Sep 2024',
+      description: stats?.tugasAkhir?.disetujui > 0 ? 'Judul tugas akhir telah disetujui' : 'Belum mengajukan judul',
+      status: stats?.tugasAkhir?.disetujui > 0 ? 'completed' : stats?.tugasAkhir?.pending > 0 ? 'current' : 'upcoming',
+      date: stats?.tugasAkhir?.disetujui > 0 || stats?.tugasAkhir?.pending > 0 ? 'Telah diajukan' : undefined,
     },
     {
       title: 'Bimbingan',
-      description: '12 sesi bimbingan telah dilakukan',
-      status: 'current',
-      date: 'Sedang berlangsung',
+      description: `${stats?.bimbingan?.total || 0} sesi bimbingan telah dilakukan`,
+      status: stats?.bimbingan?.total > 0 ? 'current' : 'upcoming',
+      date: stats?.bimbingan?.total > 0 ? 'Sedang berlangsung' : undefined,
     },
     {
       title: 'Pendaftaran Sidang',
-      description: 'Menunggu kelengkapan berkas',
-      status: 'upcoming',
+      description: stats?.sidang?.status === 'Terdaftar' ? 'Terdaftar untuk sidang' : 'Menunggu kelengkapan berkas',
+      status: stats?.sidang?.status === 'Terdaftar' ? 'completed' : stats?.bimbingan?.total > 5 ? 'current' : 'upcoming',
     },
     {
       title: 'Sidang Tugas Akhir',
-      description: 'Belum dijadwalkan',
+      description: stats?.sidang?.tanggal ? `Dijadwalkan` : 'Belum dijadwalkan',
       status: 'upcoming',
     },
-  ]);
+  ];
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
@@ -107,12 +130,12 @@ export default function ProgressTimeline() {
           <span className="text-sm font-medium text-gray-600">
             Progress Keseluruhan
           </span>
-          <span className="text-sm font-bold text-blue-600">50%</span>
+          <span className="text-sm font-bold text-blue-600">{stats?.progress?.percentage || 0}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
             className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out hover:from-blue-600 hover:to-purple-600"
-            style={{ width: '50%' }}
+            style={{ width: `${stats?.progress?.percentage || 0}%` }}
           ></div>
         </div>
       </div>

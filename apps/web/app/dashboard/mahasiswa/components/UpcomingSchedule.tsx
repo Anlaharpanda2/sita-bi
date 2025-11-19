@@ -6,7 +6,7 @@ import { Calendar, Clock, MapPin, User } from 'lucide-react';
 interface ScheduleItem {
   id: string;
   title: string;
-  type: 'bimbingan' | 'sidang' | 'seminar';
+  type: 'bimbingan' | 'sidang';
   date: string;
   time: string;
   location: string;
@@ -36,16 +36,6 @@ export default function UpcomingSchedule() {
       with: 'Tim Penguji',
       status: 'upcoming',
     },
-    {
-      id: '3',
-      title: 'Seminar Progress',
-      type: 'seminar',
-      date: '2024-11-28',
-      time: '09:00 - 10:00',
-      location: 'Auditorium',
-      with: 'Mahasiswa Semester 7',
-      status: 'upcoming',
-    },
   ]);
 
   const getTypeColor = (type: string) => {
@@ -63,13 +53,6 @@ export default function UpcomingSchedule() {
           text: 'text-purple-600',
           border: 'border-purple-200',
           badge: 'bg-purple-100',
-        };
-      case 'seminar':
-        return {
-          bg: 'bg-green-50',
-          text: 'text-green-600',
-          border: 'border-green-200',
-          badge: 'bg-green-100',
         };
       default:
         return {

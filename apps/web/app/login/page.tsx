@@ -45,8 +45,10 @@ export default function LoginPage() {
 
       const user = response.data.user;
 
-      // Store user data in localStorage via AuthContext
+      // Store user data and userId as token in localStorage
       login({ ...user, id: String(user.id) });
+      localStorage.setItem('token', String(response.data.userId));
+      localStorage.setItem('userId', String(response.data.userId));
 
       // Redirect based on role
       const userRole = user.roles[0]?.name;

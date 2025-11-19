@@ -12,14 +12,6 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // Preload critical resources
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    response.headers.set(
-      'Link',
-      '</api/auth/me>; rel=preload; as=fetch, </api/user/profile>; rel=preload; as=fetch',
-    );
-  }
-
   // Enable HTTP/2 Server Push hints
   response.headers.set('X-DNS-Prefetch-Control', 'on');
   response.headers.set('X-Content-Type-Options', 'nosniff');
