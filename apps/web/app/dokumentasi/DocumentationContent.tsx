@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   ChevronRight, Users, BookOpen, Layout, Shield, Zap, Code, 
   Home, Settings, FileText, Calendar, Bell, GraduationCap, UserCheck,
-  CheckCircle, AlertCircle, ArrowRight, CalendarDays, CodeXml
+  CheckCircle, AlertCircle, CalendarDays, CodeXml
 } from 'lucide-react';
 import Link from 'next/link';
 import TeamMemberCard from '../components/landing-page/TeamMemberCard';
@@ -187,26 +187,26 @@ export default function DocumentationContent() {
   }, [roadmapAnimated]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header - Using same component as landing page */}
       <HeaderWrapper activeSection="dokumentasi" scrollToSection={() => {}} />
 
       <div className="flex pt-20">
-        {/* Sidebar - Fixed position like NestJS docs */}
+        {/* Sidebar - Fixed position like Tailwind docs */}
         <aside
           className={`
             fixed top-20 left-0 bottom-0 z-40
-            w-72 bg-white border-r border-gray-200 overflow-y-auto
+            w-64 bg-white border-r border-gray-200 overflow-y-auto
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             lg:translate-x-0
           `}
           style={{ 
             scrollbarWidth: 'thin',
-            scrollbarColor: '#800000 #f3f4f6'
+            scrollbarColor: '#7f1d1d #f9fafb'
           }}
         >
-          <nav className="p-6 space-y-1">
+          <nav className="px-4 py-8 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
@@ -224,29 +224,29 @@ export default function DocumentationContent() {
                       }
                     }}
                     className={`
-                      w-full flex items-center justify-between px-4 py-2.5 rounded-lg
-                      transition-all duration-200 text-left text-sm font-medium
+                      w-full flex items-center justify-between px-3 py-2 rounded-md
+                      transition-all duration-150 text-left text-sm font-medium
                       ${
                         isActive
-                          ? 'bg-red-50 text-red-900'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-red-50 text-red-900 border-l-2 border-red-900'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 border-l-2 border-transparent'
                       }
                     `}
                   >
-                    <div className="flex items-center space-x-3">
-                      <Icon size={18} />
+                    <div className="flex items-center space-x-2.5">
+                      <Icon size={16} className={isActive ? 'text-red-900' : 'text-gray-400'} />
                       <span>{item.label}</span>
                     </div>
                     {hasChildren && (
                       <ChevronRight 
-                        size={16} 
-                        className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        size={14} 
+                        className={`transition-transform text-gray-400 ${isExpanded ? 'rotate-90' : ''}`}
                       />
                     )}
                   </button>
                   
                   {hasChildren && isExpanded && (
-                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-4">
+                    <div className="ml-6 mt-1 space-y-0.5 border-l border-gray-200 pl-3">
                       {item.children?.map((child) => {
                         const isChildActive = activeSection === child.id;
                         return (
@@ -254,12 +254,12 @@ export default function DocumentationContent() {
                             key={child.id}
                             onClick={() => scrollToSection(child.id)}
                             className={`
-                              w-full text-left px-4 py-2 rounded-lg text-sm
-                              transition-all duration-200
+                              w-full text-left px-3 py-1.5 rounded-md text-sm
+                              transition-all duration-150
                               ${
                                 isChildActive
-                                  ? 'bg-red-50 text-red-900 font-medium'
-                                  : 'text-gray-600 hover:bg-gray-50'
+                                  ? 'text-red-900 font-medium bg-red-50'
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                               }
                             `}
                           >
@@ -284,31 +284,31 @@ export default function DocumentationContent() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-72">
-          <div className="max-w-4xl mx-auto px-6 py-8">
+        <main className="flex-1 lg:ml-64">
+          <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-10 py-10">
             
             {/* Pengembang Section - Development Roadmap */}
             <section id="team" className="mb-20 scroll-mt-24">
-              <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-6">Pengembang</h1>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                  <CodeXml className="mr-3 text-red-900" size={28} />
+              <div className="mb-10">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Pengembang</h1>
+                <p className="text-lg text-gray-600 flex items-center">
+                  <CodeXml className="mr-2 text-red-900" size={22} />
                   Evolusi tim pengembang sistem SITA-BI
-                </h2>
+                </p>
               </div>
 
               {/* Team 7 PBL 2025 - Maret - Juli 2025 */}
-              <div className="mb-12 pt-10">
+              <div className="mb-12">
                 <div className="flex items-center justify-center mb-6">
-                  <div className="bg-gradient-to-r from-red-900 to-red-800 text-white px-5 py-2 rounded-full shadow-lg flex items-center space-x-2">
-                    <CalendarDays size={20} />
-                    <span className="font-semibold text-base">Maret - Juli 2025</span>
+                  <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-red-900 text-white text-sm font-medium shadow-sm">
+                    <CalendarDays size={16} />
+                    <span>Maret - Juli 2025</span>
                   </div>
                 </div>
                 
-                <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Team 7 PBL 2025</h3>
-                  <p className="text-center text-gray-600 mb-6 text-sm">Tim foundational yang membangun SITA-BI</p>
+                <div className="bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1 text-center">Team 7 PBL 2025</h3>
+                  <p className="text-center text-gray-600 mb-8 text-sm">Tim foundational yang membangun SITA-BI</p>
                   
                   {/* 4 cards in 1 row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -335,17 +335,16 @@ export default function DocumentationContent() {
               {/* Project IT 2025 - Agustus - Desember 2025 */}
               <div>
                 <div className="flex items-center justify-center mb-6">
-                  <div className="bg-gradient-to-r from-red-900 to-red-800 text-white px-5 py-2 rounded-full shadow-lg flex items-center space-x-2">
-                    <CalendarDays size={20} />
-                    <span className="font-semibold text-base">Agustus - Desember 2025</span>
+                  <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-red-900 text-white text-sm font-medium shadow-sm">
+                    <CalendarDays size={16} />
+                    <span>Agustus - Desember 2025</span>
                   </div>
                 </div>
                 
-                <div className="w-1/2 mx-auto bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Project IT 2025</h3>
-                  <p className="text-center text-gray-600 mb-6 text-sm">Evolusi dan enhancement sistem</p>
+                <div className="max-w-sm mx-auto bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1 text-center">Project IT 2025</h3>
+                  <p className="text-center text-gray-600 mb-8 text-sm">Evolusi dan enhancement sistem</p>
                   
-                  {/* 4 cards in 1 row - same as Phase 1 */}
                   <div className="grid grid-cols-1 gap-6">
                     <TeamMemberCard member={nextGenDeveloper} index={0} />
                   </div>
@@ -374,53 +373,70 @@ export default function DocumentationContent() {
             `}</style>
 
             {/* Introduction Section */}
-            <section id="introduction" className="mb-16 scroll-mt-24">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6">Pengenalan</h1>
+            <section id="introduction" className="mb-20 scroll-mt-24">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">Pengenalan</h1>
               
               {/* Tentang SITA-BI */}
-              <div id="intro-overview" className="mb-12 scroll-mt-24">
+              <div id="intro-overview" className="mb-16 scroll-mt-24">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                  <BookOpen className="mr-3 text-red-900" size={28} />
+                  <BookOpen className="mr-2.5 text-red-900" size={24} />
                   Tentang SITA-BI
                 </h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    <strong className="text-red-900">SITA-BI</strong> (Sistem Informasi Tugas Akhir - Business Intelligence) 
-                    adalah platform digital komprehensif yang dirancang khusus untuk mengelola seluruh siklus proses 
-                    tugas akhir mahasiswa secara terintegrasi, efisien, dan terorganisir dengan baik.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    Sistem ini menghubungkan tiga stakeholder utama: <strong>mahasiswa</strong>, 
-                    <strong> dosen pembimbing</strong>, dan <strong>administrator/koordinator program studi</strong> dalam 
-                    satu ekosistem digital yang mudah diakses, user-friendly, dan dapat digunakan kapan saja, di mana saja.
-                  </p>
-                  
-                  <div className="bg-red-50 border-l-4 border-red-900 p-6 rounded-r-lg my-6">
-                    <p className="text-gray-800 font-medium mb-2">
-                      💡 <strong>Tujuan Utama:</strong>
+                <div className="prose prose-gray max-w-none">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      <strong className="text-red-900">SITA-BI</strong> (Sistem Informasi Tugas Akhir - Business Intelligence) 
+                      adalah platform digital komprehensif yang dirancang khusus untuk mengelola seluruh siklus proses 
+                      tugas akhir mahasiswa secara terintegrasi, efisien, dan terorganisir dengan baik.
                     </p>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700 ml-6">
-                      <li>Mempermudah koordinasi antara mahasiswa dan dosen pembimbing</li>
-                      <li>Meningkatkan transparansi proses tugas akhir</li>
-                      <li>Mempercepat proses administrasi dan approval</li>
-                      <li>Mengurangi penggunaan dokumen fisik (paperless)</li>
-                      <li>Menyediakan tracking progress tugas akhir secara real-time</li>
+                    <p className="text-gray-700 leading-relaxed mb-0">
+                      Sistem ini menghubungkan tiga stakeholder utama: <strong>mahasiswa</strong>, 
+                      <strong> dosen pembimbing</strong>, dan <strong>administrator/koordinator program studi</strong> dalam 
+                      satu ekosistem digital yang mudah diakses, user-friendly, dan dapat digunakan kapan saja, di mana saja.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-red-50 border-l-4 border-red-900 p-5 rounded-r my-6">
+                    <p className="text-gray-900 font-semibold mb-3 text-sm">
+                      💡 Tujuan Utama
+                    </p>
+                    <ul className="space-y-2 text-sm text-gray-700">
+                      <li className="flex items-start">
+                        <span className="text-red-900 mr-2">•</span>
+                        <span>Mempermudah koordinasi antara mahasiswa dan dosen pembimbing</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-red-900 mr-2">•</span>
+                        <span>Meningkatkan transparansi proses tugas akhir</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-red-900 mr-2">•</span>
+                        <span>Mempercepat proses administrasi dan approval</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-red-900 mr-2">•</span>
+                        <span>Mengurangi penggunaan dokumen fisik (paperless)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-red-900 mr-2">•</span>
+                        <span>Menyediakan tracking progress tugas akhir secara real-time</span>
+                      </li>
                     </ul>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4 my-6">
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <Users className="text-red-900 mb-2" size={24} />
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                      <Users className="text-red-900 mb-3" size={24} />
                       <h4 className="font-semibold text-gray-900 mb-1">500+ Mahasiswa</h4>
                       <p className="text-sm text-gray-600">Pengguna aktif sistem</p>
                     </div>
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <UserCheck className="text-red-900 mb-2" size={24} />
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                      <UserCheck className="text-red-900 mb-3" size={24} />
                       <h4 className="font-semibold text-gray-900 mb-1">50+ Dosen</h4>
                       <p className="text-sm text-gray-600">Pembimbing terdaftar</p>
                     </div>
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <CheckCircle className="text-red-900 mb-2" size={24} />
+                    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                      <CheckCircle className="text-red-900 mb-3" size={24} />
                       <h4 className="font-semibold text-gray-900 mb-1">100% Digital</h4>
                       <p className="text-sm text-gray-600">Proses paperless</p>
                     </div>
@@ -429,66 +445,74 @@ export default function DocumentationContent() {
               </div>
 
               {/* Arsitektur Sistem */}
-              <div id="intro-architecture" className="mb-12 scroll-mt-24">
+              <div id="intro-architecture" className="mb-16 scroll-mt-24">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                  <Layout className="mr-3 text-red-900" size={28} />
+                  <Layout className="mr-2.5 text-red-900" size={24} />
                   Arsitektur Sistem
                 </h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    SITA-BI dibangun dengan arsitektur <strong>monorepo</strong> menggunakan <strong>Turborepo</strong> 
-                    untuk manajemen multi-package yang efisien dan skalabel. Sistem ini terdiri dari dua aplikasi utama:
-                  </p>
+                <div className="prose prose-gray max-w-none">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
+                    <p className="text-gray-700 leading-relaxed mb-0">
+                      SITA-BI dibangun dengan arsitektur <strong>monorepo</strong> menggunakan <strong>Turborepo</strong> 
+                      untuk manajemen multi-package yang efisien dan skalabel. Sistem ini terdiri dari dua aplikasi utama:
+                    </p>
+                  </div>
                   
                   <div className="grid md:grid-cols-2 gap-6 my-6">
-                    <div className="bg-white border-2 border-red-100 rounded-lg p-6">
-                      <h4 className="font-bold text-red-900 mb-3 text-lg">Frontend (Web App)</h4>
-                      <ul className="space-y-2 text-sm text-gray-700">
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h4 className="font-bold text-red-900 mb-4 text-lg flex items-center">
+                        <Code className="mr-2" size={20} />
+                        Frontend (Web App)
+                      </h4>
+                      <ul className="space-y-2.5 text-sm text-gray-700">
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>Next.js 15</strong> dengan App Router untuk routing modern</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>React 18</strong> dengan Server Components untuk performance optimal</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>TypeScript</strong> untuk type safety</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>Tailwind CSS</strong> untuk styling yang responsive</span>
                         </li>
                       </ul>
                     </div>
 
-                    <div className="bg-white border-2 border-red-100 rounded-lg p-6">
-                      <h4 className="font-bold text-red-900 mb-3 text-lg">Backend (API Server)</h4>
-                      <ul className="space-y-2 text-sm text-gray-700">
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h4 className="font-bold text-red-900 mb-4 text-lg flex items-center">
+                        <Code className="mr-2" size={20} />
+                        Backend (API Server)
+                      </h4>
+                      <ul className="space-y-2.5 text-sm text-gray-700">
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>Express.js</strong> framework untuk backend yang efisien</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>SQLite</strong> database untuk penyimpanan data</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>Prisma ORM</strong> untuk database management</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowRight className="mr-2 mt-1 flex-shrink-0 text-red-900" size={16} />
+                          <span className="text-red-900 mr-2 mt-0.5">→</span>
                           <span><strong>Passport.js + JWT</strong> untuk autentikasi</span>
                         </li>
                       </ul>
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-6">
-                    <h4 className="font-bold text-gray-900 mb-3">Komunikasi Sistem</h4>
-                    <p className="text-gray-700 text-sm leading-relaxed">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-3 text-base">Komunikasi Sistem</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed mb-0">
                       Frontend dan backend berkomunikasi melalui <strong>RESTful API</strong> dengan format JSON. 
                       Sistem menggunakan <strong>HTTP-only cookies</strong> untuk session management dan 
                       <strong> Bearer token</strong> untuk autentikasi API requests. AI Chatbot (SitaBot) terintegrasi 
@@ -499,55 +523,57 @@ export default function DocumentationContent() {
               </div>
 
               {/* Persyaratan Sistem */}
-              <div id="intro-requirements" className="mb-12 scroll-mt-24">
+              <div id="intro-requirements" className="mb-16 scroll-mt-24">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                  <Settings className="mr-3 text-red-900" size={28} />
+                  <Settings className="mr-2.5 text-red-900" size={24} />
                   Persyaratan Sistem
                 </h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    Untuk menggunakan SITA-BI dengan optimal, pastikan perangkat Anda memenuhi persyaratan berikut:
-                  </p>
+                <div className="prose prose-gray max-w-none">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
+                    <p className="text-gray-700 leading-relaxed mb-0">
+                      Untuk menggunakan SITA-BI dengan optimal, pastikan perangkat Anda memenuhi persyaratan berikut:
+                    </p>
+                  </div>
                   
-                  <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">Browser yang Didukung</h4>
-                    <ul className="grid md:grid-cols-2 gap-2 text-sm text-gray-700">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm mb-4">
+                    <h4 className="font-semibold text-gray-900 mb-4 text-base">Browser yang Didukung</h4>
+                    <ul className="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
                       <li className="flex items-center">
-                        <CheckCircle className="mr-2 text-green-600" size={16} />
-                        Google Chrome (versi 90+)
+                        <CheckCircle className="mr-2.5 text-green-600 flex-shrink-0" size={18} />
+                        <span>Google Chrome (versi 90+)</span>
                       </li>
                       <li className="flex items-center">
-                        <CheckCircle className="mr-2 text-green-600" size={16} />
-                        Mozilla Firefox (versi 88+)
+                        <CheckCircle className="mr-2.5 text-green-600 flex-shrink-0" size={18} />
+                        <span>Mozilla Firefox (versi 88+)</span>
                       </li>
                       <li className="flex items-center">
-                        <CheckCircle className="mr-2 text-green-600" size={16} />
-                        Microsoft Edge (versi 90+)
+                        <CheckCircle className="mr-2.5 text-green-600 flex-shrink-0" size={18} />
+                        <span>Microsoft Edge (versi 90+)</span>
                       </li>
                       <li className="flex items-center">
-                        <CheckCircle className="mr-2 text-green-600" size={16} />
-                        Safari (versi 14+)
+                        <CheckCircle className="mr-2.5 text-green-600 flex-shrink-0" size={18} />
+                        <span>Safari (versi 14+)</span>
                       </li>
                     </ul>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <h4 className="font-semibold text-gray-900 mb-3">Spesifikasi Minimum</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-4 text-base">Spesifikasi Minimum</h4>
+                    <ul className="space-y-3 text-sm text-gray-700">
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Koneksi Internet:</strong> Minimum 1 Mbps (Disarankan 5 Mbps+)</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Resolusi Layar:</strong> Minimum 1280x720 px (Responsif untuk mobile)</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>JavaScript:</strong> Harus diaktifkan di browser</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Cookies:</strong> Harus diizinkan untuk autentikasi</span>
                       </li>
                     </ul>
@@ -558,57 +584,74 @@ export default function DocumentationContent() {
 
 
             {/* Getting Started Section */}
-            <section id="getting-started" className="mb-16 scroll-mt-24">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6">Memulai dengan SITA-BI</h1>
+            <section id="getting-started" className="mb-20 scroll-mt-24">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">Memulai dengan SITA-BI</h1>
               
               {/* Registrasi */}
-              <div id="gs-registration" className="mb-12 scroll-mt-24">
+              <div id="gs-registration" className="mb-16 scroll-mt-24">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Registrasi Akun</h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    Untuk menggunakan SITA-BI, Anda perlu membuat akun terlebih dahulu. Berikut langkah-langkahnya:
-                  </p>
+                <div className="prose prose-gray max-w-none">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
+                    <p className="text-gray-700 leading-relaxed mb-0">
+                      Untuk menggunakan SITA-BI, Anda perlu membuat akun terlebih dahulu. Berikut langkah-langkahnya:
+                    </p>
+                  </div>
                   
-                  <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm space-y-5">
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-red-900 text-white rounded-full flex items-center justify-center font-bold mr-4">
+                      <div className="flex-shrink-0 w-7 h-7 bg-red-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-4 mt-0.5">
                         1
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">Akses Halaman Registrasi</h4>
-                        <p className="text-sm text-gray-700">
-                          Buka <strong>http://localhost:3001/register</strong> atau klik tombol 
+                        <h4 className="font-semibold text-gray-900 mb-1.5 text-sm">Akses Halaman Registrasi</h4>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          Buka <code className="px-1.5 py-0.5 bg-gray-100 rounded text-xs">http://localhost:3001/register</code> atau klik tombol 
                           <strong> &quot;Daftar&quot;</strong> di halaman login
                         </p>
                       </div>
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-red-900 text-white rounded-full flex items-center justify-center font-bold mr-4">
+                      <div className="flex-shrink-0 w-7 h-7 bg-red-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-4 mt-0.5">
                         2
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">Isi Form Registrasi</h4>
-                        <p className="text-sm text-gray-700 mb-2">
+                        <h4 className="font-semibold text-gray-900 mb-1.5 text-sm">Isi Form Registrasi</h4>
+                        <p className="text-sm text-gray-700 mb-3 leading-relaxed">
                           Lengkapi informasi berikut dengan benar:
                         </p>
-                        <ul className="text-sm text-gray-600 space-y-1 ml-4">
-                          <li>• <strong>Nama Lengkap:</strong> Sesuai identitas resmi</li>
-                          <li>• <strong>Email:</strong> Gunakan email institusi (@student.edu atau @staff.edu)</li>
-                          <li>• <strong>NIM/NIP:</strong> Nomor induk mahasiswa atau pegawai</li>
-                          <li>• <strong>Password:</strong> Minimal 8 karakter, kombinasi huruf dan angka</li>
-                          <li>• <strong>Role:</strong> Pilih Mahasiswa/Dosen/Admin sesuai status Anda</li>
+                        <ul className="text-sm text-gray-600 space-y-1.5 ml-1">
+                          <li className="flex items-start">
+                            <span className="text-red-900 mr-2">•</span>
+                            <span><strong>Nama Lengkap:</strong> Sesuai identitas resmi</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-red-900 mr-2">•</span>
+                            <span><strong>Email:</strong> Gunakan email institusi (@student.edu atau @staff.edu)</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-red-900 mr-2">•</span>
+                            <span><strong>NIM/NIP:</strong> Nomor induk mahasiswa atau pegawai</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-red-900 mr-2">•</span>
+                            <span><strong>Password:</strong> Minimal 8 karakter, kombinasi huruf dan angka</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-red-900 mr-2">•</span>
+                            <span><strong>Role:</strong> Pilih Mahasiswa/Dosen/Admin sesuai status Anda</span>
+                          </li>
                         </ul>
                       </div>
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-red-900 text-white rounded-full flex items-center justify-center font-bold mr-4">
+                      <div className="flex-shrink-0 w-7 h-7 bg-red-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-4 mt-0.5">
                         3
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">Verifikasi Email/OTP</h4>
-                        <p className="text-sm text-gray-700">
+                        <h4 className="font-semibold text-gray-900 mb-1.5 text-sm">Verifikasi Email/OTP</h4>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           Cek email Anda untuk kode verifikasi OTP. Masukkan kode 6 digit yang diterima untuk 
                           mengaktifkan akun Anda. Kode berlaku selama 10 menit.
                         </p>
@@ -616,12 +659,12 @@ export default function DocumentationContent() {
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-red-900 text-white rounded-full flex items-center justify-center font-bold mr-4">
+                      <div className="flex-shrink-0 w-7 h-7 bg-red-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-4 mt-0.5">
                         4
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">Akun Aktif</h4>
-                        <p className="text-sm text-gray-700">
+                        <h4 className="font-semibold text-gray-900 mb-1.5 text-sm">Akun Aktif</h4>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           Setelah verifikasi berhasil, akun Anda aktif dan siap digunakan. Silakan login dengan 
                           email dan password yang telah didaftarkan.
                         </p>
@@ -629,7 +672,7 @@ export default function DocumentationContent() {
                     </div>
                   </div>
 
-                  <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mt-4">
+                  <div className="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r mt-6 shadow-sm">
                     <div className="flex">
                       <AlertCircle className="text-amber-500 mr-3 flex-shrink-0" size={20} />
                       <div>
@@ -645,52 +688,78 @@ export default function DocumentationContent() {
               </div>
 
               {/* Login */}
-              <div id="gs-login" className="mb-12 scroll-mt-24">
+              <div id="gs-login" className="mb-16 scroll-mt-24">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Login & Autentikasi</h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    Setelah akun terverifikasi, Anda dapat login ke sistem SITA-BI:
-                  </p>
+                <div className="prose prose-gray max-w-none">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm mb-6">
+                    <p className="text-gray-700 leading-relaxed mb-0">
+                      Setelah akun terverifikasi, Anda dapat login ke sistem SITA-BI:
+                    </p>
+                  </div>
                   
-                  <div className="grid md:grid-cols-2 gap-6 mb-4">
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">Login Normal</h4>
-                      <ol className="text-sm text-gray-700 space-y-2">
-                        <li>1. Buka halaman login di <strong>/login</strong></li>
-                        <li>2. Masukkan email dan password Anda</li>
-                        <li>3. Klik tombol <strong>&quot;Login&quot;</strong></li>
-                        <li>4. Sistem akan redirect ke dashboard</li>
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h4 className="font-semibold text-gray-900 mb-4 text-base">Login Normal</h4>
+                      <ol className="text-sm text-gray-700 space-y-2.5">
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">1.</span>
+                          <span>Buka halaman login di <code className="px-1.5 py-0.5 bg-gray-100 rounded text-xs">/login</code></span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">2.</span>
+                          <span>Masukkan email dan password Anda</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">3.</span>
+                          <span>Klik tombol <strong>&quot;Login&quot;</strong></span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">4.</span>
+                          <span>Sistem akan redirect ke dashboard</span>
+                        </li>
                       </ol>
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">Lupa Password</h4>
-                      <ol className="text-sm text-gray-700 space-y-2">
-                        <li>1. Klik <strong>&quot;Lupa Password?&quot;</strong> di halaman login</li>
-                        <li>2. Masukkan email terdaftar</li>
-                        <li>3. Cek email untuk link reset password</li>
-                        <li>4. Buat password baru dan login kembali</li>
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                      <h4 className="font-semibold text-gray-900 mb-4 text-base">Lupa Password</h4>
+                      <ol className="text-sm text-gray-700 space-y-2.5">
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">1.</span>
+                          <span>Klik <strong>&quot;Lupa Password?&quot;</strong> di halaman login</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">2.</span>
+                          <span>Masukkan email terdaftar</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">3.</span>
+                          <span>Cek email untuk link reset password</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="font-semibold mr-2 text-red-900">4.</span>
+                          <span>Buat password baru dan login kembali</span>
+                        </li>
                       </ol>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <h4 className="font-semibold text-gray-900 mb-3">Keamanan Akun</h4>
-                    <ul className="text-sm text-gray-700 space-y-2">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-4 text-base">Keamanan Akun</h4>
+                    <ul className="text-sm text-gray-700 space-y-3">
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Session Management:</strong> Sesi login otomatis expire setelah 24 jam tidak aktif</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>JWT Token:</strong> Sistem menggunakan JWT untuk autentikasi yang aman</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Password Encryption:</strong> Password di-hash dengan bcrypt sebelum disimpan</span>
                       </li>
                       <li className="flex items-start">
-                        <CheckCircle className="mr-2 mt-0.5 text-green-600 flex-shrink-0" size={16} />
+                        <CheckCircle className="mr-2.5 mt-0.5 text-green-600 flex-shrink-0" size={18} />
                         <span><strong>Multi-Device:</strong> Anda bisa login di multiple device secara bersamaan</span>
                       </li>
                     </ul>

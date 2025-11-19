@@ -1,5 +1,7 @@
 import axios, { type AxiosError } from 'axios';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -12,7 +14,12 @@ interface GeminiContent {
   role?: 'user' | 'model';
 }
 
+interface GeminiSystemInstruction {
+  parts: GeminiPart[];
+}
+
 interface GeminiRequest {
+  systemInstruction?: GeminiSystemInstruction;
   contents: GeminiContent[];
 }
 
@@ -37,6 +44,22 @@ class GeminiService {
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
   private readonly streamBaseUrl =
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent';
+  private readonly documentationPath = path.join(
+    process.cwd(),
+    '..',
+    '..',
+    'documentation',
+    'model',
+    'documentation.json',
+  );
+  private readonly informationPath = path.join(
+    process.cwd(),
+    '..',
+    '..',
+    'documentation',
+    'model',
+    'information.json',
+  );
 
   constructor() {
     this.loadApiKeys();
@@ -60,8 +83,65 @@ class GeminiService {
     }
   }
 
+  private getSystemPrompt(): string {
+    try {
+      // Read documentation.json
+      const documentationData = fs.existsSync(this.documentationPath)
+        ? JSON.parse(fs.readFileSync(this.documentationPath, 'utf-8'))
+        : null;
+
+      // Read information.json
+      const informationData = fs.existsSync(this.informationPath)
+        ? JSON.parse(fs.readFileSync(this.informationPath, 'utf-8'))
+        : null;
+
+      // Build system prompt
+      let systemPrompt = `Kamu adalah SITABI (Sistem Informasi Tugas Akhir Bahasa Inggris), asisten AI yang membantu mahasiswa jurusan Bahasa Inggris dalam mengelola dan menyelesaikan tugas akhir mereka. Kamu ramah, profesional, dan selalu siap membantu mahasiswa dengan pertanyaan seputar sistem informasi tugas akhir, panduan penulisan, jadwal bimbingan, dan informasi akademik terkait.
+
+SUMBER INFORMASI YANG KAMU MILIKI:
+`;
+
+      if (documentationData !== null) {
+        systemPrompt += `
+1. INFORMASI PATH/LOKASI URL/HALAMAN SISTEM (dari documentation.json):
+${JSON.stringify(documentationData, null, 2)}
+`;
+      }
+
+      if (informationData !== null) {
+        systemPrompt += `
+2. INFORMASI TUGAS AKHIR & PANDUAN PENGGUNA (dari information.json):
+${JSON.stringify(informationData, null, 2)}
+`;
+      }
+
+      systemPrompt += `
+CARA MENJAWAB:
+- Berikan jawaban yang jelas, spesifik, dan informatif
+- Jika ditanya tentang lokasi/path halaman, rujuk ke struktur sistem dari documentation.json
+- Jika ditanya tentang cara menggunakan fitur, rujuk ke panduan dari information.json
+- Gunakan bahasa Indonesia yang ramah dan profesional
+- Jika tidak yakin, akui keterbatasan dan arahkan user untuk menghubungi admin/dosen
+- Berikan langkah-langkah yang mudah diikuti untuk pertanyaan "how-to"
+- Jangan menampilkan raw JSON dalam jawaban, tapi gunakan informasi dari JSON untuk memberikan jawaban yang natural dan mudah dipahami
+`;
+
+      return systemPrompt;
+    } catch (error) {
+      console.error('Error loading system prompt data:', error);
+      return `Kamu adalah SITABI (Sistem Informasi Tugas Akhir Bahasa Inggris), asisten AI yang membantu mahasiswa jurusan Bahasa Inggris dalam mengelola dan menyelesaikan tugas akhir mereka. Kamu ramah, profesional, dan selalu siap membantu mahasiswa dengan pertanyaan seputar sistem informasi tugas akhir, panduan penulisan, jadwal bimbingan, dan informasi akademik terkait.`;
+    }
+  }
+
   private async callGeminiApi(prompt: string, apiKey: string): Promise<string> {
     const requestBody: GeminiRequest = {
+      systemInstruction: {
+        parts: [
+          {
+            text: this.getSystemPrompt(),
+          },
+        ],
+      },
       contents: [
         {
           parts: [
@@ -211,6 +291,14 @@ class GeminiService {
       role: 'user',
     });
 
+    const systemInstruction: GeminiSystemInstruction = {
+      parts: [
+        {
+          text: this.getSystemPrompt(),
+        },
+      ],
+    };
+
     // Try all API keys starting from current index
     while (attemptedKeys.size < this.apiKeys.length) {
       const apiKey = this.apiKeys[this.currentKeyIndex];
@@ -228,6 +316,7 @@ class GeminiService {
         const response = await axios.post<ReadableStream>(
           `${this.streamBaseUrl}?key=${apiKey}&alt=sse`,
           {
+            systemInstruction,
             contents,
           },
           {
@@ -327,6 +416,13 @@ class GeminiService {
         const response = await axios.post<ReadableStream>(
           `${this.streamBaseUrl}?key=${apiKey}&alt=sse`,
           {
+            systemInstruction: {
+              parts: [
+                {
+                  text: this.getSystemPrompt(),
+                },
+              ],
+            },
             contents: [
               {
                 parts: [{ text: prompt }],

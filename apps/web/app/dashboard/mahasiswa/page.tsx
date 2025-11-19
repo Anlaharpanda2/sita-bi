@@ -1,8 +1,6 @@
 // Server Component with Suspense for better streaming
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { BookOpen, MessagesSquare, FileText } from 'lucide-react';
 import { DashboardCardSkeleton } from '../../components/Suspense/LoadingFallback';
 
 // Dynamically import client components
@@ -10,59 +8,75 @@ const WelcomeSection = dynamic(() => import('./components/WelcomeSection'), {
   ssr: true,
 });
 
-const featureCards = [
-  {
-    title: 'Tugas Akhir',
-    description:
-      'Ajukan judul baru atau lihat status tugas akhir Anda saat ini.',
-    href: '/dashboard/mahasiswa/tugas-akhir',
-    icon: BookOpen,
-  },
-  {
-    title: 'Bimbingan',
-    description: 'Lihat riwayat bimbingan dan tambahkan catatan untuk dosen.',
-    href: '/dashboard/mahasiswa/bimbingan',
-    icon: MessagesSquare,
-  },
-  {
-    title: 'Pendaftaran Sidang',
-    description:
-      'Daftarkan diri Anda untuk sidang dan pantau status verifikasi.',
-    href: '/dashboard/mahasiswa/sidang',
-    icon: FileText,
-  },
-];
+const DashboardStats = dynamic(() => import('./components/DashboardStats'));
+
+const SubmissionChart = dynamic(() => import('./components/SubmissionChart'));
+
+const ProgressTimeline = dynamic(() => import('./components/ProgressTimeline'));
+
+const RecentActivity = dynamic(() => import('./components/RecentActivity'));
+
+const QuickActions = dynamic(() => import('./components/QuickActions'));
+
+const UpcomingSchedule = dynamic(() => import('./components/UpcomingSchedule'));
 
 export default function MahasiswaDashboardPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-8">
+      {/* Welcome Section */}
       <Suspense
-        fallback={<div className="h-24 animate-pulse bg-gray-200 rounded-lg" />}
+        fallback={
+          <div className="h-32 animate-pulse bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl" />
+        }
       >
         <WelcomeSection />
       </Suspense>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {featureCards.map((card, index) => (
-          <Suspense key={card.title} fallback={<DashboardCardSkeleton />}>
-            <Link href={card.href}>
-              <div
-                className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-red-800 cursor-pointer"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="bg-red-100 p-3 rounded-full">
-                    <card.icon className="h-6 w-6 text-red-800" />
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-800 group-hover:text-red-800 transition-colors">
-                    {card.title}
-                  </h2>
-                </div>
-                <p className="mt-3 text-gray-600">{card.description}</p>
-              </div>
-            </Link>
+      {/* Stats Cards */}
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <DashboardCardSkeleton key={i} />
+            ))}
+          </div>
+        }
+      >
+        <DashboardStats />
+      </Suspense>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Charts & Progress */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Submission Chart */}
+          <Suspense fallback={<DashboardCardSkeleton />}>
+            <SubmissionChart />
           </Suspense>
-        ))}
+
+          {/* Progress Timeline */}
+          <Suspense fallback={<DashboardCardSkeleton />}>
+            <ProgressTimeline />
+          </Suspense>
+
+          {/* Quick Actions */}
+          <Suspense fallback={<DashboardCardSkeleton />}>
+            <QuickActions />
+          </Suspense>
+        </div>
+
+        {/* Right Column - Activity & Schedule */}
+        <div className="space-y-6">
+          {/* Upcoming Schedule */}
+          <Suspense fallback={<DashboardCardSkeleton />}>
+            <UpcomingSchedule />
+          </Suspense>
+
+          {/* Recent Activity */}
+          <Suspense fallback={<DashboardCardSkeleton />}>
+            <RecentActivity />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
