@@ -21,7 +21,7 @@ async function main() {
   const announcements = [];
   const audienceValues = Object.values(AudiensPengumuman);
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 200; i++) {
     const judul = faker.lorem.sentence();
     const isi = faker.lorem.paragraphs(3);
     const audiens = faker.helpers.arrayElement(audienceValues);
@@ -116,7 +116,7 @@ async function main() {
 
   const prodiValues = [Prodi.D3, Prodi.D4];
   const mahasiswaToSeed = [];
-  for (let i = 0; i < 250; i++) {
+  for (let i = 0; i < 50; i++) {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const name = `${firstName} ${lastName}`;

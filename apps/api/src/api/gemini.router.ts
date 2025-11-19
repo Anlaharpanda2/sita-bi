@@ -77,7 +77,10 @@ router.post(
 router.post(
   '/chat/stream/public',
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { message } = req.body as { message?: unknown };
+    const { message, history } = req.body as { 
+      message?: unknown; 
+      history?: Array<{ role: string; content: string }> 
+    };
 
     if (typeof message !== 'string' || message.length === 0) {
       res.status(400).json({
@@ -113,8 +116,11 @@ router.post(
       // Send initial connected message
       res.write('data: {"type":"connected"}\n\n');
 
-      // Stream the response
-      for await (const chunk of geminiService.streamGenerateContent(message)) {
+      // Stream the response with history context
+      for await (const chunk of geminiService.streamGenerateContentWithHistory(
+        message, 
+        history || []
+      )) {
         res.write(
           `data: ${JSON.stringify({ type: 'chunk', text: chunk })}\n\n`,
         );

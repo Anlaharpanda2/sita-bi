@@ -9,6 +9,7 @@ interface GeminiPart {
 
 interface GeminiContent {
   parts: GeminiPart[];
+  role?: 'user' | 'model';
 }
 
 interface GeminiRequest {
@@ -175,6 +176,127 @@ class GeminiService {
 
   async chat(message: string): Promise<string> {
     return this.generateContent(message);
+  }
+
+  // Stream generate content with SSE and conversation history
+  async *streamGenerateContentWithHistory(
+    prompt: string,
+    history: Array<{ role: string; content: string }> = [],
+  ): AsyncGenerator<string, void, unknown> {
+    if (this.apiKeys.length === 0) {
+      throw new Error(
+        'No Gemini API keys configured. Please add API keys to .env file',
+      );
+    }
+
+    const attemptedKeys = new Set<number>();
+
+    // Build contents array with history
+    const contents: GeminiContent[] = [];
+    
+    // Add history messages - convert 'assistant' to 'model' for Gemini API
+    // Only include messages that have content
+    for (const msg of history) {
+      if (msg.content && msg.content.trim()) {
+        contents.push({
+          parts: [{ text: msg.content }],
+          role: msg.role === 'user' ? 'user' : 'model',
+        });
+      }
+    }
+    
+    // Add current prompt as user message
+    contents.push({
+      parts: [{ text: prompt }],
+      role: 'user',
+    });
+
+    // Try all API keys starting from current index
+    while (attemptedKeys.size < this.apiKeys.length) {
+      const apiKey = this.apiKeys[this.currentKeyIndex];
+      if (apiKey === undefined) {
+        break;
+      }
+
+      const keyNumber = this.currentKeyIndex + 1;
+      console.warn(
+        `🔄 Attempting streaming request with API key #${keyNumber}`,
+      );
+      console.warn(`📝 Sending ${contents.length} messages to Gemini API`);
+
+      try {
+        const response = await axios.post<ReadableStream>(
+          `${this.streamBaseUrl}?key=${apiKey}&alt=sse`,
+          {
+            contents,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            responseType: 'stream',
+          },
+        );
+
+        const stream = response.data;
+        let buffer = '';
+
+        // Process stream chunks
+        for await (const chunk of stream as unknown as AsyncIterable<Buffer>) {
+          buffer += chunk.toString();
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') {
+                console.warn(
+                  `✅ Streaming completed with API key #${keyNumber}`,
+                );
+                return;
+              }
+
+              try {
+                const parsed = JSON.parse(data) as GeminiResponse;
+                if (
+                  parsed.candidates?.[0]?.content.parts[0]?.text !== undefined
+                ) {
+                  yield parsed.candidates[0].content.parts[0].text;
+                }
+              } catch {
+                // Skip invalid JSON
+                continue;
+              }
+            }
+          }
+        }
+
+        console.warn(`✅ Streaming success with API key #${keyNumber}`);
+        return;
+      } catch (error) {
+        attemptedKeys.add(this.currentKeyIndex);
+
+        if (this.isRateLimitError(error)) {
+          console.warn(
+            `⚠️  API key #${keyNumber} hit rate limit. Trying next key...`,
+          );
+          this.currentKeyIndex =
+            (this.currentKeyIndex + 1) % this.apiKeys.length;
+        } else {
+          console.error(
+            `❌ Error with API key #${keyNumber}:`,
+            (error as Error).message,
+          );
+          throw error;
+        }
+      }
+    }
+
+    console.error('❌ All Gemini API keys have reached their limits');
+    throw new Error(
+      'Anda sudah mencapai limit. Semua API key Gemini telah mencapai batas penggunaan.',
+    );
   }
 
   // Stream generate content with SSE

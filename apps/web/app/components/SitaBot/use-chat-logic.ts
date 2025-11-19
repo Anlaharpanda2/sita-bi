@@ -7,12 +7,36 @@ export interface Message {
   content: string;
 }
 
+const CHAT_CACHE_KEY = 'sitabot_chat_history';
+
 export function useChatLogic() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Load chat history from sessionStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem(CHAT_CACHE_KEY);
+      if (cached) {
+        try {
+          const parsedMessages = JSON.parse(cached);
+          setMessages(parsedMessages);
+        } catch (error) {
+          console.error('Failed to load chat history:', error);
+        }
+      }
+    }
+  }, []);
+
+  // Save messages to sessionStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined' && messages.length > 0) {
+      sessionStorage.setItem(CHAT_CACHE_KEY, JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     chatContainerRef.current?.scrollTo(0, chatContainerRef.current.scrollHeight);
@@ -30,6 +54,8 @@ export function useChatLogic() {
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: 'user', content: input };
+    const currentInput = input;
+    
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -40,11 +66,17 @@ export function useChatLogic() {
     abortControllerRef.current = abortController;
 
     try {
-      // Call backend Gemini API through Next.js API proxy
+      // Call backend Gemini API through Next.js API proxy with chat history
+      // Send only completed messages (exclude the empty assistant message we just added)
+      const historyToSend = messages.filter(msg => msg.content.trim() !== '');
+      
       const response = await fetch('/api/gemini/chat/stream/public', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ 
+          message: currentInput,
+          history: historyToSend
+        }),
         signal: abortController.signal,
       });
 
@@ -132,6 +164,13 @@ export function useChatLogic() {
     }
   };
 
+  const clearHistory = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(CHAT_CACHE_KEY);
+      setMessages([]);
+    }
+  };
+
   return {
     messages,
     input,
@@ -140,5 +179,6 @@ export function useChatLogic() {
     setInput,
     handleSubmit,
     stop,
+    clearHistory,
   };
 }

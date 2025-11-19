@@ -23,6 +23,7 @@ export default function ChatbotModal({ isOpen, onClose }: ChatbotModalProps) {
     setInput,
     handleSubmit,
     stop,
+    clearHistory,
   } = useChatLogic();
 
   useEffect(() => {
@@ -46,12 +47,17 @@ export default function ChatbotModal({ isOpen, onClose }: ChatbotModalProps) {
     handleSubmit(fakeEvent);
   };
 
+  const handleClose = () => {
+    clearHistory();
+    onClose();
+  };
+
   return (
     <>
       {/* Backdrop Overlay - covers everything including header */}
       <div 
         className={`fixed inset-0 bg-black transition-opacity duration-500 z-[998] ${modalVisible ? 'opacity-60' : 'opacity-0'}`}
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       {/* Modal Container - above backdrop */}
@@ -114,7 +120,7 @@ export default function ChatbotModal({ isOpen, onClose }: ChatbotModalProps) {
                 </div>
               </div>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all"
               >
                 <X className="w-5 h-5 text-white" />
