@@ -41,17 +41,24 @@ export default function RecommendedTopics({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="bg-maroon-900 p-3 rounded-lg">
-          <BookMarked className="h-6 w-6 text-white" />
+      <div className="flex items-start gap-5">
+        <div className="flex-shrink-0">
+          <div className="relative">
+            <div className="absolute inset-0 bg-maroon-900/20 rounded-2xl blur-lg"></div>
+            <div className="relative bg-gradient-to-br from-maroon-900 to-maroon-800 p-4 rounded-2xl shadow-lg hover:scale-105 hover:rotate-3 transition-all duration-300">
+              <BookMarked className="h-7 w-7 text-white" />
+            </div>
+          </div>
         </div>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-700">
+        <div className="flex-1">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Topik Rekomendasi
           </h2>
-          <p className="text-sm text-gray-500">Dikurasi oleh dosen ahli untuk Anda</p>
+          <p className="text-gray-600 leading-relaxed">
+            Topik tugas akhir yang dikurasi khusus oleh dosen ahli di bidangnya untuk membantu Anda memulai penelitian
+          </p>
         </div>
       </div>
 
@@ -60,45 +67,61 @@ export default function RecommendedTopics({
         {recommendedTitles.map((topic, idx) => (
           <div
             key={topic.id}
-            className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md hover:border-maroon-900/30 transition-all duration-300"
+            className="group relative overflow-hidden bg-gradient-to-br from-white to-maroon-50/20 rounded-2xl border-2 border-maroon-100 shadow-sm hover:shadow-lg hover:border-maroon-200 transition-all duration-300"
           >
-            <div className="flex gap-4">
-              {/* Left Side - Number */}
+            {/* Decorative corner accent */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-maroon-500/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-maroon-500/10 transition-colors duration-500"></div>
+            
+            <div className="relative flex gap-6 p-6">
+              {/* Left Side - Number Badge */}
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-maroon-900 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                  {idx + 1}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-maroon-900/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative w-14 h-14 bg-gradient-to-br from-maroon-900 to-maroon-800 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    {idx + 1}
+                  </div>
+                </div>
+                {/* Sparkle indicator */}
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-sm">
+                  <Sparkles className="h-3.5 w-3.5 text-white" />
                 </div>
               </div>
 
               {/* Main Content */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 space-y-4">
                 {/* Title */}
-                <h3 className="font-bold text-lg text-gray-800 mb-2 leading-tight">
-                  {topic.judul_topik}
-                </h3>
+                <div>
+                  <h3 className="font-bold text-xl text-gray-900 mb-2 leading-tight group-hover:text-maroon-900 transition-colors duration-300">
+                    {topic.judul_topik}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-gray-600 leading-relaxed line-clamp-3 group-hover:text-gray-700">
+                    {topic.deskripsi}
+                  </p>
+                </div>
                 
-                {/* Description */}
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  {topic.deskripsi}
-                </p>
-                
-                {/* Info Pills */}
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Lecturer */}
-                  <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
-                    <User className="h-4 w-4 text-maroon-900" />
+                {/* Info Cards */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Lecturer Card */}
+                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-maroon-200 transition-all duration-300 group/pill">
+                    <div className="w-10 h-10 bg-gradient-to-br from-maroon-900 to-maroon-800 rounded-xl flex items-center justify-center group-hover/pill:scale-110 transition-transform duration-300">
+                      <User className="h-5 w-5 text-white" />
+                    </div>
                     <div>
-                      <p className="text-xs text-gray-500">Dosen</p>
-                      <p className="text-sm font-semibold text-gray-800">{topic.dosenPencetus.name}</p>
+                      <p className="text-xs font-medium text-gray-500">Dosen Pembimbing</p>
+                      <p className="text-sm font-bold text-gray-900">{topic.dosenPencetus.name}</p>
                     </div>
                   </div>
 
-                  {/* Quota */}
-                  <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
-                    <Users2 className="h-4 w-4 text-maroon-900" />
+                  {/* Quota Card */}
+                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group/pill">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center group-hover/pill:scale-110 transition-transform duration-300">
+                      <Users2 className="h-5 w-5 text-white" />
+                    </div>
                     <div>
-                      <p className="text-xs text-gray-500">Kuota</p>
-                      <p className="text-sm font-semibold text-gray-800">{topic.kuota} slot</p>
+                      <p className="text-xs font-medium text-gray-500">Kuota Tersedia</p>
+                      <p className="text-sm font-bold text-gray-900">{topic.kuota} Mahasiswa</p>
                     </div>
                   </div>
                 </div>
@@ -108,13 +131,17 @@ export default function RecommendedTopics({
               <div className="flex-shrink-0 flex items-center">
                 <button
                   onClick={() => onSelectTitle(topic.judul_topik)}
-                  className="bg-maroon-900 text-white px-5 py-3 rounded-lg font-semibold hover:bg-maroon-800 active:scale-95 transition-all duration-200 flex flex-col items-center gap-1"
+                  className="group/btn relative bg-gradient-to-br from-maroon-900 to-maroon-800 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 flex flex-col items-center gap-2 overflow-hidden"
                 >
-                  <PlusCircle className="h-5 w-5" />
-                  <span className="text-xs">Gunakan</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-maroon-800 to-maroon-900 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                  <PlusCircle className="relative h-6 w-6 group-hover/btn:rotate-90 transition-transform duration-500" />
+                  <span className="relative text-sm">Gunakan Topik</span>
                 </button>
               </div>
             </div>
+            
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon-500 via-maroon-600 to-maroon-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
           </div>
         ))}
       </div>

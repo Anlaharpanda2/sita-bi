@@ -46,7 +46,7 @@ export default function MahasiswaLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex">
         <Suspense
           fallback={<div className="w-64 bg-white shadow-lg animate-pulse fixed inset-y-0 left-0" />}
@@ -55,7 +55,7 @@ export default function MahasiswaLayout({ children }: { children: ReactNode }) {
         </Suspense>
         
         <main className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-          <div className="p-6 lg:p-8 max-w-7xl mx-auto w-full bg-gray-100">
+          <div className="p-6 max-w-7xl mx-auto w-full">
             {children}
           </div>
         </main>
