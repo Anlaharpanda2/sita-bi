@@ -165,7 +165,7 @@ export function useSubmitTitle() {
   const submitTitle = async (judul: string, onSuccess?: () => void) => {
     setLoading(true);
     try {
-      await request('/tugas-akhir/my-ta', {
+      await request('/tugas-akhir/', {
         method: 'POST',
         body: { judul },
       });
