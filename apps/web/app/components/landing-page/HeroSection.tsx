@@ -87,53 +87,14 @@ export default function HeroSection() {
 
           {/* Right Content - Image */}
           <div className="relative lg:ml-auto">
-            <div className="relative">
-              {/* Decorative Elements */}
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-red-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
-              
-              {/* Main Image Container */}
-              <div className="relative bg-white p-4 rounded-3xl shadow-2xl backdrop-blur-sm border border-white/20">
-                <div className="relative overflow-hidden rounded-2xl">
-                  <Image
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYB48qcI4RmLRUfQqoGwJb6GIM7SqYE9rcBg&s"
-                    alt="SITA-BI Platform Illustration"
-                    width={600}
-                    height={600}
-                    priority
-                    className="w-full h-auto transform hover:scale-105 transition-transform duration-500"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-red-600/10 to-transparent pointer-events-none"></div>
-                </div>
-              </div>
-
-              {/* Floating Card 1 */}
-              <div className="absolute -left-6 top-1/4 bg-white p-4 rounded-2xl shadow-xl border border-red-100 animate-float hidden lg:block">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center">
-                    <span className="text-white text-xl font-bold">95%</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Success Rate</p>
-                    <p className="text-sm font-semibold text-gray-900">Mahasiswa</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Card 2 */}
-              <div className="absolute -right-6 bottom-1/4 bg-white p-4 rounded-2xl shadow-xl border border-red-100 animate-float-delayed hidden lg:block">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
-                    <span className="text-white text-xl font-bold">500+</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Active Users</p>
-                    <p className="text-sm font-semibold text-gray-900">Pengguna</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/hero.png"
+              alt="Gedung Politeknik"
+              width={5020}
+              height={1080}
+              className="w-full h-auto object-cover"
+              priority
+            />
           </div>
         </div>
       </div>

@@ -22,6 +22,12 @@ const nextConfig = {
         port: '',
         pathname: '/wp-content/uploads/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.grok.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   reactStrictMode: true,

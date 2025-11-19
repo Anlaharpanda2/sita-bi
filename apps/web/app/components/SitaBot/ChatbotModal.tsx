@@ -48,14 +48,14 @@ export default function ChatbotModal({ isOpen, onClose }: ChatbotModalProps) {
 
   return (
     <>
-      {/* Backdrop Overlay */}
+      {/* Backdrop Overlay - covers everything including header */}
       <div 
-        className={`fixed inset-0 bg-black transition-opacity duration-500 z-40 ${modalVisible ? 'opacity-60' : 'opacity-0'}`}
+        className={`fixed inset-0 bg-black transition-opacity duration-500 z-[998] ${modalVisible ? 'opacity-60' : 'opacity-0'}`}
         onClick={onClose}
       />
 
-      {/* Modal Container */}
-      <div className={`fixed inset-0 flex items-center justify-center z-50 p-4 transition-all duration-500 ${modalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+      {/* Modal Container - above backdrop */}
+      <div className={`fixed inset-0 flex items-center justify-center z-[999] p-4 transition-all duration-500 ${modalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
         
         {showIntro ? (
           /* Premium Intro Animation */
