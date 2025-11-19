@@ -63,57 +63,42 @@ export default function TugasAkhirPage() {
   }
 
   return (
-    <div className="space-y-8 p-6 animate-in fade-in duration-500">
-      {/* Hero Header with Gradient */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl p-8 md:p-12 group">
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-700"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24 group-hover:scale-150 transition-transform duration-700"></div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4 group-hover:translate-x-2 transition-transform duration-300">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:rotate-12 transition-transform duration-300">
-              <BookOpen className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-                Final Project
-              </h1>
-              <p className="text-white/90 text-lg drop-shadow">Tugas Akhir</p>
-            </div>
+    <div className="space-y-6 p-6">
+      {/* Hero Header */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+        <div className="flex items-center gap-4">
+          <div className="bg-maroon-900 p-3 rounded-xl group-hover:scale-105 transition-transform duration-300">
+            <BookOpen className="h-8 w-8 text-white" />
           </div>
-          <p className="text-white/95 text-lg max-w-2xl leading-relaxed drop-shadow group-hover:translate-x-2 transition-transform duration-300 delay-75">
-            Manage your final project submission, check similarity, and explore recommended topics from expert lecturers
-          </p>
+          <div>
+            <h1 className="text-4xl font-bold text-gray-700">
+              Tugas Akhir
+            </h1>
+            <p className="text-gray-500 text-base mt-1">
+              Kelola pengajuan tugas akhir, cek kemiripan judul, dan jelajahi topik rekomendasi dari dosen
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Current Thesis Status */}
       {tugasAkhir ? (
-        <div className="group relative bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-green-100 overflow-hidden">
-          {/* Animated Background Pattern */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-3xl transform translate-x-32 -translate-y-32"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-emerald-200/30 to-transparent rounded-full blur-3xl transform -translate-x-32 translate-y-32"></div>
-          </div>
-
-          <div className="relative z-10 flex justify-between items-start gap-6">
-            <div className="flex-1 space-y-6">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-all duration-300">
+          <div className="flex justify-between items-start gap-6">
+            <div className="flex-1 space-y-4">
               {/* Header with Status */}
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <CheckCircle2 className="h-8 w-8 text-white" />
+                <div className="bg-maroon-900 p-3 rounded-lg">
+                  <CheckCircle2 className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-2xl font-bold text-gray-800 group-hover:text-green-700 transition-colors duration-300">
-                      Your Current Thesis
+                    <h2 className="text-2xl font-bold text-gray-700">
+                      Tugas Akhir Anda Saat Ini
                     </h2>
-                    <div className="group-hover:scale-105 transition-transform duration-300">
-                      {getStatusChip(tugasAkhir.status)}
-                    </div>
+                    {getStatusChip(tugasAkhir.status)}
                   </div>
-                  <p className="text-lg text-gray-700 leading-relaxed group-hover:text-gray-900 transition-colors duration-300">
+                  <p className="text-base text-gray-600 leading-relaxed">
                     {tugasAkhir.judul}
                   </p>
                 </div>
@@ -121,27 +106,27 @@ export default function TugasAkhirPage() {
 
               {/* Supervisors Section */}
               {tugasAkhir.peranDosenTa.length > 0 && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-all duration-300 border border-green-100">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Users className="h-5 w-5 text-green-600" />
-                    <h3 className="font-bold text-gray-800">
-                      Supervisors
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Users className="h-5 w-5 text-maroon-900" />
+                    <h3 className="font-semibold text-gray-700">
+                      Pembimbing
                     </h3>
                   </div>
-                  <div className="grid gap-3">
+                  <div className="space-y-2">
                     {tugasAkhir.peranDosenTa.map((peran, idx) => (
                       <div 
                         key={idx} 
-                        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-transparent rounded-xl hover:from-green-100 hover:translate-x-2 transition-all duration-300 group/item"
+                        className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
                       >
-                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-md group-hover/item:scale-110 transition-transform duration-300">
+                        <div className="w-10 h-10 bg-maroon-900 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                           {peran.dosen.user.name.charAt(0)}
                         </div>
                         <div className="flex-1">
-                          <p className="font-semibold text-gray-800 group-hover/item:text-green-700 transition-colors duration-300">
+                          <p className="font-medium text-gray-800">
                             {peran.dosen.user.name}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-500">
                             {peran.peran}
                           </p>
                         </div>
@@ -156,32 +141,25 @@ export default function TugasAkhirPage() {
             {tugasAkhir.status === 'DIAJUKAN' && (
               <button
                 onClick={handleDeleteTugasAkhir}
-                className="group/btn relative px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 overflow-hidden"
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 active:scale-95 transition-all duration-200 flex items-center gap-2"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-rose-700 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative flex items-center gap-2">
-                  <Trash2 size={18} className="group-hover/btn:rotate-12 transition-transform duration-300" />
-                  <span>Delete</span>
-                </div>
+                <Trash2 size={18} />
+                <span>Hapus</span>
               </button>
             )}
           </div>
         </div>
       ) : (
         <>
-          <div id="similarity-form" className="animate-in slide-in-from-bottom-4 duration-500">
+          <div id="similarity-form">
             <SimilarityForm initialTitle={selectedTitle} onSuccess={refetch} />
           </div>
 
-          <div className="animate-in slide-in-from-bottom-5 duration-700">
-            <RecommendedTopics onSelectTitle={handleSelectRecommendedTitle} />
-          </div>
+          <RecommendedTopics onSelectTitle={handleSelectRecommendedTitle} />
         </>
       )}
 
-      <div className="animate-in slide-in-from-bottom-6 duration-900">
-        <SubmittedTitlesTable />
-      </div>
+      <SubmittedTitlesTable />
     </div>
   );
 }
